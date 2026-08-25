@@ -1136,7 +1136,8 @@
         body.mode-spectator #btnConnectProjector,
         body.mode-spectator .answer-box,
         body.mode-spectator #reboundPanel,
-        body.mode-spectator #easyModeIndicator {
+        body.mode-spectator #easyModeIndicator,
+        body.mode-spectator #chaosModeToggle {
             display: none !important;
         }
         @keyframes easyLedPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
@@ -1159,10 +1160,20 @@
 
         #projectorScreen {
             display: none; position: fixed; inset: 0; z-index: 2000;
-            flex-direction: column; align-items: center; justify-content: center;
-            padding: 40px; text-align: center; gap: 22px; overflow: hidden;
+            flex-direction: column; align-items: stretch; gap: 16px;
+            padding: 24px 40px 40px; text-align: center; overflow: hidden;
         }
         body.mode-spectator #projectorScreen { display: flex; }
+        /* Contenedor de TODO el contenido salvo el marcador: es quien se
+           encarga de centrar verticalmente cada panel (igual que antes
+           hacía #projectorScreen directamente), dejando el marcador de
+           equipos fuera de ese centrado — así queda fijo arriba en vez de
+           flotar junto al resto del contenido. */
+        #pjContent {
+            flex: 1 1 auto; min-height: 0; width: 100%;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            gap: 22px; overflow: hidden;
+        }
         #pjIdle { display:flex; flex-direction:column; align-items:center; gap:18px; }
         #pjIdle .pj-idle-logo { max-width: 200px; border-radius: 32px; }
         #pjBoard { display:none; flex-direction:column; align-items:center; gap:8px; width:100%; max-width:1700px; max-height:94vh; overflow-y:auto; padding: 4px 6px; }
@@ -1238,9 +1249,11 @@
         #pjMinigameView.stop-active #pjStopWrap { flex: 0 1 auto; }
         #pjResults { display:none; flex-direction:column; align-items:center; }
         #pjConductAlert { display:none; position:fixed; top: 30%; left:50%; transform:translateX(-50%); font-size: 2.2rem; font-weight:800; padding: 20px 40px; border-radius:20px; z-index:5000; box-shadow: 0 10px 40px rgba(0,0,0,0.4); }
-        #pjScoreBar { position:fixed; bottom:0; left:0; right:0; display:flex; flex-wrap:nowrap; overflow-x:auto; gap:8px; padding: 14px 16px; background: rgba(0,0,0,0.35); backdrop-filter: blur(10px); z-index: 2100; }
-        body.light-mode #pjScoreBar { background: rgba(255,255,255,0.55); }
-        #pjScoreBar .pj-team-chip { flex:0 0 auto; padding:8px 16px; border-radius:100px; font-weight:700; font-size:0.95rem; background: var(--card-bg); border:2px solid var(--border-color); display:flex; align-items:center; gap:8px; }
+        /* El marcador reutiliza .scoreboard/.team-card tal cual (mismas
+           reglas que el moderador, incluida su adaptación a móvil), solo
+           se ajusta el margen para que quede pegado arriba de #projectorScreen
+           en vez del margen pensado para ir debajo del logo/h1 del moderador. */
+        #pjScoreboard.scoreboard { margin-top: 0; flex-shrink: 0; }
 
         /* ════════════════════════════════════════════════════════════════
            COMODÍN DEL CAOS 🌀 — abanico de 3 cartas con flip 3D.
@@ -1279,14 +1292,42 @@
         .chaos-indicator { display:inline-flex; align-items:center; font-size:0.72rem; margin-left:2px; filter: drop-shadow(0 0 3px rgba(168,85,247,0.7)); animation: chaosIndicatorPulse 1.4s ease-in-out infinite; }
         @keyframes chaosIndicatorPulse { 0%,100%{ transform:scale(1); } 50%{ transform:scale(1.2); } }
 
-        /* Botón "Modo Caos" junto al dado: activa una ronda completa en la
-           que cada equipo saca 3 cartas gratis al empezar su turno. */
-        .btn-chaos-mode { display:flex; flex-direction:column; align-items:center; gap:4px; width:auto; padding:12px 18px; border-radius:16px; background:rgba(168,85,247,0.12); border:2px solid #a855f7; color:#a855f7; font-weight:700; font-size:0.72rem; text-transform:uppercase; letter-spacing:0.4px; min-height:64px; cursor:pointer; transition: all 0.2s; }
-        .btn-chaos-mode .material-symbols-outlined { font-size:1.6rem; }
-        .btn-chaos-mode:hover { filter:brightness(1.1); transform: translateY(-2px); }
-        .btn-chaos-mode.active { background:linear-gradient(135deg,#7c3aed,#a855f7); color:#fff; border-color:#f5f0ff; box-shadow:0 0 18px rgba(168,85,247,0.6); animation: chaosModePulse 1.4s ease-in-out infinite; }
+        /* Toggle "Modo Caos" — esquina superior derecha de la pantalla,
+           visible solo durante la partida (igual que easyModeIndicator,
+           su espejo en la esquina izquierda). Un solo icono de remolino
+           que gira despacio siempre y se acelera/ilumina al activarse. */
+        #chaosModeToggle {
+            display: none; position: fixed; top: 10px; right: 16px; z-index: 9500;
+            align-items: center; gap: 6px; padding: 6px 12px; border-radius: 100px;
+            background: rgba(168,85,247,0.12); border: 1px solid rgba(168,85,247,0.4);
+            color: #a855f7; font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 0.3px; cursor: pointer; transition: all 0.25s ease;
+        }
+        body.game-active #chaosModeToggle { display: inline-flex; }
+        #chaosModeToggle .material-symbols-outlined { font-size: 1.2rem; animation: chaosTogglePassiveSpin 6s linear infinite; }
+        #chaosModeToggle:hover { background: rgba(168,85,247,0.22); }
+        #chaosModeToggle.active {
+            background: linear-gradient(135deg,#7c3aed,#a855f7); color: #fff;
+            border-color: #f5f0ff; box-shadow: 0 0 16px rgba(168,85,247,0.6);
+            animation: chaosModePulse 1.4s ease-in-out infinite;
+        }
+        #chaosModeToggle.active .material-symbols-outlined { animation: chaosToggleActiveSpin 1.6s linear infinite; }
+        @keyframes chaosTogglePassiveSpin { from{ transform:rotate(0); } to{ transform:rotate(360deg); } }
+        @keyframes chaosToggleActiveSpin { from{ transform:rotate(0); } to{ transform:rotate(360deg); } }
         @keyframes chaosModePulse { 0%,100%{ transform:scale(1); } 50%{ transform:scale(1.05); } }
-        @media (max-width: 900px) { .btn-chaos-mode { padding:8px 12px; font-size:0.62rem; min-height:0; } .btn-chaos-mode .material-symbols-outlined { font-size:1.3rem; } }
+        @media (max-width: 600px) { #chaosModeToggle span.chaos-toggle-label { display:none; } #chaosModeToggle { padding:8px; } }
+
+        /* Tinte morado de pantalla completa ("luz mágica") mientras el Modo
+           Caos está activo. Cubre TODA la ventana (moderador o proyector,
+           misma clase en ambos) sin bloquear clics: pointer-events:none. */
+        #chaosScreenTint {
+            position: fixed; inset: 0; z-index: 8700; pointer-events: none;
+            opacity: 0; transition: opacity 0.6s ease;
+            background: radial-gradient(circle at 50% 15%, rgba(168,85,247,0.30), rgba(88,28,135,0.16) 45%, rgba(10,5,20,0.30) 100%);
+            mix-blend-mode: normal;
+        }
+        body.chaos-mode-active #chaosScreenTint { opacity: 1; animation: chaosTintPulse 3.2s ease-in-out infinite; }
+        @keyframes chaosTintPulse { 0%,100% { opacity: 0.82; } 50% { opacity: 1; } }
 
         /* Mini-iconos de comodines usados/disponibles en cada tarjeta de
            equipo (marcador del moderador y del proyector): Doble o Nada,
@@ -1305,8 +1346,11 @@
         #pjChaosOverlay h2 { color:#f5f0ff; text-shadow:0 0 20px rgba(168,85,247,0.6); font-size: clamp(1.4rem, 3vw, 2.2rem); }
         #pjChaosOverlay .chaos-fan { transform: scale(1.15); margin-top: 30px; }
         #pjChaosResultText { font-size: clamp(1.1rem, 2.6vw, 1.7rem); font-weight:800; color:#f5f0ff; max-width:900px; margin-top: 20px; }
+        @media (max-width: 900px) {
+            #projectorScreen { padding: 14px 18px 24px; gap: 10px; }
+            #pjContent { gap: 14px; }
+        }
         @media (max-width: 700px) {
-            #projectorScreen { padding: 18px; gap: 14px; }
             #pjOptionsGrid { grid-template-columns: 1fr; }
             #pjMinigameIcon { font-size: 5.5rem !important; }
         }
@@ -1322,7 +1366,7 @@
     <div id="streakBanner"><span id="streakBannerText"></span></div>
 
     <div style="position: fixed; bottom: 12px; right: 24px; font-size: 0.75rem; color: var(--text-muted); opacity: 0.8; font-weight: 400; letter-spacing: 0.3px; z-index: 5000;">
-        © 2026 Fernando Ros • <span onclick="document.getElementById('changelogModal').style.display='block'" style="cursor:pointer; text-decoration:underline; font-weight:500; color:var(--secondary);">Versión 7.5.0</span>
+        © 2026 Fernando Ros • <span onclick="document.getElementById('changelogModal').style.display='block'" style="cursor:pointer; text-decoration:underline; font-weight:500; color:var(--secondary);">Versión 7.6.0</span>
     </div>
 
     <!-- Indicador LED discreto de "Modo fácil" — solo visible para el
@@ -1332,6 +1376,23 @@
     <div id="easyModeIndicator" style="display:none; align-items:center; gap:6px; position: fixed; top: 12px; left: 16px; font-size: 0.72rem; color: var(--text-muted); opacity: 0.85; font-weight: 500; letter-spacing: 0.3px; z-index: 9500; background: rgba(0,0,0,0.0);" title="Modo fácil activado: solo preguntas marcadas como Fácil en la columna D">
         <span style="width:8px; height:8px; border-radius:50%; background:#30d158; box-shadow:0 0 6px rgba(48,209,88,0.75); display:inline-block; animation: easyLedPulse 2.2s ease-in-out infinite;"></span> Modo fácil
     </div>
+
+    <!-- Toggle "Modo Caos" — esquina superior derecha, solo para el
+         moderador (oculto en el proyector vía body.mode-spectator más
+         abajo). Activa/desactiva toggleChaosMode(); su estado visual lo
+         actualiza updateChaosModeButton(). -->
+    <button type="button" id="chaosModeToggle" onclick="toggleChaosMode()" title="Modo Caos: cada equipo saca una carta gratis al empezar su turno, durante una ronda completa.">
+        <span class="material-symbols-outlined">cyclone</span>
+        <span class="chaos-toggle-label">Caos</span>
+    </button>
+
+    <!-- Tinte morado de pantalla completa ("luz mágica") mientras el Modo
+         Caos está activo — decorativo, sin bloquear clics. Presente tanto
+         en la ventana del moderador como en la del proyector (misma clase
+         body.chaos-mode-active en ambas, sincronizada por
+         Presentation.broadcast('CHAOS_MODE_TOGGLE', ...) — ver
+         toggleChaosMode()/deactivateChaosMode() y Projector.onMessage). -->
+    <div id="chaosScreenTint"></div>
 
     <!-- ════════════════════════════════════════════════════════════════
          MODALES GLOBALES
@@ -1345,6 +1406,16 @@
             <button onclick="document.getElementById('changelogModal').style.display='none'" style="background:none; border:none; color:var(--text-main); font-size:1.6rem; padding:0; width:auto;">×</button>
         </div>
         <div>
+            <div class="changelog-version">
+                <h4><strong>v7.6.0 – Modo Caos rediseñado + Proyector unificado y responsivo</strong></h4>
+                <ul>
+                    <li><strong>Modo Caos como toggle de esquina:</strong> el botón "Modo Caos" se movió del panel del dado a un interruptor fijo arriba a la derecha con icono de remolino (🌀), visible solo durante la partida.</li>
+                    <li><strong>Tinte morado de pantalla completa:</strong> al activarlo, toda la pantalla (moderador y proyector, sincronizados) adquiere un resplandor morado pulsante tipo "luz mágica", sin bloquear ningún clic.</li>
+                    <li><strong>Marcador del proyector unificado con el del moderador:</strong> las tarjetas de equipo pasaron de una barra inferior con diseño propio a vivir arriba, reutilizando exactamente las mismas clases que el marcador del moderador — mismo aspecto, mismas animaciones de racha/turno activo, y la misma adaptación a pantallas estrechas (fila horizontal deslizable) sin código adicional.</li>
+                    <li><strong>Proyector genuinamente responsivo:</strong> reestructurada la pantalla para que el marcador quede fijo arriba mientras el resto del contenido (tablero, preguntas, minijuegos, resultados) se sigue centrando en el espacio restante, con paddings y espaciados que se ajustan en pantallas más angostas.</li>
+                    <li><strong>Limpieza de código muerto:</strong> eliminados varios objetos de "arquitectura" (App, StorageManager, DataManager, TimerManager, etc.) que quedaron declarados pero nunca se usaban en ningún otro punto del archivo, y el CSS de la vieja barra de marcador del proyector.</li>
+                </ul>
+            </div>
             <div class="changelog-version">
                 <h4><strong>v7.5.0 – Reglas oficiales de Adivina la Canción + audio reorganizado</strong></h4>
                 <ul>
@@ -1572,7 +1643,7 @@
     
    <div id="infoModal" style="display: none; position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); background: var(--surface); padding: 28px; border-radius: 20px; border: 1px solid var(--border-color); animation: modalPop 0.22s cubic-bezier(0.4,0,0.2,1); z-index: 10000; width: 90%; max-width: 340px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
     <p style="color: var(--primary); font-weight: 700; margin-bottom: 6px; font-size: 1.5rem;">Trivia Cultural</p>
-    <p style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 20px;">Versión 7.5.0</p>
+    <p style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 20px;">Versión 7.6.0</p>
     <p style="margin-bottom: 8px; font-size: 0.95rem; font-weight: 600;">Desarrollado por Fernando Ros</p>
     <p style="margin-bottom: 20px; font-size: 0.9rem;">
         <a href="mailto:rosfernando@gmail.com" style="color: var(--primary); text-decoration: none; display:inline-flex; align-items:center; gap:5px;">
@@ -1958,6 +2029,15 @@
          (respuesta correcta, palabra secreta de minijuegos, etc).
          ════════════════════════════════════════════════════════════ -->
     <div id="projectorScreen">
+        <!-- Marcador de equipos IDÉNTICO al del moderador: reutiliza las
+             mismas clases (.scoreboard/.team-card) que #liveScoreboard,
+             así que hereda automáticamente todo su CSS — incluida la
+             adaptación a móvil/pantallas estrechas (fila horizontal
+             deslizable) — sin una sola regla nueva. Ver
+             Projector.renderScoreBar(). -->
+        <div id="pjScoreboard" class="scoreboard" style="display:none;"></div>
+
+        <div id="pjContent">
         <div id="pjIdle">
             <img src="https://lh3.googleusercontent.com/d/1fR0TLBGXzDKI5oYIKL70GMwGg6iRaSiZ" class="pj-idle-logo" alt="Trivia cultural" onerror="this.style.display='none';">
             <h1 style="margin:0;">Trivia cultural</h1>
@@ -2066,9 +2146,9 @@
             </div>
             <p style="font-size:0.7rem;color:var(--text-muted);text-align:left;margin-bottom:24px;">*Puntaje hipotético: lo que tendría cada equipo sin multiplicador de racha, sin comodines ni puntos robados/perdidos por cartas del Caos.</p>
         </div>
+        </div>
 
         <div id="pjConductAlert"></div>
-        <div id="pjScoreBar"></div>
 
         <!-- COMODÍN DEL CAOS — espejo en tiempo real. Reutiliza las mismas
              clases .chaos-fan/.chaos-card del moderador; se muestra al
@@ -2110,14 +2190,6 @@
             <div class="dice-hint" id="diceHint">🎲 Toca el dado para elegir categoría al azar</div>
             <button type="button" class="dice-reset-link" id="btnDiceReset" onclick="resetDiceSelection()">Mostrar todas las categorías</button>
           </div>
-          <!-- MODO CAOS: activa una "ronda de caos" (una vuelta completa de
-               turnos) en la que cada equipo saca sus 3 cartas al empezar su
-               turno, sin gastar su Comodín del Caos personal. Ver
-               toggleChaosMode() / setTurn() en el JS. -->
-          <button type="button" id="btnChaosMode" class="btn-chaos-mode" onclick="toggleChaosMode()" title="Activar Modo Caos por una ronda: cada equipo saca carta al empezar su turno, gratis.">
-            <span class="material-symbols-outlined">whatshot</span>
-            <span>Modo Caos</span>
-          </button>
         </div>
 
         <!-- ════════════════════════════════════════════════════════════
@@ -2815,6 +2887,7 @@
                         if(state.teams?.length) {
                             this.broadcast('START_GAME', { teams: teamsForBroadcast(), themeKey: currentThemeKey, currentTurn: state.currentTurn, diceEnabled: config.diceEnabled });
                             this.broadcast('UPDATE_SCORE', { teams: teamsForBroadcast(), currentTurn: state.currentTurn });
+                            this.broadcast('CHAOS_MODE_TOGGLE', { active: state.chaosModeActive });
                         }
                     }
                 });
@@ -2872,6 +2945,7 @@
                 if(state.teams?.length) {
                     this.broadcast('START_GAME', { teams: teamsForBroadcast(), themeKey: currentThemeKey, currentTurn: state.currentTurn, diceEnabled: config.diceEnabled });
                     this.broadcast('UPDATE_SCORE', { teams: teamsForBroadcast(), currentTurn: state.currentTurn });
+                    this.broadcast('CHAOS_MODE_TOGGLE', { active: state.chaosModeActive });
                 }
             },
             _markDisconnected() {
@@ -2953,6 +3027,7 @@
                     case 'CHAOS_REVEAL':    Projector.chaosReveal(payload); break;
                     case 'CHAOS_RESULT':    Projector.chaosResult(payload); break;
                     case 'CHAOS_CLOSE':     Projector.chaosClose(); break;
+                    case 'CHAOS_MODE_TOGGLE': Projector.setChaosModeTint(payload); break;
                     case 'DICE_TOGGLE':     Projector.toggleDiceVisibility(payload); break;
                     case 'SONG_PLAY':       Projector.songPlay(payload); break;
                     case 'SONG_NUDGE':      Projector.songNudge(); break;
@@ -3007,10 +3082,11 @@
             _panels: ['pjIdle','pjBoard','pjCategoryReveal','pjQuestionView','pjMinigameView','pjSongView','pjResults'],
             _showPanel(id) {
                 this._panels.forEach(p => { const el = document.getElementById(p); if(el) el.style.display = (p === id) ? (p === 'pjCategoryReveal' ? 'block' : 'flex') : 'none'; });
-                // El marcador inferior no tiene sentido superpuesto al podio
-                // final (que ya muestra los puntajes de forma protagónica).
-                const scoreBar = document.getElementById('pjScoreBar');
-                if(scoreBar) scoreBar.style.display = (id === 'pjResults') ? 'none' : 'flex';
+                // El marcador no tiene sentido en la pantalla de espera (aún
+                // no hay equipos) ni superpuesto al podio final (que ya
+                // muestra los puntajes de forma protagónica).
+                const scoreboard = document.getElementById('pjScoreboard');
+                if(scoreboard) scoreboard.style.display = (id === 'pjResults' || id === 'pjIdle') ? 'none' : 'flex';
             },
             showIdle() { this._showPanel('pjIdle'); },
             showBoard(payload) {
@@ -3026,6 +3102,12 @@
             toggleDiceVisibility(payload) {
                 const panel = document.querySelector('#pjBoard .dice-panel');
                 if(panel) panel.classList.toggle('dice-hidden', payload.diceEnabled === false);
+            },
+            // Espejo del tinte morado de pantalla completa del Modo Caos:
+            // misma clase body.chaos-mode-active que en la ventana del
+            // moderador, así que reutiliza el mismo #chaosScreenTint/CSS.
+            setChaosModeTint(payload) {
+                document.body.classList.toggle('chaos-mode-active', !!payload?.active);
             },
             /**
              * renderBoardCategories(payload)
@@ -3143,7 +3225,8 @@
              * (.team-card .team-score ya está oculto por CSS).
              */
             renderScoreBar() {
-                const bar = document.getElementById('pjScoreBar');
+                const bar = document.getElementById('pjScoreboard');
+                if(!bar) return;
                 bar.innerHTML = this.teams.map((t, i) => {
                     const isActive = i === this.currentTurn;
                     const isUpdated = i === this.lastUpdated;
@@ -3156,7 +3239,7 @@
                 }).join('');
                 // Número flotante grande (+N/-N), idéntico al del moderador:
                 // misma clase .score-float-global, misma animación CSS, solo
-                // que posicionado sobre la pastilla del equipo en #pjScoreBar.
+                // que posicionado sobre la pastilla del equipo en #pjScoreboard.
                 if(this.lastDelta !== null && typeof this.lastUpdated === 'number' && bar.children[this.lastUpdated]) {
                     const card = bar.children[this.lastUpdated];
                     const r = card.getBoundingClientRect();
@@ -4989,11 +5072,17 @@
             if(auto) showToast('🌀 El Modo Caos terminó su ronda.', 'info', 3000);
             persistNow(true);
         }
+        // Sincroniza el botón de esquina y el tinte morado de pantalla
+        // completa con state.chaosModeActive — tanto en esta ventana
+        // (moderador) como en el proyector, al que se avisa por broadcast.
         function updateChaosModeButton() {
-            const btn = document.getElementById('btnChaosMode');
-            if(!btn) return;
-            btn.classList.toggle('active', state.chaosModeActive);
-            btn.title = state.chaosModeActive ? `Modo Caos activo (quedan ${state.chaosModeRemaining} turnos)` : 'Activar Modo Caos por una ronda: cada equipo saca carta al empezar su turno, gratis.';
+            const btn = document.getElementById('chaosModeToggle');
+            if(btn) {
+                btn.classList.toggle('active', state.chaosModeActive);
+                btn.title = state.chaosModeActive ? `Modo Caos activo (quedan ${state.chaosModeRemaining} turnos)` : 'Modo Caos: cada equipo saca una carta gratis al empezar su turno, durante una ronda completa.';
+            }
+            document.body.classList.toggle('chaos-mode-active', state.chaosModeActive);
+            Presentation.broadcast('CHAOS_MODE_TOGGLE', { active: state.chaosModeActive });
         }
 
         function renderChaosModal() {
@@ -5425,48 +5514,6 @@
             if(!el) return;
             el.classList.toggle('tabu-word-compact', el.innerText.length > 14);
         }
-
-        // --- ARQUITECTURA INTERNA ----------------------------------------
-        // Sin librerías externas, sin jQuery y sin frameworks: estos módulos
-        // ordenan responsabilidades sobre la SPA actual sin reescribirla.
-        const App = {
-            cleanup() {
-                TimerManager.clearAll();
-                UIManager.cleanup();
-                if(typeof autosaveInterval !== 'undefined') clearInterval(autosaveInterval);
-            }
-        };
-        const StorageManager = { save: persistNow, export: exportSession, importFile: importSessionFromFile, restore: tryRestoreSession };
-        const DataManager = { load: loadGameData, process: processData, cache: cacheData, getCache: getCachedData };
-        const StateManager = { snapshot: snapshotSession, hydrate: hydrateSession, setTurn, addNormal, addExtra };
-        const TimerManager = { start: (...args) => gameTimer.start(...args), stop: () => gameTimer.stop(), clearAll: () => { gameTimer.stop(); clearInterval(Minigames.Stop.intervalLetter); } };
-        const QuestionManager = { random: startRandomQuestion, start: startQuestion, execute: executeQuestion, correct: handleCorrect, incorrect: handleIncorrect };
-        const MiniGameManager = Minigames;
-        const UIManager = {
-            renderBoard,
-            renderScoreboard,
-            renderRanking: renderLiveRanking,
-            delegatedActions: {},
-            delegatedClickHandler: null,
-            initEventDelegation() {
-                if(this.delegatedClickHandler) return;
-                this.delegatedClickHandler = (event) => {
-                    const actionNode = event.target.closest('[data-action]');
-                    if(!actionNode) return;
-                    const action = this.delegatedActions[actionNode.dataset.action];
-                    if(action) action(event, actionNode);
-                };
-                document.addEventListener('click', this.delegatedClickHandler);
-            },
-            cleanup() {
-                if(this.delegatedClickHandler) document.removeEventListener('click', this.delegatedClickHandler);
-                this.delegatedClickHandler = null;
-            }
-        };
-        const ModalManager = { ranking: toggleRanking, settings: toggleSettingsModal, info: showAppInfo };
-        const ToastManager = { show: showToast };
-        const AudioManager = { playEffect: playSoundEffect, playMusic, stopMusic };
-        UIManager.initEventDelegation();
 
         // --- CARGA DE GOOGLE SHEETS ---
         // Se ejecuta de inmediato (no se espera a window.onload, que retrasaría el fetch
