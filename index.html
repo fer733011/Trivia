@@ -1366,7 +1366,7 @@
     <div id="streakBanner"><span id="streakBannerText"></span></div>
 
     <div style="position: fixed; bottom: 12px; right: 24px; font-size: 0.75rem; color: var(--text-muted); opacity: 0.8; font-weight: 400; letter-spacing: 0.3px; z-index: 5000;">
-        © 2026 Fernando Ros • <span onclick="document.getElementById('changelogModal').style.display='block'" style="cursor:pointer; text-decoration:underline; font-weight:500; color:var(--secondary);">Versión 7.6.0</span>
+        © 2026 Fernando Ros • <span onclick="document.getElementById('changelogModal').style.display='block'" style="cursor:pointer; text-decoration:underline; font-weight:500; color:var(--secondary);">Versión 7.7.0</span>
     </div>
 
     <!-- Indicador LED discreto de "Modo fácil" — solo visible para el
@@ -1406,6 +1406,14 @@
             <button onclick="document.getElementById('changelogModal').style.display='none'" style="background:none; border:none; color:var(--text-main); font-size:1.6rem; padding:0; width:auto;">×</button>
         </div>
         <div>
+            <div class="changelog-version">
+                <h4><strong>v7.7.0 – Salto de intro en Adivina la Canción</strong></h4>
+                <ul>
+                    <li><strong>Arranca más cerca del estribillo:</strong> cada canción ahora empieza a los 35 segundos por defecto (configurable en Ajustes técnicos) en vez de desde el 0:00, saltando la intro/instrumental típica de la mayoría de canciones pop.</li>
+                    <li><strong>Botón "+10s" durante el juego:</strong> si una canción en particular todavía no llegó al estribillo (o el salto por defecto se pasó de largo), el moderador puede adelantar 10 segundos más sin reiniciar el cronómetro de puntaje.</li>
+                    <li>El salto de intro no afecta la puntuación: el cronómetro que decide los puntos siempre arranca en 0 al pulsar "Reproducir", sin importar en qué segundo real del video empiece a sonar.</li>
+                </ul>
+            </div>
             <div class="changelog-version">
                 <h4><strong>v7.6.0 – Modo Caos rediseñado + Proyector unificado y responsivo</strong></h4>
                 <ul>
@@ -1643,7 +1651,7 @@
     
    <div id="infoModal" style="display: none; position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); background: var(--surface); padding: 28px; border-radius: 20px; border: 1px solid var(--border-color); animation: modalPop 0.22s cubic-bezier(0.4,0,0.2,1); z-index: 10000; width: 90%; max-width: 340px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
     <p style="color: var(--primary); font-weight: 700; margin-bottom: 6px; font-size: 1.5rem;">Trivia Cultural</p>
-    <p style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 20px;">Versión 7.6.0</p>
+    <p style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 20px;">Versión 7.7.0</p>
     <p style="margin-bottom: 8px; font-size: 0.95rem; font-weight: 600;">Desarrollado por Fernando Ros</p>
     <p style="margin-bottom: 20px; font-size: 0.9rem;">
         <a href="mailto:rosfernando@gmail.com" style="color: var(--primary); text-decoration: none; display:inline-flex; align-items:center; gap:5px;">
@@ -1906,6 +1914,8 @@
                         <h5 style="color:#ec4899; margin: 0 0 10px 0; display:flex; align-items:center; gap:6px; font-weight:700;"><span class="material-symbols-outlined" style="font-size:1.1rem;">music_note</span> Adivina la Canción</h5>
                         <div class="setup-group" style="margin-bottom:8px;"><label>Tiempo por turno de equipo (s)</label><input type="number" id="setTimeCancionRound" min="30"></div>
                         <div class="setup-group" style="margin-bottom:8px;"><label>Tiempo máx. por canción (s)</label><input type="number" id="setTimeCancionMax" min="10"></div>
+                        <div class="setup-group" style="margin-bottom:8px;"><label>Saltar intro al reproducir (s)</label><input type="number" id="setCancionStartOffset" min="0"></div>
+                        <p style="font-size:0.68rem; color:var(--text-muted); line-height:1.4; margin:0 0 8px;">Arranca cada canción ese número de segundos, saltando la intro para caer más cerca del estribillo (aproximado, no exacto). Con el botón "+10s" durante el juego puedes adelantar más si hace falta.</p>
                         <div class="setup-group" style="margin-bottom:8px; display:flex; gap:6px;"><input type="number" id="setPtsCancionMax" title="Pts máx (primeros 10s)" placeholder="Pts máx"><input type="number" id="setPtsCancionMin" title="Pts mín (justo antes del límite)" placeholder="Pts mín"></div>
                         <p style="font-size:0.68rem; color:var(--text-muted); line-height:1.4; margin:0 0 8px;">Puntaje: máx. en los primeros 10s, baja poco a poco hasta el mínimo cerca del límite, y 0 si se agota el tiempo sin acertar.</p>
                         <div class="setup-group" style="margin-bottom:0;">
@@ -2619,6 +2629,7 @@
             <div id="cancionActiveControls" style="display:none; gap:12px; justify-content:center; flex-wrap:wrap;">
                 <button id="btnCancionCorrect" class="btn-correct" style="width:auto; padding:14px 30px; border-radius:100px;" onclick="Minigames.Cancion.handleCorrect()"><span class="material-symbols-outlined" style="vertical-align:middle;">check</span> Correcto</button>
                 <button id="btnCancionNext" class="btn-primary" style="background:var(--primary); width:auto; padding:14px 30px;" onclick="Minigames.Cancion.nextSongClick()"><span class="material-symbols-outlined" style="vertical-align:middle;">skip_next</span> Siguiente Canción</button>
+                <button id="btnCancionSkipForward" class="btn-secondary" style="width:auto; padding:14px 20px;" onclick="Minigames.Cancion.skipForward()" title="Si todavía no llegó al estribillo, adelanta 10s más"><span class="material-symbols-outlined" style="vertical-align:middle; font-size:1.1rem;">fast_forward</span> +10s</button>
                 <button id="btnCancionNudge" class="btn-secondary" style="width:auto; padding:14px 20px;" onclick="Minigames.Cancion.nudge()" title="Si no suena, pulsa aquí"><span class="material-symbols-outlined" style="vertical-align:middle; font-size:1.1rem;">volume_up</span> 🔊 No suena</button>
                 <button id="btnCancionExit" class="btn-secondary" style="border-color: var(--incorrect-color); color: var(--incorrect-color); width:auto; padding:14px 20px;" onclick="Minigames.Cancion.confirmExit()"><span class="material-symbols-outlined" style="vertical-align:middle; font-size:1.1rem;">stop_circle</span> Terminar minijuego</button>
             </div>
@@ -3335,7 +3346,7 @@
                 const iframe = document.getElementById('pjSongYtIframe');
                 if(!iframe) return;
                 iframe.onload = () => { ytNudgePlay(iframe); setTimeout(() => ytNudgePlay(iframe), 900); };
-                iframe.src = ytEmbedUrl(payload.videoId);
+                iframe.src = ytEmbedUrl(payload.videoId, payload.startAt || 0);
             },
             // Respaldo manual: si el proyector no reproduce sonido (política
             // de autoplay del navegador/pantalla), tocar el disco en la
@@ -3621,7 +3632,7 @@
         function getSavedYtApiKey() { try { return localStorage.getItem('trivia_yt_api_key') || DEFAULT_YT_API_KEY; } catch(e) { return DEFAULT_YT_API_KEY; } }
         function saveYtApiKey(key) { try { localStorage.setItem('trivia_yt_api_key', key || ''); } catch(e) {} }
 
-        let config = { teamsCount: 3, ptsCorrect: 10, ptsRebound: 5, ptsChallengeMax: 50, ptsMultiple: 10, allowDouble: true, allowFifty: true, allowDoN: true, allowRebounds: true, isDouble: false, isDoubleOrNothing: false, isFiftyFifty: false, timeQuestion: 30, timeAcertijos: 90, timeMultiple: 30, timePictionary: 60, timeTabu: 60, timeStop: 120, timeCharadas: 60, ptsPicFacil: 2, ptsPicIntermedia: 3, ptsPicDificil: 10, ptsChaFacil: 2, ptsChaIntermedia: 3, ptsChaDificil: 10, ptsTabu: 5, ptsStopUnique: 10, ptsStopRepeated: 5, soundEnabled: true, streakThreshold: 3, streakMultiplier: 1.5, streakStep: 2, streakIncrement: 0.5, streakShieldAt: 6, easyMode: false, diceEnabled: false, ytApiKey: getSavedYtApiKey(), ptsCancionMax: 20, ptsCancionMin: 10, timeCancionMax: 30, timeCancionRound: 180 };
+        let config = { teamsCount: 3, ptsCorrect: 10, ptsRebound: 5, ptsChallengeMax: 50, ptsMultiple: 10, allowDouble: true, allowFifty: true, allowDoN: true, allowRebounds: true, isDouble: false, isDoubleOrNothing: false, isFiftyFifty: false, timeQuestion: 30, timeAcertijos: 90, timeMultiple: 30, timePictionary: 60, timeTabu: 60, timeStop: 120, timeCharadas: 60, ptsPicFacil: 2, ptsPicIntermedia: 3, ptsPicDificil: 10, ptsChaFacil: 2, ptsChaIntermedia: 3, ptsChaDificil: 10, ptsTabu: 5, ptsStopUnique: 10, ptsStopRepeated: 5, soundEnabled: true, streakThreshold: 3, streakMultiplier: 1.5, streakStep: 2, streakIncrement: 0.5, streakShieldAt: 6, easyMode: false, diceEnabled: false, ytApiKey: getSavedYtApiKey(), ptsCancionMax: 20, ptsCancionMin: 10, timeCancionMax: 30, timeCancionRound: 180, cancionStartOffset: 35 };
         let state = { db: [], categories: {}, catNames: [], teams: [], currentTurn: null, activeCat: null, activeQ: null, challenges: [], picPools: { facil: [], intermedia: [], dificil: [] }, charadasPools: { facil: [], intermedia: [], dificil: [] }, tabuPools: {}, tabuCategories: new Set(["Aleatoria"]), teamPools: {}, multiplePool: [], acertijosPool: [], stopCategories: [], stopLetters: [], history: [], undoStack: [], gameLog: [], lastScoreUpdated: null, lastScoreDelta: null, roundRespondedCount: 0, roundStartTurn: null, blockedCategories: [], scoreHistory: [], chaosModeActive: false, chaosModeRemaining: 0, chaosCardGatePending: false, songCategories: [], songPlaylistIds: {}, songPools: {} };
 
         // --- PERSISTENCIA, CACHÉ E HISTORIAL -------------------------------
@@ -4061,8 +4072,14 @@
          * clic que repite el mismo comando como último recurso 100%
          * fiable (un clic directo del usuario nunca se bloquea).
          */
-        function ytEmbedUrl(videoId) {
-            return `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=0&rel=0&modestbranding=1&playsinline=1&enablejsapi=1`;
+        // startSeconds: si es > 0, arranca el video en ese punto en vez de
+        // 0:00 — así se salta la intro y se cae más cerca del estribillo.
+        // No afecta el puntaje: el cronómetro de la canción (songTimer)
+        // siempre empieza en 0 al pulsar "Reproducir", independientemente
+        // de en qué segundo real del video arranque el audio.
+        function ytEmbedUrl(videoId, startSeconds = 0) {
+            const start = Math.max(0, Math.floor(startSeconds) || 0);
+            return `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=0&rel=0&modestbranding=1&playsinline=1&enablejsapi=1${start > 0 ? `&start=${start}` : ''}`;
         }
         function ytNudgePlay(iframe) {
             if(!iframe || !iframe.contentWindow) return;
@@ -4727,7 +4744,7 @@
              * proyector, el reproductor vive localmente en esta pantalla.
              */
             Cancion: {
-                currentCat: null, activeSong: null, playing: false, revealed: false, roundScore: 0, roundActive: false,
+                currentCat: null, activeSong: null, playing: false, revealed: false, roundScore: 0, roundActive: false, extraSkip: 0,
                 // NOTA TÉCNICA: se reproduce con un <iframe> normal apuntando
                 // a la URL de embed de YouTube (autoplay=1&enablejsapi=1),
                 // controlado solo cambiando su src — funciona igual con o
@@ -4807,7 +4824,7 @@
                     const pool = state.songPools[this.currentCat];
                     if(!pool || !pool.length) { showToast('Se agotaron las canciones de esta categoría.', 'warn'); this.endRound(); return; }
                     this.activeSong = pool.pop();
-                    this.playing = false; this.revealed = false;
+                    this.playing = false; this.revealed = false; this.extraSkip = 0;
                     const t = state.teams[state.currentTurn];
                     const pill = document.getElementById('cancionTeamPill');
                     pill.innerHTML = `<span style="font-family:'Apple Color Emoji',sans-serif;">${t.emoji}</span> ${t.id}. ${t.countryName}${streakBadgeHTML(state.currentTurn)}`;
@@ -4835,13 +4852,14 @@
                     document.getElementById('btnCancionPlay').style.display = 'none';
                     document.getElementById('cancionActiveControls').style.display = 'flex';
                     document.getElementById('btnCancionCorrect').disabled = false;
+                    const startAt = (config.cancionStartOffset || 0) + (this.extraSkip || 0);
                     if(Presentation.isConnected()) {
-                        Presentation.broadcast('SONG_PLAY', { videoId: this.activeSong.videoId });
+                        Presentation.broadcast('SONG_PLAY', { videoId: this.activeSong.videoId, startAt });
                     } else {
                         const iframe = document.getElementById('cancionYtIframe');
                         if(iframe) {
                             iframe.onload = () => { ytNudgePlay(iframe); setTimeout(() => ytNudgePlay(iframe), 900); };
-                            iframe.src = ytEmbedUrl(this.activeSong.videoId);
+                            iframe.src = ytEmbedUrl(this.activeSong.videoId, startAt);
                         }
                     }
                     songTimer.start(
@@ -4853,6 +4871,25 @@
                         () => this.handleTimeout(),
                         config.timeCancionMax
                     );
+                },
+                // Ajuste manual sobre la marcha: si el estribillo todavía no
+                // llegó (o el salto por defecto se pasó de largo), recarga
+                // el video 10s más adelante desde donde esté ahora mismo.
+                // No reinicia el cronómetro de puntaje (songTimer sigue
+                // corriendo igual) — solo cambia el punto de audio.
+                skipForward() {
+                    if(!this.playing || !this.activeSong) return;
+                    this.extraSkip = (this.extraSkip || 0) + 10;
+                    const startAt = (config.cancionStartOffset || 0) + this.extraSkip;
+                    if(Presentation.isConnected()) {
+                        Presentation.broadcast('SONG_PLAY', { videoId: this.activeSong.videoId, startAt });
+                    } else {
+                        const iframe = document.getElementById('cancionYtIframe');
+                        if(iframe) {
+                            iframe.onload = () => { ytNudgePlay(iframe); setTimeout(() => ytNudgePlay(iframe), 900); };
+                            iframe.src = ytEmbedUrl(this.activeSong.videoId, startAt);
+                        }
+                    }
                 },
                 // Botón "Correcto": registra el acierto con el puntaje del
                 // segundo exacto en que se pulsó, PAUSA el cronómetro
@@ -6941,6 +6978,7 @@
             document.getElementById('setPtsStopRepeated').value = config.ptsStopRepeated;
             document.getElementById('setTimeCancionRound').value = config.timeCancionRound;
             document.getElementById('setTimeCancionMax').value = config.timeCancionMax;
+            document.getElementById('setCancionStartOffset').value = config.cancionStartOffset;
             document.getElementById('setPtsCancionMax').value = config.ptsCancionMax;
             document.getElementById('setPtsCancionMin').value = config.ptsCancionMin;
             document.getElementById('setYtApiKey').value = config.ytApiKey || '';
@@ -6975,6 +7013,7 @@
             config.ptsStopRepeated = parseInt(document.getElementById('setPtsStopRepeated').value) || 5;
             config.timeCancionRound = parseInt(document.getElementById('setTimeCancionRound').value) || 180;
             config.timeCancionMax = parseInt(document.getElementById('setTimeCancionMax').value) || 30;
+            config.cancionStartOffset = Math.max(0, parseInt(document.getElementById('setCancionStartOffset').value) || 0);
             config.ptsCancionMax = parseInt(document.getElementById('setPtsCancionMax').value) || 20;
             config.ptsCancionMin = parseInt(document.getElementById('setPtsCancionMin').value) || 10;
             config.ytApiKey = document.getElementById('setYtApiKey').value.trim();
