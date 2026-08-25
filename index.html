@@ -1322,7 +1322,7 @@
     <div id="streakBanner"><span id="streakBannerText"></span></div>
 
     <div style="position: fixed; bottom: 12px; right: 24px; font-size: 0.75rem; color: var(--text-muted); opacity: 0.8; font-weight: 400; letter-spacing: 0.3px; z-index: 5000;">
-        © 2026 Fernando Ros • <span onclick="document.getElementById('changelogModal').style.display='block'" style="cursor:pointer; text-decoration:underline; font-weight:500; color:var(--secondary);">Versión 7.4.0</span>
+        © 2026 Fernando Ros • <span onclick="document.getElementById('changelogModal').style.display='block'" style="cursor:pointer; text-decoration:underline; font-weight:500; color:var(--secondary);">Versión 7.5.0</span>
     </div>
 
     <!-- Indicador LED discreto de "Modo fácil" — solo visible para el
@@ -1345,6 +1345,16 @@
             <button onclick="document.getElementById('changelogModal').style.display='none'" style="background:none; border:none; color:var(--text-main); font-size:1.6rem; padding:0; width:auto;">×</button>
         </div>
         <div>
+            <div class="changelog-version">
+                <h4><strong>v7.5.0 – Reglas oficiales de Adivina la Canción + audio reorganizado</strong></h4>
+                <ul>
+                    <li><strong>Nueva dinámica de turno con pausa/reanudación exacta:</strong> el cronómetro global de 3 minutos por equipo sigue corriendo mientras suena cada canción; al acertar o agotarse los 30 segundos de una pista, se PAUSA en el segundo exacto y se revela el video (que sigue sonando como premio). Al pulsar "Siguiente Canción" se reanuda justo donde quedó y se carga otra canción.</li>
+                    <li><strong>Puntaje por tramos:</strong> 20 pts en los primeros 10 segundos, bajando progresivamente hasta 10 pts cerca de los 30s, y 0 pts (canción perdida) si se agotan los 30s sin acertar — todo configurable en Ajustes técnicos.</li>
+                    <li><strong>Tres botones fijos mientras suena una canción:</strong> "Correcto" (registra el acierto y pausa/revela), "Siguiente Canción" (avanza y reanuda o pausa según corresponda) y "Terminar minijuego" (ahora pide confirmación por toast antes de cortar la partida musical, para evitar clics accidentales).</li>
+                    <li><strong>API key de YouTube incluida por defecto</strong> en el propio código — funciona de fábrica sin ningún paso previo; sigue siendo posible sustituirla por una propia desde Ajustes técnicos.</li>
+                    <li><strong>Todos los sonidos del juego movidos a la carpeta <code>Sound/</code></strong> (junto al HTML) y unificados a formato <code>.mp3</code>: preguntas, minijuegos, dado, música de fondo y el aplauso final.</li>
+                </ul>
+            </div>
             <div class="changelog-version">
                 <h4><strong>v7.4.0 – Causa raíz del silencio: se necesita servidor local</strong></h4>
                 <ul>
@@ -1562,7 +1572,7 @@
     
    <div id="infoModal" style="display: none; position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); background: var(--surface); padding: 28px; border-radius: 20px; border: 1px solid var(--border-color); animation: modalPop 0.22s cubic-bezier(0.4,0,0.2,1); z-index: 10000; width: 90%; max-width: 340px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
     <p style="color: var(--primary); font-weight: 700; margin-bottom: 6px; font-size: 1.5rem;">Trivia Cultural</p>
-    <p style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 20px;">Versión 7.4.0</p>
+    <p style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 20px;">Versión 7.5.0</p>
     <p style="margin-bottom: 8px; font-size: 0.95rem; font-weight: 600;">Desarrollado por Fernando Ros</p>
     <p style="margin-bottom: 20px; font-size: 0.9rem;">
         <a href="mailto:rosfernando@gmail.com" style="color: var(--primary); text-decoration: none; display:inline-flex; align-items:center; gap:5px;">
@@ -1825,12 +1835,13 @@
                         <h5 style="color:#ec4899; margin: 0 0 10px 0; display:flex; align-items:center; gap:6px; font-weight:700;"><span class="material-symbols-outlined" style="font-size:1.1rem;">music_note</span> Adivina la Canción</h5>
                         <div class="setup-group" style="margin-bottom:8px;"><label>Tiempo por turno de equipo (s)</label><input type="number" id="setTimeCancionRound" min="30"></div>
                         <div class="setup-group" style="margin-bottom:8px;"><label>Tiempo máx. por canción (s)</label><input type="number" id="setTimeCancionMax" min="10"></div>
-                        <div class="setup-group" style="margin-bottom:8px; display:flex; gap:6px;"><input type="number" id="setPtsCancionMax" title="Pts máx (0-10s)" placeholder="Pts máx"><input type="number" id="setPtsCancionMin" title="Pts mín (al agotar tiempo)" placeholder="Pts mín"></div>
+                        <div class="setup-group" style="margin-bottom:8px; display:flex; gap:6px;"><input type="number" id="setPtsCancionMax" title="Pts máx (primeros 10s)" placeholder="Pts máx"><input type="number" id="setPtsCancionMin" title="Pts mín (justo antes del límite)" placeholder="Pts mín"></div>
+                        <p style="font-size:0.68rem; color:var(--text-muted); line-height:1.4; margin:0 0 8px;">Puntaje: máx. en los primeros 10s, baja poco a poco hasta el mínimo cerca del límite, y 0 si se agota el tiempo sin acertar.</p>
                         <div class="setup-group" style="margin-bottom:0;">
                             <label>API key de YouTube Data v3</label>
                             <input type="text" id="setYtApiKey" placeholder="AIza…" style="width:100%; padding:8px 10px; border-radius:8px; border:1px solid var(--border-color); background:transparent; color:var(--text-main); font-size:0.85rem;">
                         </div>
-                        <p style="font-size:0.68rem; color:var(--text-muted); line-height:1.4; margin:6px 0 0;">Gratis, sin login: se saca en <a href="https://console.cloud.google.com/" target="_blank" style="color:#ec4899;">Google Cloud Console</a> activando "YouTube Data API v3". Restríngela por dominio para mayor seguridad. Las playlists se configuran en la hoja "Canciones" del Google Sheet (columnas Categoría y Playlist).</p>
+                        <p style="font-size:0.68rem; color:var(--text-muted); line-height:1.4; margin:6px 0 0;">Ya viene con una clave incrustada por defecto — solo cámbiala si quieres usar la tuya propia. Gratis, sin login: se saca en <a href="https://console.cloud.google.com/" target="_blank" style="color:#ec4899;">Google Cloud Console</a> activando "YouTube Data API v3". Restríngela por dominio para mayor seguridad. Las playlists se configuran en la hoja "Canciones" del Google Sheet (columnas Categoría y Playlist).</p>
                     </div>
                 </div>
             </div>
@@ -2468,9 +2479,8 @@
         <h2 style="display:flex; align-items:center; justify-content:center; gap:10px;"><span class="material-symbols-outlined" style="font-size:2rem; color:#ec4899;">music_note</span> Minijuego: Adivina la Canción 🎵</h2>
         <div id="cancionSetupArea" style="width: 100%; text-align: center;">
             <div id="cancionFileWarning" style="display:none; text-align:left; background:rgba(239,68,68,0.1); border:1px solid var(--incorrect-color); border-radius:14px; padding:16px 18px; margin-bottom:18px;">
-                <p style="font-weight:800; color:var(--incorrect-color); margin-bottom:6px; display:flex; align-items:center; gap:6px;"><span class="material-symbols-outlined" style="font-size:1.2rem;">warning</span> Este minijuego necesita abrirse por un servidor local</p>
-                <p style="font-size:0.85rem; color:var(--text-main); line-height:1.5; margin-bottom:8px;">Ahora mismo el archivo está abierto con doble clic (<code>file://…</code>). YouTube bloquea la reproducción incrustada en ese caso — <strong>por eso no suena ninguna canción, sin excepción</strong>. La solución no es de este código: hay que servir el archivo por <code>http://</code> una vez, antes de abrirlo.</p>
-                <p style="font-size:0.85rem; color:var(--text-muted); line-height:1.5; margin-bottom:0;">Usa el lanzador <strong>iniciar_trivia.bat</strong> (Windows) o <strong>iniciar_trivia.command</strong> (Mac) que viene junto a este HTML: hace doble clic → abre un servidor local → abre el juego solo, ya sin este problema. El resto del juego (preguntas, minijuegos, comodines) funciona igual con o sin esto; solo Adivina la Canción lo necesita.</p>
+                <p style="font-weight:800; color:var(--incorrect-color); margin-bottom:6px; display:flex; align-items:center; gap:6px;"><span class="material-symbols-outlined" style="font-size:1.2rem;">warning</span> Este minijuego necesita abrirse desde una URL web</p>
+                <p style="font-size:0.85rem; color:var(--text-main); line-height:1.5; margin-bottom:0;">Ahora mismo el archivo está abierto con doble clic (<code>file://…</code>). YouTube bloquea la reproducción incrustada en ese caso — <strong>por eso no suena ninguna canción, sin excepción</strong>. Abre el juego desde su enlace publicado (por ejemplo, la URL de <code>https://tu-usuario.github.io/…</code> si ya lo tienes en GitHub Pages) en vez de abrir el archivo directamente. El resto del juego (preguntas, minijuegos, comodines) funciona igual con o sin esto; solo Adivina la Canción lo necesita.</p>
             </div>
             <p style="color:var(--text-muted); margin-bottom:20px;">Cada equipo tiene un turno cronometrado: mientras dure el tiempo, adivina tantas canciones como pueda — entre más rápido, más puntos por canción.</p>
             <div class="setup-group" style="max-width:360px; margin:0 auto 20px;">
@@ -2492,7 +2502,7 @@
             <div style="display:flex; gap:22px; align-items:center; justify-content:center; margin-bottom:10px; flex-wrap:wrap;">
                 <div style="text-align:center;">
                     <div id="cancionRoundTimer" class="timer-text" style="color:#ec4899; font-size:2.2rem; min-width:80px; padding:8px;">3:00</div>
-                    <div style="font-size:0.7rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;">Tiempo de turno</div>
+                    <div id="cancionRoundTimerLabel" style="font-size:0.7rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;">Tiempo de turno</div>
                 </div>
                 <div style="text-align:center;">
                     <div id="cancionRoundScore" style="font-size:2.2rem; font-weight:800; color:var(--primary); line-height:1;">0</div>
@@ -2502,7 +2512,7 @@
 
             <p id="cancionModeratorTitle" style="font-size:0.85rem; color:var(--text-muted); background:rgba(128,128,128,0.08); border:1px dashed var(--border-color); border-radius:10px; padding:6px 14px; margin-bottom:14px;">🎧 Suena: <strong>—</strong></p>
 
-            <div style="display:flex; gap:22px; align-items:center; justify-content:center; margin-bottom:18px; flex-wrap:wrap;">
+            <div id="cancionTimerRow" style="display:flex; gap:22px; align-items:center; justify-content:center; margin-bottom:18px; flex-wrap:wrap;">
                 <div style="text-align:center;">
                     <div id="cancionTimer" class="timer-text" style="color:#ec4899; font-size:2.6rem; min-width:80px; padding:10px;">0</div>
                     <div style="font-size:0.7rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;">Segundos de esta canción</div>
@@ -2523,15 +2533,22 @@
             </div>
             <p id="cancionRevealTitle" style="display:none; font-size:1.1rem; font-weight:700; margin-bottom:16px;"></p>
 
+            <!-- Antes de pulsar "Reproducir" (necesario para que el navegador
+                 permita el sonido) solo se ve este botón. Una vez suena la
+                 canción, aparecen SIEMPRE los tres botones de abajo:
+                 "Correcto" (registra el acierto con el puntaje del segundo
+                 exacto y pausa el cronómetro de 3 min revelando el video),
+                 "Siguiente Canción" (si ya está revelado, reanuda el
+                 cronómetro donde se pausó y carga otra canción; si aún está
+                 sonando, la salta sin puntos) y "Terminar minijuego". -->
             <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
                 <button id="btnCancionPlay" class="btn-primary" style="background:#ec4899; color:white; width:auto; padding:14px 30px;" onclick="Minigames.Cancion.play()"><span class="material-symbols-outlined" style="vertical-align:middle;">play_arrow</span> Reproducir</button>
-                <button id="btnCancionCorrect" class="btn-correct" style="display:none; width:auto; padding:14px 30px; border-radius:100px;" onclick="Minigames.Cancion.handleCorrect()"><span class="material-symbols-outlined" style="vertical-align:middle;">check</span> ¡Acertaron!</button>
-                <button id="btnCancionSkip" class="btn-incorrect" style="display:none; width:auto; padding:14px 30px; border-radius:100px;" onclick="Minigames.Cancion.handleFail()"><span class="material-symbols-outlined" style="vertical-align:middle; font-size:1.1rem;">close</span> Fallaron · Siguiente</button>
-                <button id="btnCancionNudge" class="btn-secondary" style="display:none; width:auto; padding:14px 20px;" onclick="Minigames.Cancion.nudge()" title="Si no suena, pulsa aquí"><span class="material-symbols-outlined" style="vertical-align:middle; font-size:1.1rem;">volume_up</span> 🔊 No suena</button>
-                <button id="btnCancionNext" class="btn-primary" style="background:var(--primary); width:auto; padding:14px 30px;" onclick="Minigames.Cancion.stopAndNext()"><span class="material-symbols-outlined" style="vertical-align:middle;">skip_next</span> Terminar turno de este equipo</button>
             </div>
-            <div style="width: 100%; max-width: 400px; margin-top: 25px;">
-                <button class="btn-secondary" style="border-color: var(--primary); color: var(--primary);" onclick="Minigames.Cancion.exit()">Terminar minijuego</button>
+            <div id="cancionActiveControls" style="display:none; gap:12px; justify-content:center; flex-wrap:wrap;">
+                <button id="btnCancionCorrect" class="btn-correct" style="width:auto; padding:14px 30px; border-radius:100px;" onclick="Minigames.Cancion.handleCorrect()"><span class="material-symbols-outlined" style="vertical-align:middle;">check</span> Correcto</button>
+                <button id="btnCancionNext" class="btn-primary" style="background:var(--primary); width:auto; padding:14px 30px;" onclick="Minigames.Cancion.nextSongClick()"><span class="material-symbols-outlined" style="vertical-align:middle;">skip_next</span> Siguiente Canción</button>
+                <button id="btnCancionNudge" class="btn-secondary" style="width:auto; padding:14px 20px;" onclick="Minigames.Cancion.nudge()" title="Si no suena, pulsa aquí"><span class="material-symbols-outlined" style="vertical-align:middle; font-size:1.1rem;">volume_up</span> 🔊 No suena</button>
+                <button id="btnCancionExit" class="btn-secondary" style="border-color: var(--incorrect-color); color: var(--incorrect-color); width:auto; padding:14px 20px;" onclick="Minigames.Cancion.confirmExit()"><span class="material-symbols-outlined" style="vertical-align:middle; font-size:1.1rem;">stop_circle</span> Terminar minijuego</button>
             </div>
         </div>
     </div>
@@ -3404,21 +3421,21 @@
         // fetch de datos durante la carga inicial.
         const soundSources = {
             // Preguntas normales, Opción Múltiple, Acertijos y rebotes.
-            correct: 'correcto.mp3',
-            incorrect: 'incorrecto.wav',
+            correct: 'Sound/correcto.mp3',
+            incorrect: 'Sound/incorrecto.mp3',
             // Minijuegos de "palabra" (Pictionary, Charadas, Tabú).
-            miniCorrect: 'pictcorrect.wav',
-            miniIncorrect: 'pictincorrect.mp3',
+            miniCorrect: 'Sound/pictcorrect.mp3',
+            miniIncorrect: 'Sound/pictincorrect.mp3',
             // Aplausos al aparecer la tarjeta del equipo ganador.
-            applause: 'applause.wav',
+            applause: 'Sound/applause.mp3',
             tick: 'https://actions.google.com/sounds/v1/alarms/beep_short.ogg',
             reveal: 'https://actions.google.com/sounds/v1/magic/magic_chime.ogg',
             transition: 'https://actions.google.com/sounds/v1/office/button_push.ogg',
-            timeout: 'fintiempo.mp3',
-            // Cuenta atrás de los últimos 10s: clock.wav en preguntas normales
-            // y Opción Múltiple; clock2.wav en el resto de minijuegos.
-            countdownClock: 'clock.wav',
-            countdownClockMini: 'clock2.wav'
+            timeout: 'Sound/fintiempo.mp3',
+            // Cuenta atrás de los últimos 10s: clock.mp3 en preguntas normales
+            // y Opción Múltiple; clock2.mp3 en el resto de minijuegos.
+            countdownClock: 'Sound/clock.mp3',
+            countdownClockMini: 'Sound/clock2.mp3'
         };
         // Volumen por defecto 1.0; la transición de pantalla queda más discreta a propósito.
         const soundVolumes = { transition: 0.18, timeout: 1, countdownClock: 0.8, countdownClockMini: 0.8 };
@@ -3476,7 +3493,7 @@
         
         // --- MÚSICA DE FONDO ---
         let bgMusic = new Audio();
-        const musicQuestions = ["1.mp3", "2.mp3", "3.mp3", "4.mp3"];
+        const musicQuestions = ["Sound/1.mp3", "Sound/2.mp3", "Sound/3.mp3", "Sound/4.mp3"];
         
         function playMusic(type = 'question', specificTrack = null) { 
             if(Presentation.isConnected()) { Presentation.broadcast('PLAY_MUSIC', { type, track: specificTrack }); return; }
@@ -3514,10 +3531,14 @@
         // La API key de YouTube se guarda aparte del resto de la partida
         // (clave propia en localStorage), así sobrevive a "Nueva partida"
         // y a volver a abrir el archivo — no hace falta pegarla cada vez.
-        function getSavedYtApiKey() { try { return localStorage.getItem('trivia_yt_api_key') || ''; } catch(e) { return ''; } }
+        // Trae además una clave por defecto incrustada en el código, para
+        // que funcione de fábrica sin ningún paso previo; si el moderador
+        // guarda una propia en Ajustes técnicos, esa tiene prioridad.
+        const DEFAULT_YT_API_KEY = 'AIzaSyATfHuOsWdwsFlGAg2NN9P4A0xlau6LKZY';
+        function getSavedYtApiKey() { try { return localStorage.getItem('trivia_yt_api_key') || DEFAULT_YT_API_KEY; } catch(e) { return DEFAULT_YT_API_KEY; } }
         function saveYtApiKey(key) { try { localStorage.setItem('trivia_yt_api_key', key || ''); } catch(e) {} }
 
-        let config = { teamsCount: 3, ptsCorrect: 10, ptsRebound: 5, ptsChallengeMax: 50, ptsMultiple: 10, allowDouble: true, allowFifty: true, allowDoN: true, allowRebounds: true, isDouble: false, isDoubleOrNothing: false, isFiftyFifty: false, timeQuestion: 30, timeAcertijos: 90, timeMultiple: 30, timePictionary: 60, timeTabu: 60, timeStop: 120, timeCharadas: 60, ptsPicFacil: 2, ptsPicIntermedia: 3, ptsPicDificil: 10, ptsChaFacil: 2, ptsChaIntermedia: 3, ptsChaDificil: 10, ptsTabu: 5, ptsStopUnique: 10, ptsStopRepeated: 5, soundEnabled: true, streakThreshold: 3, streakMultiplier: 1.5, streakStep: 2, streakIncrement: 0.5, streakShieldAt: 6, easyMode: false, diceEnabled: false, ytApiKey: getSavedYtApiKey(), ptsCancionMax: 20, ptsCancionMin: 5, timeCancionMax: 20, timeCancionRound: 180 };
+        let config = { teamsCount: 3, ptsCorrect: 10, ptsRebound: 5, ptsChallengeMax: 50, ptsMultiple: 10, allowDouble: true, allowFifty: true, allowDoN: true, allowRebounds: true, isDouble: false, isDoubleOrNothing: false, isFiftyFifty: false, timeQuestion: 30, timeAcertijos: 90, timeMultiple: 30, timePictionary: 60, timeTabu: 60, timeStop: 120, timeCharadas: 60, ptsPicFacil: 2, ptsPicIntermedia: 3, ptsPicDificil: 10, ptsChaFacil: 2, ptsChaIntermedia: 3, ptsChaDificil: 10, ptsTabu: 5, ptsStopUnique: 10, ptsStopRepeated: 5, soundEnabled: true, streakThreshold: 3, streakMultiplier: 1.5, streakStep: 2, streakIncrement: 0.5, streakShieldAt: 6, easyMode: false, diceEnabled: false, ytApiKey: getSavedYtApiKey(), ptsCancionMax: 20, ptsCancionMin: 10, timeCancionMax: 30, timeCancionRound: 180 };
         let state = { db: [], categories: {}, catNames: [], teams: [], currentTurn: null, activeCat: null, activeQ: null, challenges: [], picPools: { facil: [], intermedia: [], dificil: [] }, charadasPools: { facil: [], intermedia: [], dificil: [] }, tabuPools: {}, tabuCategories: new Set(["Aleatoria"]), teamPools: {}, multiplePool: [], acertijosPool: [], stopCategories: [], stopLetters: [], history: [], undoStack: [], gameLog: [], lastScoreUpdated: null, lastScoreDelta: null, roundRespondedCount: 0, roundStartTurn: null, blockedCategories: [], scoreHistory: [], chaosModeActive: false, chaosModeRemaining: 0, chaosCardGatePending: false, songCategories: [], songPlaylistIds: {}, songPools: {} };
 
         // --- PERSISTENCIA, CACHÉ E HISTORIAL -------------------------------
@@ -4014,6 +4035,33 @@
             stop() { if(this.interval) { clearInterval(this.interval); this.interval = null; } }
         };
 
+        // Cronómetro DESCENDENTE del turno global de 3 minutos de un equipo
+        // en Adivina la Canción. Independiente del gameTimer central para
+        // poder PAUSAR y REANUDAR exactamente en el segundo donde se dejó
+        // (al acertar/agotarse una canción y al pulsar "Siguiente Canción"),
+        // sin arrastrar el resto de comportamientos del gameTimer (sonido de
+        // cuenta atrás, broadcasts de otros minijuegos, etc).
+        const cancionRoundTimer = {
+            interval: null, remaining: 0, onTick: null, onComplete: null,
+            start(seconds, onTick, onComplete) {
+                this.stop();
+                this.remaining = seconds;
+                this.onTick = onTick; this.onComplete = onComplete;
+                this.onTick(this.remaining);
+                this._run();
+            },
+            _run() {
+                this.interval = setInterval(() => {
+                    this.remaining--;
+                    if(this.onTick) this.onTick(this.remaining);
+                    if(this.remaining <= 0) { this.stop(); if(this.onComplete) this.onComplete(); }
+                }, 1000);
+            },
+            pause() { if(this.interval) { clearInterval(this.interval); this.interval = null; } },
+            resume() { if(!this.interval && this.remaining > 0) this._run(); },
+            stop() { if(this.interval) { clearInterval(this.interval); this.interval = null; } }
+        };
+
         // Puntaje disponible en el segundo `t`: completo hasta los 10s,
         // luego baja linealmente hasta ptsCancionMin al llegar a timeCancionMax.
         function currentSongPoints(t) {
@@ -4069,7 +4117,7 @@
                         document.getElementById('btnAcertijosCorrect').innerText = `¡Correcta! (+${config.ptsCorrect} pts)`;
 
                         autoScrollTo('acertijosScreen');
-                        playMusic('minigame', '5.mp3');
+                        playMusic('minigame', 'Sound/5.mp3');
                         gameTimer.start(config.timeAcertijos, t => document.getElementById('acertijosTimer').innerText = t, () => this.onTimeUp(), 'minigame');
                     });
                 },
@@ -4201,7 +4249,7 @@
                         // el público jamás debe poder inspeccionar el mensaje
                         // para saber cuál es la correcta antes de tiempo.
                         Presentation.broadcast('REVEAL_OPTIONS', { options: this.options.map((o, i) => `${String.fromCharCode(65+i)}. ${o.text}`) });
-                        playMusic('minigame', '6.mp3');
+                        playMusic('minigame', 'Sound/6.mp3');
                         gameTimer.start(config.timeMultiple, t => document.getElementById('multipleTimer').innerText = t, () => this.handleTimeout(), 'normal');
                     }, timerStartDelay);
                     });
@@ -4312,7 +4360,7 @@
                     consumeChaosCardGate(() => {
                         document.getElementById('picGameArea').style.display = 'block'; (function(){const t=state.teams[state.currentTurn];const p=document.getElementById('picTeamPill');if(p&&t){p.textContent=t.emoji+' '+t.countryName;p.style.background=t.color||'var(--secondary)';}})();
                         this.setDifficulty(this.currentCat); autoScrollTo('pictionaryScreen'); 
-                        playMusic('minigame', '7.mp3'); 
+                        playMusic('minigame', 'Sound/7.mp3'); 
                         Presentation.broadcast('START_MINIGAME', { type: 'pictionary', teamIndex: state.currentTurn, timeSeconds: this.selectedTime });
                         gameTimer.start(this.selectedTime, t => document.getElementById('picTimer').innerText = t, () => { playSoundEffect('timeout'); recordHistory({ type:'timeout', title:'Tiempo agotado', detail:`Pictionary · ${teamLabel(state.currentTurn)}` }); this.finish(); }, 'minigame');
                     });
@@ -4394,7 +4442,7 @@
                     consumeChaosCardGate(() => {
                         document.getElementById('chaGameArea').style.display = 'block'; (function(){const t=state.teams[state.currentTurn];const p=document.getElementById('chaTeamPill');if(p&&t){p.textContent=t.emoji+' '+t.countryName;p.style.background=t.color||'var(--secondary)';}})(); 
                         this.setDifficulty(this.currentCat); autoScrollTo('charadasScreen'); 
-                        playMusic('minigame', '7.mp3'); 
+                        playMusic('minigame', 'Sound/7.mp3'); 
                         Presentation.broadcast('START_MINIGAME', { type: 'charadas', teamIndex: state.currentTurn, timeSeconds: this.selectedTime });
                         gameTimer.start(this.selectedTime, t => document.getElementById('chaTimer').innerText = t, () => { playSoundEffect('timeout'); recordHistory({ type:'timeout', title:'Tiempo agotado', detail:`Charadas · ${teamLabel(state.currentTurn)}` }); this.finish(); }, 'minigame');
                     });
@@ -4466,7 +4514,7 @@
                     consumeChaosCardGate(() => {
                         document.getElementById('tabuGameArea').style.display = 'block';
                         this.updateCorrectLabel(); this.nextWord(cat); autoScrollTo('tabuScreen'); 
-                        playMusic('minigame', '8.mp3'); 
+                        playMusic('minigame', 'Sound/8.mp3'); 
                         Presentation.broadcast('START_MINIGAME', { type: 'tabu', teamIndex: state.currentTurn, timeSeconds: this.selectedTime });
                         gameTimer.start(this.selectedTime, t => document.getElementById('tabuTimer').innerText = t, () => { playSoundEffect('timeout'); recordHistory({ type:'timeout', title:'Tiempo agotado', detail:`Tabú · ${teamLabel(state.currentTurn)}` }); this.finish(); }, 'minigame');
                     });
@@ -4556,7 +4604,7 @@
                     document.getElementById('btnStartStopTimer').disabled = true;
                     consumeChaosCardGate(() => {
                         document.getElementById('btnStopEndEarly').style.display = 'block'; document.getElementById('stopTimer').style.display = 'block';
-                        playMusic('minigame', '5.mp3'); 
+                        playMusic('minigame', 'Sound/5.mp3'); 
                         Presentation.broadcast('START_MINIGAME', { type: 'stop', teamIndex: state.currentTurn, timeSeconds: parseInt(document.getElementById('stopTimeInput').value) || 180, categories: this.currentCategories });
                         gameTimer.start(parseInt(document.getElementById('stopTimeInput').value) || 180, 
                             t => document.getElementById('stopTimer').innerText = t, 
@@ -4598,15 +4646,14 @@
             Cancion: {
                 currentCat: null, activeSong: null, playing: false, revealed: false, roundScore: 0, roundActive: false,
                 // NOTA TÉCNICA: se reproduce con un <iframe> normal apuntando
-                // a la URL de embed de YouTube (autoplay=1), NO con la API de
-                // JavaScript (YT.Player). La API de JS necesita un handshake
-                // por postMessage con un origen http(s) válido; al abrir este
-                // archivo como file:// ese origen es null y el handshake
-                // nunca se completa — resultado: "Reproduciendo…" sin sonido
-                // y errores de reproductor en cualquier video, no solo en
-                // los que de verdad tienen la incrustación bloqueada.
-                // Controlando el iframe por su src funciona siempre, sin
-                // depender de ningún servidor.
+                // a la URL de embed de YouTube (autoplay=1&enablejsapi=1),
+                // controlado solo cambiando su src — funciona igual con o
+                // sin servidor, siempre que el sitio esté en http(s)
+                // (GitHub Pages cumple esto). ytNudgePlay() manda además un
+                // comando play/unmute por postMessage como refuerzo, y el
+                // botón "🔊 No suena"/el disco lo repiten a mano si hiciera
+                // falta — un clic directo del usuario nunca lo bloquea el
+                // navegador.
                 init() {
                     playSoundEffect('transition');
                     if(state.currentTurn === null) { showToast("Asigna un turno antes de iniciar.", "warn"); return; }
@@ -4651,20 +4698,28 @@
                     document.getElementById('cancionGameArea').style.display = 'flex';
                     this.startRound();
                 },
-                // Arranca el turno de un equipo: cronómetro descendente de
-                // config.timeCancionRound segundos, encadenando canciones
-                // una tras otra sin volver al tablero entre ellas.
+                // Arranca el turno de un equipo: cronómetro GLOBAL descendente
+                // de config.timeCancionRound segundos (3 min por defecto).
+                // Este cronómetro sigue corriendo mientras suena cada canción
+                // y solo se PAUSA al acertar o agotarse el tiempo de una
+                // pista (ver _pauseAndReveal), reanudándose exactamente donde
+                // quedó cuando el moderador pulsa "Siguiente Canción".
                 startRound() {
                     consumeChaosCardGate(() => {
                         this.roundScore = 0;
                         this.roundActive = true;
                         const roundSeconds = config.timeCancionRound || 180;
                         document.getElementById('cancionRoundScore').textContent = '0';
-                        document.getElementById('cancionRoundTimer').textContent = formatMMSS(roundSeconds);
-                        gameTimer.start(roundSeconds, t => { document.getElementById('cancionRoundTimer').textContent = formatMMSS(t); }, () => this.endRound(), 'minigame');
+                        cancionRoundTimer.start(roundSeconds, t => {
+                            document.getElementById('cancionRoundTimer').textContent = formatMMSS(t);
+                        }, () => this.endRound());
                         this.nextSong();
                     });
                 },
+                // Carga la siguiente canción del pool: la deja lista para
+                // reproducir (botón "Reproducir" visible, controles de
+                // juego ocultos) — necesita un clic real del moderador por
+                // cada canción para garantizar el sonido en el navegador.
                 nextSong() {
                     const pool = state.songPools[this.currentCat];
                     if(!pool || !pool.length) { showToast('Se agotaron las canciones de esta categoría.', 'warn'); this.endRound(); return; }
@@ -4681,33 +4736,22 @@
                     document.getElementById('cancionOverlay').classList.remove('cancion-revealed');
                     document.getElementById('cancionRevealTitle').style.display = 'none';
                     document.getElementById('btnCancionPlay').style.display = 'inline-block';
-                    document.getElementById('btnCancionCorrect').style.display = 'none';
-                    document.getElementById('btnCancionSkip').style.display = 'none';
-                    document.getElementById('btnCancionNudge').style.display = 'none';
-                    // Corta el video anterior antes de mostrar el nuevo, para
-                    // que no se solapen dos audios si el moderador encadena
-                    // rápido (ver reveal(), que no pausa el clip a propósito).
+                    document.getElementById('cancionActiveControls').style.display = 'none';
                     const iframe = document.getElementById('cancionYtIframe');
                     if(iframe) iframe.src = 'about:blank';
                     Presentation.broadcast('START_MINIGAME', { type: 'cancion', teamIndex: state.currentTurn });
                     autoScrollTo('cancionScreen');
                 },
-                // El cronómetro (y por tanto el gasto de puntos) arranca al
-                // pulsar "Reproducir" para esta canción. Se carga el iframe
-                // con autoplay=1 y, además, se refuerza el arranque del
-                // sonido con un par de comandos por postMessage (ver
-                // ytNudgePlay) apenas el iframe termina de cargar y otra
-                // vez un segundo después, por si el navegador ignoró el
-                // primer intento. Si aun así no suena, el propio disco
-                // (#cancionOverlay) tiene un clic que repite el comando —
-                // un clic directo del usuario nunca lo bloquea el navegador.
+                // Arranca ESTA canción. El cronómetro por canción (0→30s,
+                // el que decide el puntaje) empieza aquí; el cronómetro
+                // GLOBAL de 3 minutos ya venía corriendo desde antes y
+                // sigue corriendo sin cambios.
                 play() {
                     if(this.playing || !this.activeSong) return;
                     this.playing = true; this.revealed = false;
                     document.getElementById('btnCancionPlay').style.display = 'none';
-                    document.getElementById('btnCancionCorrect').style.display = 'inline-block';
-                    document.getElementById('btnCancionSkip').style.display = 'inline-block';
-                    document.getElementById('btnCancionNudge').style.display = 'inline-block';
+                    document.getElementById('cancionActiveControls').style.display = 'flex';
+                    document.getElementById('btnCancionCorrect').disabled = false;
                     if(Presentation.isConnected()) {
                         Presentation.broadcast('SONG_PLAY', { videoId: this.activeSong.videoId });
                     } else {
@@ -4727,20 +4771,12 @@
                         config.timeCancionMax
                     );
                 },
-                // Respaldo manual 100% fiable: si tras "Reproducir" no se
-                // escucha nada, tocar el disco repite el comando de play/
-                // unmute. Al ser un clic directo del usuario sobre la
-                // pantalla, ningún navegador lo bloquea — a diferencia del
-                // intento automático, que a veces no cuenta como "gesto"
-                // suficiente para el iframe según el navegador.
-                nudge() {
-                    if(!this.playing) return;
-                    const iframe = document.getElementById('cancionYtIframe');
-                    if(iframe) ytNudgePlay(iframe);
-                    if(Presentation.isConnected()) Presentation.broadcast('SONG_NUDGE', {});
-                },
+                // Botón "Correcto": registra el acierto con el puntaje del
+                // segundo exacto en que se pulsó, PAUSA el cronómetro
+                // global de 3 minutos y revela el video (que sigue sonando,
+                // como premio, hasta que se pase a la siguiente).
                 handleCorrect() {
-                    if(!this.playing) return;
+                    if(!this.playing || this.revealed) return;
                     this.playing = false; songTimer.stop();
                     const secs = songTimer.elapsed, pts = currentSongPoints(secs);
                     pushUndo('Adivina la Canción: acierto');
@@ -4749,48 +4785,27 @@
                     this.roundScore += pts;
                     document.getElementById('cancionRoundScore').textContent = this.roundScore;
                     recordHistory({ type:'score', title:'Adivina la Canción', detail:`${teamLabel(state.currentTurn)} · +${pts} pts en ${secs}s · "${this.activeSong.title}"` });
-                    this.reveal();
-                    this._queueNextSong();
+                    this._pauseAndReveal();
                 },
-                // "Fallaron / Siguiente": el equipo no adivinó (o el video
-                // no se pudo escuchar bien) — 0 puntos, se revela el título
-                // para que el moderador confirme, y se pasa a otra canción
-                // sin salir del turno de 3 minutos de este equipo.
-                handleFail() {
-                    if(!this.playing) return;
-                    this.playing = false; songTimer.stop();
-                    playSoundEffect('miniIncorrect');
-                    recordHistory({ type:'answer', title:'Adivina la Canción: no acertaron', detail:`${teamLabel(state.currentTurn)} · "${this.activeSong.title}"` });
-                    this.reveal();
-                    this._queueNextSong();
-                },
+                // Se agotaron los 30s de la canción sin acertar: 0 puntos,
+                // la canción se da por perdida — igual que un acierto,
+                // pausa el cronómetro global y revela el video.
                 handleTimeout() {
                     this.playing = false;
                     playSoundEffect('timeout');
-                    recordHistory({ type:'timeout', title:'Adivina la Canción', detail:`Tiempo agotado en la canción · "${this.activeSong.title}" · ${teamLabel(state.currentTurn)}` });
-                    this.reveal();
-                    this._queueNextSong();
+                    recordHistory({ type:'timeout', title:'Adivina la Canción', detail:`Canción perdida (0 pts, se agotó el tiempo) · "${this.activeSong.title}" · ${teamLabel(state.currentTurn)}` });
+                    this._pauseAndReveal();
                 },
-                // Pequeña pausa para que se vea el título revelado antes de
-                // saltar a la siguiente canción del mismo turno; se cancela
-                // sola si el turno de 3 minutos ya terminó mientras tanto.
-                // Envuelto en try/catch: un fallo aquí NUNCA debe cortar la
-                // cadena de canciones del equipo.
-                _queueNextSong() {
-                    setTimeout(() => {
-                        try { if(this.roundActive && gameTimer.interval) this.nextSong(); }
-                        catch(e) { console.warn('Error al pasar a la siguiente canción', e); if(this.roundActive && gameTimer.interval) this.nextSong(); }
-                    }, 2600);
-                },
-                // Revela el título de la canción. El video sigue sonando tal
-                // cual (no se puede bajar el volumen del iframe simple, así
-                // que se prioriza que el audio nunca falle sobre ese detalle
-                // estético) hasta que se corte al pasar a la siguiente.
-                reveal() {
+                // Lógica común a "acertaron" y "se acabó el tiempo de la
+                // pista": pausa el cronómetro GLOBAL exactamente donde va,
+                // deshabilita "Correcto" (ya no aplica para esta canción) y
+                // destapa el video. "Siguiente Canción" queda como única
+                // salida hacia adelante.
+                _pauseAndReveal() {
                     this.revealed = true;
-                    document.getElementById('btnCancionCorrect').style.display = 'none';
-                    document.getElementById('btnCancionSkip').style.display = 'none';
-                    document.getElementById('btnCancionNudge').style.display = 'none';
+                    cancionRoundTimer.pause();
+                    const btnCorrect = document.getElementById('btnCancionCorrect');
+                    if(btnCorrect) btnCorrect.disabled = true;
                     document.getElementById('cancionOverlay').classList.add('cancion-revealed');
                     setTimeout(() => { const el = document.getElementById('cancionOverlay'); if(el) el.style.display = 'none'; }, 400);
                     const revealEl = document.getElementById('cancionRevealTitle');
@@ -4800,12 +4815,68 @@
                         Presentation.broadcast('SONG_REVEAL', { title: this.activeSong.title, channel: this.activeSong.channel });
                     }
                 },
-                // Fin del turno de 3 minutos (por tiempo agotado o manual):
-                // corta música/video, avisa el total del equipo y pasa el
-                // turno al siguiente, arrancando su propio turno de inmediato.
+                // Botón "Siguiente Canción" — comportamiento doble según el
+                // momento en que se pulsa:
+                //   · Si ya está revelado (tras acertar o agotarse el
+                //     tiempo): REANUDA el cronómetro global exactamente
+                //     donde se pausó, corta el video y carga otra canción.
+                //   · Si aún está sonando sin revelar (el moderador decide
+                //     saltarla, p.ej. video roto): 0 puntos, no hace falta
+                //     pausar/reanudar porque el cronómetro global nunca se
+                //     detuvo, y pasa directo a la siguiente.
+                nextSongClick() {
+                    const iframe = document.getElementById('cancionYtIframe');
+                    if(this.revealed) {
+                        cancionRoundTimer.resume();
+                        if(iframe) iframe.src = 'about:blank';
+                        if(Presentation.isConnected()) Presentation.broadcast('SONG_STOP', {});
+                        this.nextSong();
+                    } else if(this.playing) {
+                        this.playing = false; songTimer.stop();
+                        playSoundEffect('timeout');
+                        recordHistory({ type:'question', title:'Canción saltada', detail:`"${this.activeSong?.title || ''}" · ${teamLabel(state.currentTurn)}` });
+                        if(iframe) iframe.src = 'about:blank';
+                        if(Presentation.isConnected()) Presentation.broadcast('SONG_STOP', {});
+                        this.nextSong();
+                    }
+                },
+                // Respaldo manual 100% fiable: si tras "Reproducir" no se
+                // escucha nada, este botón (o tocar el disco) repite el
+                // comando de play/unmute. Al ser un clic directo del
+                // usuario, ningún navegador lo bloquea.
+                nudge() {
+                    if(!this.playing) return;
+                    const iframe = document.getElementById('cancionYtIframe');
+                    if(iframe) ytNudgePlay(iframe);
+                    if(Presentation.isConnected()) Presentation.broadcast('SONG_NUDGE', {});
+                },
+                // "Terminar minijuego" pide confirmación por toast antes de
+                // ejecutar — es una acción que corta la partida musical
+                // completa (no solo el turno del equipo actual), así que
+                // conviene un paso extra para evitar un clic accidental.
+                confirmExit() {
+                    document.querySelectorAll('.toast-confirm').forEach(t => t.remove());
+                    const el = document.createElement('div');
+                    el.className = 'toast toast-warn toast-confirm';
+                    el.style.cssText = 'pointer-events:all; display:flex; gap:8px; align-items:center; flex-wrap:wrap; white-space:normal;';
+                    el.innerHTML = `<span style="flex:1 1 100%;">¿Terminar "Adivina la Canción"? El equipo conserva los puntos ya ganados en este turno.</span>`
+                        + `<button onclick="this.closest('.toast-confirm').remove(); Minigames.Cancion.exit();" `
+                        + `style="background:var(--incorrect-color);color:white;border:none;border-radius:8px;padding:5px 12px;font-size:0.82rem;font-weight:700;cursor:pointer;width:auto;min-height:0;">Sí, terminar</button>`
+                        + `<button onclick="this.closest('.toast-confirm').remove()" `
+                        + `style="background:rgba(128,128,128,0.2);color:var(--text-main);border:none;border-radius:8px;padding:5px 12px;font-size:0.82rem;font-weight:700;cursor:pointer;width:auto;min-height:0;">Cancelar</button>`;
+                    document.body.appendChild(el);
+                    requestAnimationFrame(() => { requestAnimationFrame(() => el.classList.add('visible')); });
+                    setTimeout(() => { el.classList.remove('visible'); setTimeout(() => el.remove(), 280); }, 6000);
+                },
+                // Fin del turno de 3 minutos (el cronómetro global llegó a
+                // 0 mientras corría — escuchando una canción o esperando a
+                // que el moderador pulse "Reproducir" de la siguiente):
+                // corta música/video, avisa el total del equipo y arranca
+                // el turno del siguiente equipo de inmediato.
                 endRound() {
                     this.roundActive = false;
-                    gameTimer.stop(); songTimer.stop();
+                    cancionRoundTimer.stop();
+                    songTimer.stop();
                     if(Presentation.isConnected()) Presentation.broadcast('SONG_STOP', {});
                     const iframe = document.getElementById('cancionYtIframe');
                     if(iframe) iframe.src = 'about:blank';
@@ -4815,10 +4886,13 @@
                     setTurn((state.currentTurn + 1) % state.teams.length);
                     this.startRound();
                 },
-                stopAndNext() { this.endRound(); },
+                // Corte manual de TODO el minijuego (cualquier equipo, en
+                // cualquier momento) — llamado únicamente tras confirmar en
+                // confirmExit().
                 exit() {
                     this.roundActive = false;
-                    gameTimer.stop(); songTimer.stop();
+                    cancionRoundTimer.stop();
+                    songTimer.stop();
                     if(Presentation.isConnected()) Presentation.broadcast('SONG_STOP', {});
                     const iframe = document.getElementById('cancionYtIframe');
                     if(iframe) iframe.src = 'about:blank';
@@ -5726,7 +5800,7 @@
                 launchConfetti();
                 if (state.teams.length > 1) {
                     playSoundEffect('applause');
-                    playMusic('minigame', 'end.wav');
+                    playMusic('minigame', 'Sound/end.mp3');
                 }
             }, PODIUM_REVEAL_TOTAL_MS);
         }
@@ -6366,7 +6440,7 @@
         // necesario para que el final del sonido coincida con el final de
         // la animación de tirada (DICE_ROLL_ANIMATION_MS, que debe
         // coincidir con la transición CSS de .dice-cube).
-        const diceSoundFiles = ['Dados1.mp3', 'Dados2.mp3', 'Dados3.ogg'];
+        const diceSoundFiles = ['Sound/Dados1.mp3', 'Sound/Dados2.mp3', 'Sound/Dados3.mp3'];
         const DICE_ROLL_ANIMATION_MS = 1100;
         // Extraída para poder reutilizarse tanto en el Emisor (moderador)
         // como en el Receptor (proyector) — ambos ejecutan el MISMO archivo,
@@ -6853,9 +6927,9 @@
             config.ptsStopUnique = parseInt(document.getElementById('setPtsStopUnique').value) || 10;
             config.ptsStopRepeated = parseInt(document.getElementById('setPtsStopRepeated').value) || 5;
             config.timeCancionRound = parseInt(document.getElementById('setTimeCancionRound').value) || 180;
-            config.timeCancionMax = parseInt(document.getElementById('setTimeCancionMax').value) || 20;
+            config.timeCancionMax = parseInt(document.getElementById('setTimeCancionMax').value) || 30;
             config.ptsCancionMax = parseInt(document.getElementById('setPtsCancionMax').value) || 20;
-            config.ptsCancionMin = parseInt(document.getElementById('setPtsCancionMin').value) || 5;
+            config.ptsCancionMin = parseInt(document.getElementById('setPtsCancionMin').value) || 10;
             config.ytApiKey = document.getElementById('setYtApiKey').value.trim();
             saveYtApiKey(config.ytApiKey);
             config.streakThreshold = parseInt(document.getElementById('setStreakThreshold').value) || 3;
