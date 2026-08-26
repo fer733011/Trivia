@@ -1298,6 +1298,7 @@
            que gira despacio siempre y se acelera/ilumina al activarse. */
         #chaosModeToggle {
             display: none; position: fixed; top: 10px; right: 16px; z-index: 9500;
+            width: auto; min-height: 0;
             align-items: center; gap: 6px; padding: 6px 12px; border-radius: 100px;
             background: rgba(168,85,247,0.12); border: 1px solid rgba(168,85,247,0.4);
             color: #a855f7; font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
@@ -1366,7 +1367,7 @@
     <div id="streakBanner"><span id="streakBannerText"></span></div>
 
     <div style="position: fixed; bottom: 12px; right: 24px; font-size: 0.75rem; color: var(--text-muted); opacity: 0.8; font-weight: 400; letter-spacing: 0.3px; z-index: 5000;">
-        © 2026 Fernando Ros • <span onclick="document.getElementById('changelogModal').style.display='block'" style="cursor:pointer; text-decoration:underline; font-weight:500; color:var(--secondary);">Versión 7.7.0</span>
+        © 2026 Fernando Ros • <span onclick="document.getElementById('changelogModal').style.display='block'" style="cursor:pointer; text-decoration:underline; font-weight:500; color:var(--secondary);">Versión 7.8.0</span>
     </div>
 
     <!-- Indicador LED discreto de "Modo fácil" — solo visible para el
@@ -1406,6 +1407,15 @@
             <button onclick="document.getElementById('changelogModal').style.display='none'" style="background:none; border:none; color:var(--text-main); font-size:1.6rem; padding:0; width:auto;">×</button>
         </div>
         <div>
+            <div class="changelog-version">
+                <h4><strong>v7.8.0 – Correcciones de Modo Caos, Pruebas especiales y Adivina la Canción</strong></h4>
+                <ul>
+                    <li><strong>Botón del Modo Caos corregido:</strong> el toggle de esquina superior derecha se veía estirado de lado a lado de la pantalla por una regla CSS genérica de ancho; ahora es un chip compacto como estaba previsto.</li>
+                    <li><strong>"Opción múltiple" ya no se duplica</strong> en la pantalla de Pruebas especiales — sigue disponible como tarjeta destacada en el tablero principal.</li>
+                    <li><strong>El cronómetro de turno de Adivina la Canción ya no avanza con la música parada:</strong> ahora nace en pausa y solo corre mientras una canción está sonando de verdad; se detiene en cuanto se acierta, se agota el tiempo de la pista, o el moderador la salta, y no vuelve a correr hasta que la siguiente canción confirme que está sonando.</li>
+                    <li><strong>Margen de 4 segundos antes de arrancar los cronómetros:</strong> al pulsar "Reproducir", el video empieza a cargar de inmediato pero ni el cronómetro de puntaje de la canción ni el del turno arrancan hasta 4 segundos después, dando tiempo a que la canción cargue sin penalizar al equipo.</li>
+                </ul>
+            </div>
             <div class="changelog-version">
                 <h4><strong>v7.7.0 – Salto de intro en Adivina la Canción</strong></h4>
                 <ul>
@@ -1651,7 +1661,7 @@
     
    <div id="infoModal" style="display: none; position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); background: var(--surface); padding: 28px; border-radius: 20px; border: 1px solid var(--border-color); animation: modalPop 0.22s cubic-bezier(0.4,0,0.2,1); z-index: 10000; width: 90%; max-width: 340px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
     <p style="color: var(--primary); font-weight: 700; margin-bottom: 6px; font-size: 1.5rem;">Trivia Cultural</p>
-    <p style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 20px;">Versión 7.7.0</p>
+    <p style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 20px;">Versión 7.8.0</p>
     <p style="margin-bottom: 8px; font-size: 0.95rem; font-weight: 600;">Desarrollado por Fernando Ros</p>
     <p style="margin-bottom: 20px; font-size: 0.9rem;">
         <a href="mailto:rosfernando@gmail.com" style="color: var(--primary); text-decoration: none; display:inline-flex; align-items:center; gap:5px;">
@@ -4137,10 +4147,12 @@
 
         // Cronómetro DESCENDENTE del turno global de 3 minutos de un equipo
         // en Adivina la Canción. Independiente del gameTimer central para
-        // poder PAUSAR y REANUDAR exactamente en el segundo donde se dejó
-        // (al acertar/agotarse una canción y al pulsar "Siguiente Canción"),
+        // poder PAUSAR y REANUDAR exactamente en el segundo donde se dejó,
         // sin arrastrar el resto de comportamientos del gameTimer (sonido de
-        // cuenta atrás, broadcasts de otros minijuegos, etc).
+        // cuenta atrás, broadcasts de otros minijuegos, etc). Solo corre
+        // mientras una canción suena de verdad: nace en pausa
+        // (startPaused) y cada tramo de reproducción lo reanuda/pausa
+        // explícitamente (ver Minigames.Cancion).
         const cancionRoundTimer = {
             interval: null, remaining: 0, onTick: null, onComplete: null,
             start(seconds, onTick, onComplete) {
@@ -4149,6 +4161,14 @@
                 this.onTick = onTick; this.onComplete = onComplete;
                 this.onTick(this.remaining);
                 this._run();
+            },
+            // Igual que start(), pero deja el cronómetro detenido (mostrando
+            // el tiempo total) hasta que algo llame a resume() explícitamente.
+            startPaused(seconds, onTick, onComplete) {
+                this.stop();
+                this.remaining = seconds;
+                this.onTick = onTick; this.onComplete = onComplete;
+                this.onTick(this.remaining);
             },
             _run() {
                 this.interval = setInterval(() => {
@@ -4744,7 +4764,15 @@
              * proyector, el reproductor vive localmente en esta pantalla.
              */
             Cancion: {
-                currentCat: null, activeSong: null, playing: false, revealed: false, roundScore: 0, roundActive: false, extraSkip: 0,
+                currentCat: null, activeSong: null, playing: false, revealed: false, roundScore: 0, roundActive: false, extraSkip: 0, _playBufferTimeout: null,
+                // Cancela el temporizador de 4s de "colchón" pendiente, si
+                // lo hubiera — se llama siempre que se abandona la canción
+                // actual (saltar, acertar por timeout, terminar turno o
+                // minijuego) para que ese callback diferido nunca actúe
+                // sobre una canción que ya no es la activa.
+                _clearPlayBuffer() {
+                    if(this._playBufferTimeout) { clearTimeout(this._playBufferTimeout); this._playBufferTimeout = null; }
+                },
                 // NOTA TÉCNICA: se reproduce con un <iframe> normal apuntando
                 // a la URL de embed de YouTube (autoplay=1&enablejsapi=1),
                 // controlado solo cambiando su src — funciona igual con o
@@ -4800,17 +4828,17 @@
                 },
                 // Arranca el turno de un equipo: cronómetro GLOBAL descendente
                 // de config.timeCancionRound segundos (3 min por defecto).
-                // Este cronómetro sigue corriendo mientras suena cada canción
-                // y solo se PAUSA al acertar o agotarse el tiempo de una
-                // pista (ver _pauseAndReveal), reanudándose exactamente donde
-                // quedó cuando el moderador pulsa "Siguiente Canción".
+                // Nace EN PAUSA: solo corre mientras una canción suena de
+                // verdad (tras el colchón de 4s de play(), ver más abajo) y
+                // se pausa en cuanto deja de sonar (acierto, tiempo agotado,
+                // o salto manual) — nunca avanza con el video parado.
                 startRound() {
                     consumeChaosCardGate(() => {
                         this.roundScore = 0;
                         this.roundActive = true;
                         const roundSeconds = config.timeCancionRound || 180;
                         document.getElementById('cancionRoundScore').textContent = '0';
-                        cancionRoundTimer.start(roundSeconds, t => {
+                        cancionRoundTimer.startPaused(roundSeconds, t => {
                             document.getElementById('cancionRoundTimer').textContent = formatMMSS(t);
                         }, () => this.endRound());
                         this.nextSong();
@@ -4823,6 +4851,7 @@
                 nextSong() {
                     const pool = state.songPools[this.currentCat];
                     if(!pool || !pool.length) { showToast('Se agotaron las canciones de esta categoría.', 'warn'); this.endRound(); return; }
+                    this._clearPlayBuffer();
                     this.activeSong = pool.pop();
                     this.playing = false; this.revealed = false; this.extraSkip = 0;
                     const t = state.teams[state.currentTurn];
@@ -4846,12 +4875,20 @@
                 // el que decide el puntaje) empieza aquí; el cronómetro
                 // GLOBAL de 3 minutos ya venía corriendo desde antes y
                 // sigue corriendo sin cambios.
+                // Arranca ESTA canción. Por un margen de 4 segundos (algunas
+                // canciones tardan en cargar) el video ya se está pidiendo
+                // pero NINGÚN cronómetro corre todavía — ni el de puntaje de
+                // la canción ni el turno global de 3 minutos — y "Correcto"
+                // queda deshabilitado. Pasados los 4s (y solo si el
+                // moderador no saltó la canción mientras tanto), arrancan
+                // ambos cronómetros a la vez.
                 play() {
                     if(this.playing || !this.activeSong) return;
                     this.playing = true; this.revealed = false;
                     document.getElementById('btnCancionPlay').style.display = 'none';
                     document.getElementById('cancionActiveControls').style.display = 'flex';
-                    document.getElementById('btnCancionCorrect').disabled = false;
+                    document.getElementById('btnCancionCorrect').disabled = true;
+                    document.getElementById('cancionTimer').innerText = '…';
                     const startAt = (config.cancionStartOffset || 0) + (this.extraSkip || 0);
                     if(Presentation.isConnected()) {
                         Presentation.broadcast('SONG_PLAY', { videoId: this.activeSong.videoId, startAt });
@@ -4862,15 +4899,22 @@
                             iframe.src = ytEmbedUrl(this.activeSong.videoId, startAt);
                         }
                     }
-                    songTimer.start(
-                        t => {
-                            document.getElementById('cancionTimer').innerText = t;
-                            document.getElementById('cancionPoints').innerText = currentSongPoints(t);
-                            Presentation.broadcast('SONG_TICK', { elapsed: t, points: currentSongPoints(t) });
-                        },
-                        () => this.handleTimeout(),
-                        config.timeCancionMax
-                    );
+                    this._clearPlayBuffer();
+                    this._playBufferTimeout = setTimeout(() => {
+                        this._playBufferTimeout = null;
+                        if(!this.playing) return; // se saltó/canceló durante el colchón
+                        document.getElementById('btnCancionCorrect').disabled = false;
+                        cancionRoundTimer.resume();
+                        songTimer.start(
+                            t => {
+                                document.getElementById('cancionTimer').innerText = t;
+                                document.getElementById('cancionPoints').innerText = currentSongPoints(t);
+                                Presentation.broadcast('SONG_TICK', { elapsed: t, points: currentSongPoints(t) });
+                            },
+                            () => this.handleTimeout(),
+                            config.timeCancionMax
+                        );
+                    }, 4000);
                 },
                 // Ajuste manual sobre la marcha: si el estribillo todavía no
                 // llegó (o el salto por defecto se pasó de largo), recarga
@@ -4938,21 +4982,25 @@
                 // Botón "Siguiente Canción" — comportamiento doble según el
                 // momento en que se pulsa:
                 //   · Si ya está revelado (tras acertar o agotarse el
-                //     tiempo): REANUDA el cronómetro global exactamente
-                //     donde se pausó, corta el video y carga otra canción.
+                //     tiempo): corta el video y carga otra canción. El
+                //     cronómetro global YA quedó pausado por _pauseAndReveal
+                //     y sigue así — no vuelve a correr hasta que la próxima
+                //     canción confirme que suena (colchón de 4s de play()).
                 //   · Si aún está sonando sin revelar (el moderador decide
-                //     saltarla, p.ej. video roto): 0 puntos, no hace falta
-                //     pausar/reanudar porque el cronómetro global nunca se
-                //     detuvo, y pasa directo a la siguiente.
+                //     saltarla, p.ej. video roto): 0 puntos, se pausa el
+                //     cronómetro global por las dudas (podía llevar rato
+                //     corriendo si ya había pasado el colchón) y pasa
+                //     directo a la siguiente.
                 nextSongClick() {
                     const iframe = document.getElementById('cancionYtIframe');
+                    this._clearPlayBuffer();
                     if(this.revealed) {
-                        cancionRoundTimer.resume();
                         if(iframe) iframe.src = 'about:blank';
                         if(Presentation.isConnected()) Presentation.broadcast('SONG_STOP', {});
                         this.nextSong();
                     } else if(this.playing) {
                         this.playing = false; songTimer.stop();
+                        cancionRoundTimer.pause();
                         playSoundEffect('timeout');
                         recordHistory({ type:'question', title:'Canción saltada', detail:`"${this.activeSong?.title || ''}" · ${teamLabel(state.currentTurn)}` });
                         if(iframe) iframe.src = 'about:blank';
@@ -4995,6 +5043,7 @@
                 // el turno del siguiente equipo de inmediato.
                 endRound() {
                     this.roundActive = false;
+                    this._clearPlayBuffer();
                     cancionRoundTimer.stop();
                     songTimer.stop();
                     if(Presentation.isConnected()) Presentation.broadcast('SONG_STOP', {});
@@ -5011,6 +5060,7 @@
                 // confirmExit().
                 exit() {
                     this.roundActive = false;
+                    this._clearPlayBuffer();
                     cancionRoundTimer.stop();
                     songTimer.stop();
                     if(Presentation.isConnected()) Presentation.broadcast('SONG_STOP', {});
@@ -6940,7 +6990,6 @@
             cM.innerHTML += `<div class="tooltip" style="background:linear-gradient(135deg, #a855f7, #6366f1); ${bS}" onclick="Minigames.Pictionary.init()"><span class="material-symbols-outlined" style="vertical-align:middle; margin-right:6px;">draw</span> PICTIONARY</div>`;
             cM.innerHTML += `<div class="tooltip" style="background:linear-gradient(135deg, #f59e0b, #d97706); ${bS}" onclick="Minigames.Charadas.init()"><span class="material-symbols-outlined" style="vertical-align:middle; margin-right:6px;">directions_run</span> CHARADAS</div>`;
             cM.innerHTML += `<div class="tooltip" style="background:linear-gradient(135deg, var(--incorrect-color), #f97316); ${bS}" onclick="Minigames.Tabu.init()"><span class="material-symbols-outlined" style="vertical-align:middle; margin-right:6px;">speaker_notes_off</span> TABÚ</div>`;
-            cM.innerHTML += `<div class="tooltip" style="background:linear-gradient(135deg, #0ea5e9, #0284c7); ${bS}" onclick="Minigames.Multiple.init()"><span class="material-symbols-outlined" style="vertical-align:middle; margin-right:6px;">quiz</span> OPCIÓN MÚLTIPLE</div>`;
             cM.innerHTML += `<div class="tooltip" style="background:linear-gradient(135deg, var(--correct-color), #059669); ${bS}" onclick="Minigames.Acertijos.init()"><span class="material-symbols-outlined" style="vertical-align:middle; margin-right:6px;">psychology</span> ACERTIJOS</div>`;
             cM.innerHTML += `<div class="tooltip" style="background:linear-gradient(135deg, var(--incorrect-color), #e11d48); ${bS}" onclick="Minigames.Stop.init()"><span class="material-symbols-outlined" style="vertical-align:middle; margin-right:6px;">front_hand</span> STOP!</div>`;
             cM.innerHTML += `<div class="tooltip" style="background:linear-gradient(135deg, #ec4899, #db2777); ${bS}" onclick="Minigames.Cancion.init()"><span class="material-symbols-outlined" style="vertical-align:middle; margin-right:6px;">music_note</span> ADIVINA LA CANCIÓN</div>`;
