@@ -1294,29 +1294,31 @@
 
         /* Toggle "Modo Caos" — esquina superior derecha de la pantalla,
            visible solo durante la partida (igual que easyModeIndicator,
-           su espejo en la esquina izquierda). Un solo icono de remolino
-           que gira despacio siempre y se acelera/ilumina al activarse. */
+           su espejo en la esquina izquierda). Reutiliza el mismo
+           componente .switch/.slider de "Modo fácil" y "Sonido" en
+           Ajustes técnicos — mismo interruptor deslizante, en morado. */
         #chaosModeToggle {
             display: none; position: fixed; top: 10px; right: 16px; z-index: 9500;
-            width: auto; min-height: 0;
-            align-items: center; gap: 6px; padding: 6px 12px; border-radius: 100px;
-            background: rgba(168,85,247,0.12); border: 1px solid rgba(168,85,247,0.4);
-            color: #a855f7; font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
-            letter-spacing: 0.3px; cursor: pointer; transition: all 0.25s ease;
+            align-items: center; gap: 8px; padding: 6px 10px; border-radius: 100px;
+            background: rgba(168,85,247,0.10); border: 1px solid rgba(168,85,247,0.3);
+            color: #a855f7; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.3px;
+            transition: all 0.25s ease;
         }
-        body.game-active #chaosModeToggle { display: inline-flex; }
+        body.game-active #chaosModeToggle { display: flex; }
         #chaosModeToggle .material-symbols-outlined { font-size: 1.2rem; animation: chaosTogglePassiveSpin 6s linear infinite; }
-        #chaosModeToggle:hover { background: rgba(168,85,247,0.22); }
         #chaosModeToggle.active {
-            background: linear-gradient(135deg,#7c3aed,#a855f7); color: #fff;
-            border-color: #f5f0ff; box-shadow: 0 0 16px rgba(168,85,247,0.6);
-            animation: chaosModePulse 1.4s ease-in-out infinite;
+            background: rgba(168,85,247,0.22); border-color: rgba(168,85,247,0.55);
+            box-shadow: 0 0 14px rgba(168,85,247,0.4);
+            animation: chaosModePulse 1.6s ease-in-out infinite;
         }
         #chaosModeToggle.active .material-symbols-outlined { animation: chaosToggleActiveSpin 1.6s linear infinite; }
+        /* El interruptor en sí: mismo .switch/.slider genérico, solo con
+           el color "encendido" en morado en vez de var(--primary). */
+        #chaosModeToggle .switch input:checked + .slider { background-color: #a855f7; }
         @keyframes chaosTogglePassiveSpin { from{ transform:rotate(0); } to{ transform:rotate(360deg); } }
         @keyframes chaosToggleActiveSpin { from{ transform:rotate(0); } to{ transform:rotate(360deg); } }
-        @keyframes chaosModePulse { 0%,100%{ transform:scale(1); } 50%{ transform:scale(1.05); } }
-        @media (max-width: 600px) { #chaosModeToggle span.chaos-toggle-label { display:none; } #chaosModeToggle { padding:8px; } }
+        @keyframes chaosModePulse { 0%,100%{ transform:scale(1); } 50%{ transform:scale(1.04); } }
+        @media (max-width: 600px) { #chaosModeToggle span.chaos-toggle-label { display:none; } #chaosModeToggle { padding:6px 8px; } }
 
         /* Tinte morado de pantalla completa ("luz mágica") mientras el Modo
            Caos está activo. Cubre TODA la ventana (moderador o proyector,
@@ -1367,7 +1369,7 @@
     <div id="streakBanner"><span id="streakBannerText"></span></div>
 
     <div style="position: fixed; bottom: 12px; right: 24px; font-size: 0.75rem; color: var(--text-muted); opacity: 0.8; font-weight: 400; letter-spacing: 0.3px; z-index: 5000;">
-        © 2026 Fernando Ros • <span onclick="document.getElementById('changelogModal').style.display='block'" style="cursor:pointer; text-decoration:underline; font-weight:500; color:var(--secondary);">Versión 7.8.0</span>
+        © 2026 Fernando Ros • <span onclick="document.getElementById('changelogModal').style.display='block'" style="cursor:pointer; text-decoration:underline; font-weight:500; color:var(--secondary);">Versión 7.9.0</span>
     </div>
 
     <!-- Indicador LED discreto de "Modo fácil" — solo visible para el
@@ -1380,12 +1382,18 @@
 
     <!-- Toggle "Modo Caos" — esquina superior derecha, solo para el
          moderador (oculto en el proyector vía body.mode-spectator más
-         abajo). Activa/desactiva toggleChaosMode(); su estado visual lo
-         actualiza updateChaosModeButton(). -->
-    <button type="button" id="chaosModeToggle" onclick="toggleChaosMode()" title="Modo Caos: cada equipo saca una carta gratis al empezar su turno, durante una ronda completa.">
+         abajo). Interruptor real (mismo componente .switch/.slider que
+         "Modo fácil"/"Sonido"), no un botón — activa/desactiva
+         toggleChaosMode(); su estado visual lo actualiza
+         updateChaosModeButton(). -->
+    <div id="chaosModeToggle" title="Modo Caos: cada equipo saca una carta gratis al empezar su turno, durante una ronda completa.">
         <span class="material-symbols-outlined">cyclone</span>
         <span class="chaos-toggle-label">Caos</span>
-    </button>
+        <label class="switch">
+            <input type="checkbox" id="chaosModeCheckbox" onchange="toggleChaosMode()">
+            <span class="slider"></span>
+        </label>
+    </div>
 
     <!-- Tinte morado de pantalla completa ("luz mágica") mientras el Modo
          Caos está activo — decorativo, sin bloquear clics. Presente tanto
@@ -1407,6 +1415,15 @@
             <button onclick="document.getElementById('changelogModal').style.display='none'" style="background:none; border:none; color:var(--text-main); font-size:1.6rem; padding:0; width:auto;">×</button>
         </div>
         <div>
+            <div class="changelog-version">
+                <h4><strong>v7.9.0 – Nueva carta del Caos, Racha Robada, Espejo mejorado e interruptor real</strong></h4>
+                <ul>
+                    <li><strong>Nueva carta — Comodín Prestado 🎭:</strong> usa el Doble o Nada o el ±50 de un equipo rival en tu próxima respuesta, sin que a ellos les cueste el suyo (elige primero el rival, luego cuál de sus dos comodines pedir prestado).</li>
+                    <li><strong>"Intercambio de Racha" ahora es Racha Robada 🔥:</strong> en vez de intercambiar, le robas la racha actual (y el escudo, si tenía) a un rival elegido; la tuya se reinicia a 0. Variante más agresiva de la carta anterior.</li>
+                    <li><strong>Espejo mejorado:</strong> ahora copia de verdad el ÚLTIMO comodín jugado por otro equipo en orden cronológico real — ya sea un comodín normal (2×, Doble o Nada, ±50) o una carta del Caos — en vez de fijarse solo en cartas del Caos y tomar cualquiera al azar entre los equipos.</li>
+                    <li><strong>Interruptor del Modo Caos corregido:</strong> ahora es un interruptor deslizante real (el mismo componente que "Modo fácil" y "Sonido" en Ajustes técnicos), no un botón/chip.</li>
+                </ul>
+            </div>
             <div class="changelog-version">
                 <h4><strong>v7.8.0 – Correcciones de Modo Caos, Pruebas especiales y Adivina la Canción</strong></h4>
                 <ul>
@@ -1661,7 +1678,7 @@
     
    <div id="infoModal" style="display: none; position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); background: var(--surface); padding: 28px; border-radius: 20px; border: 1px solid var(--border-color); animation: modalPop 0.22s cubic-bezier(0.4,0,0.2,1); z-index: 10000; width: 90%; max-width: 340px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
     <p style="color: var(--primary); font-weight: 700; margin-bottom: 6px; font-size: 1.5rem;">Trivia Cultural</p>
-    <p style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 20px;">Versión 7.8.0</p>
+    <p style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 20px;">Versión 7.9.0</p>
     <p style="margin-bottom: 8px; font-size: 0.95rem; font-weight: 600;">Desarrollado por Fernando Ros</p>
     <p style="margin-bottom: 20px; font-size: 0.9rem;">
         <a href="mailto:rosfernando@gmail.com" style="color: var(--primary); text-decoration: none; display:inline-flex; align-items:center; gap:5px;">
@@ -3643,7 +3660,7 @@
         function saveYtApiKey(key) { try { localStorage.setItem('trivia_yt_api_key', key || ''); } catch(e) {} }
 
         let config = { teamsCount: 3, ptsCorrect: 10, ptsRebound: 5, ptsChallengeMax: 50, ptsMultiple: 10, allowDouble: true, allowFifty: true, allowDoN: true, allowRebounds: true, isDouble: false, isDoubleOrNothing: false, isFiftyFifty: false, timeQuestion: 30, timeAcertijos: 90, timeMultiple: 30, timePictionary: 60, timeTabu: 60, timeStop: 120, timeCharadas: 60, ptsPicFacil: 2, ptsPicIntermedia: 3, ptsPicDificil: 10, ptsChaFacil: 2, ptsChaIntermedia: 3, ptsChaDificil: 10, ptsTabu: 5, ptsStopUnique: 10, ptsStopRepeated: 5, soundEnabled: true, streakThreshold: 3, streakMultiplier: 1.5, streakStep: 2, streakIncrement: 0.5, streakShieldAt: 6, easyMode: false, diceEnabled: false, ytApiKey: getSavedYtApiKey(), ptsCancionMax: 20, ptsCancionMin: 10, timeCancionMax: 30, timeCancionRound: 180, cancionStartOffset: 35 };
-        let state = { db: [], categories: {}, catNames: [], teams: [], currentTurn: null, activeCat: null, activeQ: null, challenges: [], picPools: { facil: [], intermedia: [], dificil: [] }, charadasPools: { facil: [], intermedia: [], dificil: [] }, tabuPools: {}, tabuCategories: new Set(["Aleatoria"]), teamPools: {}, multiplePool: [], acertijosPool: [], stopCategories: [], stopLetters: [], history: [], undoStack: [], gameLog: [], lastScoreUpdated: null, lastScoreDelta: null, roundRespondedCount: 0, roundStartTurn: null, blockedCategories: [], scoreHistory: [], chaosModeActive: false, chaosModeRemaining: 0, chaosCardGatePending: false, songCategories: [], songPlaylistIds: {}, songPools: {} };
+        let state = { db: [], categories: {}, catNames: [], teams: [], currentTurn: null, activeCat: null, activeQ: null, challenges: [], picPools: { facil: [], intermedia: [], dificil: [] }, charadasPools: { facil: [], intermedia: [], dificil: [] }, tabuPools: {}, tabuCategories: new Set(["Aleatoria"]), teamPools: {}, multiplePool: [], acertijosPool: [], stopCategories: [], stopLetters: [], history: [], undoStack: [], gameLog: [], lastScoreUpdated: null, lastScoreDelta: null, roundRespondedCount: 0, roundStartTurn: null, blockedCategories: [], scoreHistory: [], chaosModeActive: false, chaosModeRemaining: 0, chaosCardGatePending: false, songCategories: [], songPlaylistIds: {}, songPools: {}, wildcardLog: [] };
 
         // --- PERSISTENCIA, CACHÉ E HISTORIAL -------------------------------
         const STORAGE_KEYS = {
@@ -5097,16 +5114,17 @@
          */
         const CHAOS_CARDS = [
             { id:'robo',        icon:'bolt',                 title:'Robo Relámpago',        desc:'Roba el 25% de los puntos del líder actual (mínimo 10 pts).' },
-            { id:'racha',       icon:'local_fire_department', title:'Intercambio de Racha',  desc:'Elige un equipo e intercambia tu racha y multiplicador con el suyo.', needsTarget:true, targetLabel:'racha' },
+            { id:'racha',       icon:'local_fire_department', title:'Racha Robada',          desc:'Le robas la racha actual a un rival (y su escudo, si tenía). La tuya se reinicia a 0.', needsTarget:true, targetLabel:'racha' },
             { id:'prohibida',   icon:'block',                title:'Categoría Prohibida',   desc:'Bloquea una categoría del tablero por el resto de la partida.', needsCategory:true },
             { id:'doblefilo',   icon:'swords',               title:'Doble Filo',            desc:'Tu próxima respuesta vale el triple si aciertas... o el doble en contra si fallas.' },
             { id:'maldicion',   icon:'skull',                title:'Maldición del Líder',   desc:'El líder actual pierde los puntos ganados en sus últimas 3 rondas: se reparten entre el resto de equipos.' },
             { id:'segunda',     icon:'redeem',               title:'Segunda Oportunidad',   desc:'Recupera el uso de un comodín ya gastado (Doble o Nada o ±50).' },
+            { id:'prestado',    icon:'theater_comedy',       title:'Comodín Prestado',      desc:'Usa el Doble o Nada o el ±50 de un rival en tu próxima respuesta, sin que a ellos les cueste el suyo.', needsTarget:true, needsChoice:true, targetLabel:'comodín' },
             { id:'espejo',      icon:'flip',                 title:'Espejo',                desc:'Copia el último comodín (normal o del Caos) que jugó otro equipo.' },
             { id:'intercambio', icon:'sync_alt',             title:'Intercambio de Puntajes',desc:'Elige un equipo y cruza tu puntaje total con el suyo.', needsTarget:true, targetLabel:'puntaje' },
             { id:'nada',        icon:'visibility_off',       title:'Nada pasó...',          desc:'La carta no tiene ningún efecto. Solo drama.' }
         ];
-        let chaosState = { teamIndex: null, cards: [], revealedIndex: null, applied: false, isModeAuto: false, onClose: null };
+        let chaosState = { teamIndex: null, cards: [], revealedIndex: null, applied: false, isModeAuto: false, onClose: null, pendingTarget: null };
 
         function chaosPickThree() {
             const pool = [...CHAOS_CARDS];
@@ -5119,7 +5137,7 @@
             if(state.currentTurn === null) { showToast('Asigna un turno antes de jugar el Caos.', 'warn'); return; }
             const t = state.teams[state.currentTurn];
             if(t.usedCaos) { showToast(`${teamLabel(state.currentTurn)} ya usó su Comodín del Caos.`, 'warn'); return; }
-            chaosState = { teamIndex: state.currentTurn, cards: chaosPickThree(), revealedIndex: null, applied: false, isModeAuto: false, onClose: null };
+            chaosState = { teamIndex: state.currentTurn, cards: chaosPickThree(), revealedIndex: null, applied: false, isModeAuto: false, onClose: null, pendingTarget: null };
             renderChaosModal();
             document.getElementById('chaosModal').style.display = 'block';
             playSoundEffect('transition');
@@ -5136,7 +5154,7 @@
         // arrancar recién entonces el cronómetro que estaba esperando.
         function triggerAutoChaosCard(teamIndex, onClose) {
             if(document.getElementById('chaosModal').style.display === 'block') { if(onClose) onClose(); return; } // evita solapar modales
-            chaosState = { teamIndex, cards: chaosPickThree(), revealedIndex: null, applied: false, isModeAuto: true, onClose: onClose || null };
+            chaosState = { teamIndex, cards: chaosPickThree(), revealedIndex: null, applied: false, isModeAuto: true, onClose: onClose || null, pendingTarget: null };
             renderChaosModal();
             document.getElementById('chaosModal').style.display = 'block';
             playSoundEffect('transition');
@@ -5144,7 +5162,11 @@
         }
 
         function toggleChaosMode() {
-            if(state.currentTurn === null) { showToast('Inicia la partida para activar el Modo Caos.', 'warn'); return; }
+            if(state.currentTurn === null) {
+                showToast('Inicia la partida para activar el Modo Caos.', 'warn');
+                updateChaosModeButton(); // resincroniza el interruptor visual (el clic ya lo había marcado)
+                return;
+            }
             if(state.chaosModeActive) { deactivateChaosMode(false); return; }
             state.chaosModeActive = true;
             state.chaosModeRemaining = state.teams.length;
@@ -5159,14 +5181,17 @@
             if(auto) showToast('🌀 El Modo Caos terminó su ronda.', 'info', 3000);
             persistNow(true);
         }
-        // Sincroniza el botón de esquina y el tinte morado de pantalla
-        // completa con state.chaosModeActive — tanto en esta ventana
-        // (moderador) como en el proyector, al que se avisa por broadcast.
+        // Sincroniza el interruptor de esquina y el tinte morado de
+        // pantalla completa con state.chaosModeActive — tanto en esta
+        // ventana (moderador) como en el proyector, al que se avisa por
+        // broadcast.
         function updateChaosModeButton() {
-            const btn = document.getElementById('chaosModeToggle');
-            if(btn) {
-                btn.classList.toggle('active', state.chaosModeActive);
-                btn.title = state.chaosModeActive ? `Modo Caos activo (quedan ${state.chaosModeRemaining} turnos)` : 'Modo Caos: cada equipo saca una carta gratis al empezar su turno, durante una ronda completa.';
+            const wrap = document.getElementById('chaosModeToggle');
+            const checkbox = document.getElementById('chaosModeCheckbox');
+            if(checkbox) checkbox.checked = state.chaosModeActive;
+            if(wrap) {
+                wrap.classList.toggle('active', state.chaosModeActive);
+                wrap.title = state.chaosModeActive ? `Modo Caos activo (quedan ${state.chaosModeRemaining} turnos)` : 'Modo Caos: cada equipo saca una carta gratis al empezar su turno, durante una ronda completa.';
             }
             document.body.classList.toggle('chaos-mode-active', state.chaosModeActive);
             Presentation.broadcast('CHAOS_MODE_TOGGLE', { active: state.chaosModeActive });
@@ -5216,27 +5241,37 @@
             applyBtn.style.display = 'none'; applyBtn.textContent = 'Aplicar'; applyBtn.onclick = applyChaosGeneric;
 
             if(card.needsTarget) {
-                renderChaosTargetPanel();
+                renderChaosTargetPanel(!!card.needsChoice);
                 document.getElementById('chaosTargetArea').style.display = 'block';
             } else if(card.needsCategory) {
                 renderChaosCategoryPanel();
                 document.getElementById('chaosCategoryArea').style.display = 'block';
             } else if(card.id === 'segunda' && t.usedDoN && t.usedFifty) {
+                setChaosChoiceLabel('¿Cuál comodín recuperar?');
                 document.getElementById('chaosChoiceArea').style.display = 'block';
             } else {
                 applyBtn.style.display = 'inline-block';
             }
         }
 
+        function setChaosChoiceLabel(text) {
+            const label = document.querySelector('#chaosChoiceArea p');
+            if(label) label.textContent = text;
+        }
+
         // Panel de selección de rival: muestra puntos Y racha de cada
         // equipo (excepto el que juega la carta) para que la elección de
-        // "Intercambio de Racha" / "Intercambio de Puntajes" sea informada.
-        function renderChaosTargetPanel() {
+        // "Racha Robada" / "Intercambio de Puntajes" sea informada.
+        // twoStep=true (Comodín Prestado): elegir equipo es solo el primer
+        // paso — tras el clic se muestra el panel de elegir qué comodín
+        // pedir prestado, en vez de aplicar la carta de inmediato.
+        function renderChaosTargetPanel(twoStep) {
             const box = document.getElementById('chaosTargetGrid');
             box.innerHTML = state.teams.map((t, i) => {
                 if(i === chaosState.teamIndex) return '';
                 const mult = getStreakMultiplier(i);
-                return `<button class="btn-rebound" style="flex-direction:column; align-items:center; gap:4px; height:auto; padding:10px 16px;" onclick="applyChaosWithTarget(${i})">
+                const handler = twoStep ? `selectChaosTargetThenChoice(${i})` : `applyChaosWithTarget(${i})`;
+                return `<button class="btn-rebound" style="flex-direction:column; align-items:center; gap:4px; height:auto; padding:10px 16px;" onclick="${handler}">
                     <span><span style="font-family:'Apple Color Emoji',sans-serif;">${t.emoji}</span> ${t.id}. ${t.countryName}</span>
                     <span style="font-size:0.75rem; color:var(--text-muted); font-weight:600;">${t.score} pts · 🔥${t.streak || 0}${mult > 1 ? ' (x' + mult + ')' : ''}</span>
                 </button>`;
@@ -5253,7 +5288,15 @@
         function applyChaosGeneric() { applyChaosCard(chaosState.cards[chaosState.revealedIndex], {}); }
         function applyChaosWithTarget(targetIndex) { applyChaosCard(chaosState.cards[chaosState.revealedIndex], { targetIndex }); }
         function applyChaosCategory(catName) { applyChaosCard(chaosState.cards[chaosState.revealedIndex], { category: catName }); }
-        function applyChaosChoice(choice) { applyChaosCard(chaosState.cards[chaosState.revealedIndex], { choice }); }
+        function applyChaosChoice(choice) { applyChaosCard(chaosState.cards[chaosState.revealedIndex], { choice, targetIndex: chaosState.pendingTarget }); }
+        // Paso 1→2 del "Comodín Prestado": guarda el rival elegido y pasa a
+        // preguntar cuál de sus dos comodines (Doble o Nada / ±50) pedir.
+        function selectChaosTargetThenChoice(targetIndex) {
+            chaosState.pendingTarget = targetIndex;
+            document.getElementById('chaosTargetArea').style.display = 'none';
+            setChaosChoiceLabel(`¿Cuál comodín de ${teamLabel(targetIndex)} usas prestado?`);
+            document.getElementById('chaosChoiceArea').style.display = 'block';
+        }
 
         function applyChaosCard(card, extra) {
             if(chaosState.applied) return;
@@ -5283,10 +5326,11 @@
                 }
                 case 'racha': {
                     const tgt = state.teams[extra.targetIndex];
-                    const tmpStreak = t.streak, tmpMax = t.maxStreak, tmpShield = t.shield;
-                    t.streak = tgt.streak; t.shield = tgt.shield; if(t.streak > t.maxStreak) t.maxStreak = t.streak;
-                    tgt.streak = tmpStreak; tgt.shield = tmpShield; if(tgt.streak > tgt.maxStreak) tgt.maxStreak = tgt.streak;
-                    resultText += ` — Intercambió racha con ${teamLabel(extra.targetIndex)} (ahora 🔥${t.streak} ↔ 🔥${tgt.streak})`;
+                    const stolenStreak = tgt.streak, stolenShield = tgt.shield;
+                    t.streak = stolenStreak; t.shield = stolenShield;
+                    if(t.streak > t.maxStreak) t.maxStreak = t.streak;
+                    tgt.streak = 0; tgt.shield = false;
+                    resultText += ` — Robó la racha de ${teamLabel(extra.targetIndex)} (ahora 🔥${t.streak}${t.shield ? ' 🛡️' : ''}); la suya se reinició a 0`;
                     break;
                 }
                 case 'prohibida': {
@@ -5308,17 +5352,46 @@
                     else { resultText += ' — No tenía comodines gastados que recuperar'; }
                     break;
                 }
+                case 'prestado': {
+                    // Activa el comodín elegido para la PRÓXIMA respuesta del
+                    // equipo, saltándose por completo el chequeo de "ya
+                    // usado" (por eso hace falta pedirlo prestado) y sin
+                    // tocar usedDoN/usedFifty de nadie — ni del que lo pide
+                    // ni del rival "prestamista", que conserva el suyo intacto.
+                    const wildcardChoice = extra.choice;
+                    const targetIdx = extra.targetIndex;
+                    resetModifiers();
+                    if(wildcardChoice === 'don') config.isDoubleOrNothing = true;
+                    else if(wildcardChoice === 'fifty') config.isFiftyFifty = true;
+                    updateModifierButtons();
+                    resultText += ` — Pidió prestado el ${wildcardChoice === 'don' ? 'Doble o Nada' : '±50'} de ${teamLabel(targetIdx)} para su próxima respuesta (sin gastarle el suyo)`;
+                    break;
+                }
                 case 'espejo': {
-                    let lastCard = null, lastTeamIdx = null;
-                    state.teams.forEach((tt, i) => { if(i !== teamIdx && tt.lastWildcard) { lastCard = tt.lastWildcard; lastTeamIdx = i; } });
-                    const original = lastCard ? CHAOS_CARDS.find(c => c.id === lastCard) : null;
-                    if(original && !original.needsTarget && !original.needsCategory && original.id !== 'espejo') {
-                        resultText += ` — Copió "${original.title}" de ${teamLabel(lastTeamIdx)}`;
-                        applyChaosEffectOnly(original, teamIdx, {});
-                    } else if(original) {
-                        resultText += ` — "${original.title}" de ${teamLabel(lastTeamIdx)} no se pudo copiar automáticamente`;
-                    } else {
+                    const NORMAL_WILDCARD_LABELS = { '2x': 'Puntaje doble (2×)', don: 'Doble o Nada', fifty: '±50' };
+                    let sourceEntry = null;
+                    for(let i = state.wildcardLog.length - 1; i >= 0; i--) {
+                        if(state.wildcardLog[i].teamIndex !== teamIdx) { sourceEntry = state.wildcardLog[i]; break; }
+                    }
+                    if(!sourceEntry) {
                         resultText += ' — Nadie ha jugado un comodín todavía, no pasó nada';
+                    } else if(NORMAL_WILDCARD_LABELS[sourceEntry.kind]) {
+                        resetModifiers();
+                        if(sourceEntry.kind === '2x') config.isDouble = true;
+                        else if(sourceEntry.kind === 'don') config.isDoubleOrNothing = true;
+                        else config.isFiftyFifty = true;
+                        updateModifierButtons();
+                        resultText += ` — Copió "${NORMAL_WILDCARD_LABELS[sourceEntry.kind]}" de ${teamLabel(sourceEntry.teamIndex)} para su próxima respuesta`;
+                    } else {
+                        const original = CHAOS_CARDS.find(c => c.id === sourceEntry.kind);
+                        if(original && !original.needsTarget && !original.needsCategory && original.id !== 'espejo') {
+                            resultText += ` — Copió "${original.title}" de ${teamLabel(sourceEntry.teamIndex)}`;
+                            applyChaosEffectOnly(original, teamIdx, {});
+                        } else if(original) {
+                            resultText += ` — "${original.title}" de ${teamLabel(sourceEntry.teamIndex)} no se pudo copiar automáticamente`;
+                        } else {
+                            resultText += ' — No se encontró el último comodín jugado';
+                        }
                     }
                     break;
                 }
@@ -5339,6 +5412,7 @@
             }
 
             t.lastWildcard = card.id;
+            logWildcardUse(teamIdx, card.id);
             chaosState.applied = true;
             recordScoreSnapshot(isAuto ? '🌪️ ' + card.title : '🌀 ' + card.title);
             recordHistory({ type: 'wildcard', title: isAuto ? 'Modo Caos' : 'Comodín del Caos', detail: resultText });
@@ -6119,9 +6193,17 @@
         function showAppInfo() { document.getElementById('infoModal').style.display = 'block'; }
 
         function setJugadores(num, btn) { config.teamsCount = num; document.querySelectorAll('.btn-jugador').forEach(b => b.classList.remove('active')); btn.classList.add('active'); }
-        function toggleDoublePoints() { config.isDouble = !config.isDouble; if (config.isDouble) { config.isDoubleOrNothing = config.isFiftyFifty = false; } updateModifierButtons(); }
-        function toggleDoubleOrNothing() { let t = state.teams[state.currentTurn]; if(t?.usedDoN && !config.isDoubleOrNothing) { showToast("Este equipo ya usó Doble o Nada.", "warn"); return; } config.isDoubleOrNothing = !config.isDoubleOrNothing; if(config.isDoubleOrNothing) { config.isDouble = config.isFiftyFifty = false; } updateModifierButtons(); }
-        function toggleFiftyFifty() { let t = state.teams[state.currentTurn]; if(t?.usedFifty && !config.isFiftyFifty) { showToast("Este equipo ya usó +50/-50.", "warn"); return; } config.isFiftyFifty = !config.isFiftyFifty; if(config.isFiftyFifty) { config.isDouble = config.isDoubleOrNothing = false; } updateModifierButtons(); }
+        // Registro cronológico de comodines usados por cualquier equipo
+        // (normales: 2x/don/fifty, o cartas del Caos por su id) — lo usa
+        // la carta "Espejo" para copiar el ÚLTIMO comodín jugado por OTRO
+        // equipo, sea del tipo que sea.
+        function logWildcardUse(teamIndex, kind) {
+            state.wildcardLog.push({ teamIndex, kind, ts: Date.now() });
+            if(state.wildcardLog.length > 30) state.wildcardLog.shift();
+        }
+        function toggleDoublePoints() { config.isDouble = !config.isDouble; if (config.isDouble) { config.isDoubleOrNothing = config.isFiftyFifty = false; logWildcardUse(state.currentTurn, '2x'); } updateModifierButtons(); }
+        function toggleDoubleOrNothing() { let t = state.teams[state.currentTurn]; if(t?.usedDoN && !config.isDoubleOrNothing) { showToast("Este equipo ya usó Doble o Nada.", "warn"); return; } config.isDoubleOrNothing = !config.isDoubleOrNothing; if(config.isDoubleOrNothing) { config.isDouble = config.isFiftyFifty = false; logWildcardUse(state.currentTurn, 'don'); } updateModifierButtons(); }
+        function toggleFiftyFifty() { let t = state.teams[state.currentTurn]; if(t?.usedFifty && !config.isFiftyFifty) { showToast("Este equipo ya usó +50/-50.", "warn"); return; } config.isFiftyFifty = !config.isFiftyFifty; if(config.isFiftyFifty) { config.isDouble = config.isDoubleOrNothing = false; logWildcardUse(state.currentTurn, 'fifty'); } updateModifierButtons(); }
         function resetModifiers() { config.isDouble = config.isDoubleOrNothing = config.isFiftyFifty = false; updateModifierButtons(); }
         function resetWildcards() {
             document.querySelectorAll('.toast-confirm').forEach(t => t.remove());
