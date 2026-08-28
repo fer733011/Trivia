@@ -1369,7 +1369,7 @@
     <div id="streakBanner"><span id="streakBannerText"></span></div>
 
     <div style="position: fixed; bottom: 12px; right: 24px; font-size: 0.75rem; color: var(--text-muted); opacity: 0.8; font-weight: 400; letter-spacing: 0.3px; z-index: 5000;">
-        © 2026 Fernando Ros • <span onclick="document.getElementById('changelogModal').style.display='block'" style="cursor:pointer; text-decoration:underline; font-weight:500; color:var(--secondary);">Versión 7.9.0</span>
+        © 2026 Fernando Ros • <span onclick="document.getElementById('changelogModal').style.display='block'" style="cursor:pointer; text-decoration:underline; font-weight:500; color:var(--secondary);">Versión 7.9.1</span>
     </div>
 
     <!-- Indicador LED discreto de "Modo fácil" — solo visible para el
@@ -1415,6 +1415,13 @@
             <button onclick="document.getElementById('changelogModal').style.display='none'" style="background:none; border:none; color:var(--text-main); font-size:1.6rem; padding:0; width:auto;">×</button>
         </div>
         <div>
+            <div class="changelog-version">
+                <h4><strong>v7.9.1 – Racha Robada y Comodín Robado con más mordiente</strong></h4>
+                <ul>
+                    <li><strong>Racha Robada 🔥 ahora suma en vez de reemplazar:</strong> el equipo que juega la carta SUMA a su propia racha la del rival elegido (y hereda su escudo si tenía), en vez de solo copiarla. La racha del rival se reinicia a 0 igual que antes.</li>
+                    <li><strong>"Comodín Prestado" pasa a llamarse Comodín Robado 🎭:</strong> ahora es un robo de verdad — el rival elegido PIERDE el comodín (Doble o Nada o ±50) que se le quita, no solo lo presta. El equipo que jugó la carta lo usa obligatoriamente en su siguiente respuesta.</li>
+                </ul>
+            </div>
             <div class="changelog-version">
                 <h4><strong>v7.9.0 – Nueva carta del Caos, Racha Robada, Espejo mejorado e interruptor real</strong></h4>
                 <ul>
@@ -1678,7 +1685,7 @@
     
    <div id="infoModal" style="display: none; position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); background: var(--surface); padding: 28px; border-radius: 20px; border: 1px solid var(--border-color); animation: modalPop 0.22s cubic-bezier(0.4,0,0.2,1); z-index: 10000; width: 90%; max-width: 340px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
     <p style="color: var(--primary); font-weight: 700; margin-bottom: 6px; font-size: 1.5rem;">Trivia Cultural</p>
-    <p style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 20px;">Versión 7.9.0</p>
+    <p style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 20px;">Versión 7.9.1</p>
     <p style="margin-bottom: 8px; font-size: 0.95rem; font-weight: 600;">Desarrollado por Fernando Ros</p>
     <p style="margin-bottom: 20px; font-size: 0.9rem;">
         <a href="mailto:rosfernando@gmail.com" style="color: var(--primary); text-decoration: none; display:inline-flex; align-items:center; gap:5px;">
@@ -5114,12 +5121,12 @@
          */
         const CHAOS_CARDS = [
             { id:'robo',        icon:'bolt',                 title:'Robo Relámpago',        desc:'Roba el 25% de los puntos del líder actual (mínimo 10 pts).' },
-            { id:'racha',       icon:'local_fire_department', title:'Racha Robada',          desc:'Le robas la racha actual a un rival (y su escudo, si tenía). La tuya se reinicia a 0.', needsTarget:true, targetLabel:'racha' },
+            { id:'racha',       icon:'local_fire_department', title:'Racha Robada',          desc:'Sumas a tu racha la racha actual de un rival (y heredas su escudo, si tenía). La de él se reinicia a 0.', needsTarget:true, targetLabel:'racha' },
             { id:'prohibida',   icon:'block',                title:'Categoría Prohibida',   desc:'Bloquea una categoría del tablero por el resto de la partida.', needsCategory:true },
             { id:'doblefilo',   icon:'swords',               title:'Doble Filo',            desc:'Tu próxima respuesta vale el triple si aciertas... o el doble en contra si fallas.' },
             { id:'maldicion',   icon:'skull',                title:'Maldición del Líder',   desc:'El líder actual pierde los puntos ganados en sus últimas 3 rondas: se reparten entre el resto de equipos.' },
             { id:'segunda',     icon:'redeem',               title:'Segunda Oportunidad',   desc:'Recupera el uso de un comodín ya gastado (Doble o Nada o ±50).' },
-            { id:'prestado',    icon:'theater_comedy',       title:'Comodín Prestado',      desc:'Usa el Doble o Nada o el ±50 de un rival en tu próxima respuesta, sin que a ellos les cueste el suyo.', needsTarget:true, needsChoice:true, targetLabel:'comodín' },
+            { id:'prestado',    icon:'theater_comedy',       title:'Comodín Robado',        desc:'Robas el Doble o Nada o el ±50 de un rival: lo usas tú en tu próxima respuesta y él lo pierde.', needsTarget:true, needsChoice:true, targetLabel:'comodín' },
             { id:'espejo',      icon:'flip',                 title:'Espejo',                desc:'Copia el último comodín (normal o del Caos) que jugó otro equipo.' },
             { id:'intercambio', icon:'sync_alt',             title:'Intercambio de Puntajes',desc:'Elige un equipo y cruza tu puntaje total con el suyo.', needsTarget:true, targetLabel:'puntaje' },
             { id:'nada',        icon:'visibility_off',       title:'Nada pasó...',          desc:'La carta no tiene ningún efecto. Solo drama.' }
@@ -5327,10 +5334,11 @@
                 case 'racha': {
                     const tgt = state.teams[extra.targetIndex];
                     const stolenStreak = tgt.streak, stolenShield = tgt.shield;
-                    t.streak = stolenStreak; t.shield = stolenShield;
+                    t.streak = (t.streak || 0) + stolenStreak;
+                    if(stolenShield) t.shield = true;
                     if(t.streak > t.maxStreak) t.maxStreak = t.streak;
                     tgt.streak = 0; tgt.shield = false;
-                    resultText += ` — Robó la racha de ${teamLabel(extra.targetIndex)} (ahora 🔥${t.streak}${t.shield ? ' 🛡️' : ''}); la suya se reinició a 0`;
+                    resultText += ` — Sumó la racha de ${teamLabel(extra.targetIndex)} a la suya (ahora 🔥${t.streak}${t.shield ? ' 🛡️' : ''}); la de ${teamLabel(extra.targetIndex)} se reinició a 0`;
                     break;
                 }
                 case 'prohibida': {
@@ -5353,18 +5361,20 @@
                     break;
                 }
                 case 'prestado': {
-                    // Activa el comodín elegido para la PRÓXIMA respuesta del
-                    // equipo, saltándose por completo el chequeo de "ya
-                    // usado" (por eso hace falta pedirlo prestado) y sin
-                    // tocar usedDoN/usedFifty de nadie — ni del que lo pide
-                    // ni del rival "prestamista", que conserva el suyo intacto.
+                    // Roba el comodín elegido del equipo rival: queda armado
+                    // para la PRÓXIMA respuesta del equipo que juega la
+                    // carta (por eso se activa de inmediato, igual que
+                    // antes), pero ahora el rival lo pierde de verdad — se
+                    // le marca como usado, igual que si lo hubiera gastado
+                    // él mismo.
                     const wildcardChoice = extra.choice;
                     const targetIdx = extra.targetIndex;
+                    const targetTeam = state.teams[targetIdx];
                     resetModifiers();
-                    if(wildcardChoice === 'don') config.isDoubleOrNothing = true;
-                    else if(wildcardChoice === 'fifty') config.isFiftyFifty = true;
+                    if(wildcardChoice === 'don') { config.isDoubleOrNothing = true; targetTeam.usedDoN = true; }
+                    else if(wildcardChoice === 'fifty') { config.isFiftyFifty = true; targetTeam.usedFifty = true; }
                     updateModifierButtons();
-                    resultText += ` — Pidió prestado el ${wildcardChoice === 'don' ? 'Doble o Nada' : '±50'} de ${teamLabel(targetIdx)} para su próxima respuesta (sin gastarle el suyo)`;
+                    resultText += ` — Robó el ${wildcardChoice === 'don' ? 'Doble o Nada' : '±50'} de ${teamLabel(targetIdx)}, que ya no podrá usarlo. Se activa en la próxima respuesta de ${teamLabel(teamIdx)}.`;
                     break;
                 }
                 case 'espejo': {
