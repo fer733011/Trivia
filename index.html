@@ -1376,7 +1376,7 @@
          moderador (nunca en el proyector), oculto por defecto y activado/
          desactivado por updateEasyModeIndicator(). Deliberadamente pequeño
          y en una esquina propia para no competir con el resto de la UI. -->
-    <div id="easyModeIndicator" style="display:none; align-items:center; gap:6px; position: fixed; top: 12px; left: 16px; font-size: 0.72rem; color: var(--text-muted); opacity: 0.85; font-weight: 500; letter-spacing: 0.3px; z-index: 9500; background: rgba(0,0,0,0.0);" title="Modo fácil activado: solo preguntas marcadas como Fácil en la columna D">
+    <div id="easyModeIndicator" style="display:none; align-items:center; gap:6px; position: fixed; top: 12px; left: 16px; font-size: 0.72rem; color: var(--text-muted); opacity: 0.85; font-weight: 500; letter-spacing: 0.3px; z-index: 9500; background: rgba(0,0,0,0.0);" title="Modo fácil activado: solo preguntas marcadas como Fácil (hoja Preguntas y hoja Opción múltiple)">
         <span style="width:8px; height:8px; border-radius:50%; background:#30d158; box-shadow:0 0 6px rgba(48,209,88,0.75); display:inline-block; animation: easyLedPulse 2.2s ease-in-out infinite;"></span> Modo fácil
     </div>
 
@@ -1416,10 +1416,14 @@
         </div>
         <div>
             <div class="changelog-version">
-                <h4><strong>v7.9.1 – Racha Robada y Comodín Robado con más mordiente</strong></h4>
+                <h4><strong>v7.9.1 – Racha Robada, Comodín Robado y Modo fácil en vivo</strong></h4>
                 <ul>
+                    <li><strong>Modo fácil ahora se puede activar/desactivar EN CUALQUIER MOMENTO de la partida:</strong> antes el toggle solo se aplicaba al iniciar una partida nueva; ahora el filtrado es dinámico y el cambio se nota desde la siguiente pregunta que se reparta (tablero de "Preguntas" y Opción Múltiple), sin perder progreso ni tener que reiniciar. Ideal para subir o bajar la dificultad sobre la marcha según cómo va el grupo.</li>
                     <li><strong>Racha Robada 🔥 ahora suma en vez de reemplazar:</strong> el equipo que juega la carta SUMA a su propia racha la del rival elegido (y hereda su escudo si tenía), en vez de solo copiarla. La racha del rival se reinicia a 0 igual que antes.</li>
                     <li><strong>"Comodín Prestado" pasa a llamarse Comodín Robado 🎭:</strong> ahora es un robo de verdad — el rival elegido PIERDE el comodín (Doble o Nada o ±50) que se le quita, no solo lo presta. El equipo que jugó la carta lo usa obligatoriamente en su siguiente respuesta.</li>
+                    <li><strong>Modo fácil ahora también filtra Opción Múltiple:</strong> antes solo afectaba al tablero de "Preguntas"; ahora también lee la columna de dificultad de la hoja "Opción múltiple" (columna "Dificultad", detectada por su nombre de encabezado) y excluye las preguntas que no digan "Fácil" o que tengan esa celda vacía.</li>
+                    <li><strong>Nuevo botón "Forzar recarga desde Google Sheets"</strong> en Ajustes técnicos: los datos del Sheet se cachean hasta 24h en el navegador, así que si editas la hoja mientras la pestaña del juego sigue abierta, los cambios no se ven reflejados hasta recargar la página o usar este botón. Se necesita además iniciar "Nueva partida" para que los datos actualizados se apliquen.</li>
+                    <li><strong>Corregido: el toggle de Modo fácil podía "no pegar" al recargar la página.</strong> El guardado automático tenía un freno de 1.2s para no escribir demasiado seguido; si se cambiaba el interruptor y se recargaba el juego casi de inmediato, ese cambio podía perderse y la partida autoguardada volvía a traer el valor anterior. Ahora el cambio de Modo fácil (y el del dado de categoría) se guarda de inmediato, sin ese freno.</li>
                 </ul>
             </div>
             <div class="changelog-version">
@@ -1833,6 +1837,12 @@
                         <span class="material-symbols-outlined" style="font-size:1.1rem;">table_chart</span> Abrir Google Sheets del juego
                     </a>
                 </div>
+                <div style="margin-bottom:10px;">
+                    <button type="button" onclick="forceReloadSheetData()" style="width:auto; background:rgba(128,128,128,0.15); border:1px solid var(--border-color); border-radius:8px; padding:8px 12px; font-size:0.82rem; font-weight:600; color:var(--text-main); display:inline-flex; align-items:center; gap:6px;">
+                        <span class="material-symbols-outlined" style="font-size:1rem;">refresh</span> Forzar recarga desde Google Sheets
+                    </button>
+                    <p style="font-size:0.68rem; color:var(--text-muted); line-height:1.4; margin:6px 0 0;">Usa esto si acabas de editar el Sheet (por ejemplo, la columna Dificultad) y el juego no refleja el cambio: los datos se cachean hasta 24h y no se recargan solos mientras la pestaña sigue abierta. Después de recargar, inicia <strong>Nueva partida</strong> para que se aplique.</p>
+                </div>
                 <div style="border-top:1px solid var(--border-color); padding-top:10px;">
                     <p style="font-size:0.78rem; color:var(--text-muted); margin-bottom:8px; font-weight:600;">📂 Sin internet — cargar Excel desde el PC</p>
                     <p style="font-size:0.72rem; color:var(--text-muted); margin-bottom:8px; line-height:1.4;">Exporta el Google Sheet como <strong>.xlsx</strong> y cárgalo aquí. Se usará en lugar de la conexión online.</p>
@@ -1848,19 +1858,19 @@
                 <h4 style="text-align:left; font-size:0.9rem; color: var(--secondary); margin-bottom:8px;">Dificultad de las preguntas</h4>
                 <div class="toggle-row" style="margin-bottom:6px;">
                     <label class="switch">
-                        <input type="checkbox" id="setEasyMode" onchange="config.easyMode=this.checked; persistNow(); updateEasyModeIndicator();">
+                        <input type="checkbox" id="setEasyMode" onchange="config.easyMode=this.checked; persistNow(true); updateEasyModeIndicator(); refreshEasyModeLive();">
                         <span class="slider"></span>
                     </label>
                     <span>Modo fácil</span>
                 </div>
-                <p style="font-size:0.72rem; color:var(--text-muted); line-height:1.4; margin:0;">Usa solo las preguntas de la hoja "Preguntas" cuya <strong>columna D</strong> diga "Fácil". Las demás quedan excluidas del tablero (categorías sin ninguna pregunta fácil aparecerán agotadas). Se aplica al iniciar la partida.</p>
+                <p style="font-size:0.72rem; color:var(--text-muted); line-height:1.4; margin:0;">Filtra la hoja "Preguntas" (columna D) y la hoja "Opción múltiple" (columna "Dificultad") para usar solo preguntas marcadas "Fácil"; las demás no salen mientras esté activo. <strong>Se puede activar o desactivar en cualquier momento de la partida</strong> — el efecto se nota desde la siguiente pregunta que se reparta, sin perder progreso ni reiniciar nada.</p>
             </div>
 
             <div style="background: rgba(128,128,128,0.1); padding: 12px; border-radius: 12px;">
                 <h4 style="text-align:left; font-size:0.9rem; color: var(--secondary); margin-bottom:8px;">Tablero</h4>
                 <div class="toggle-row" style="margin-bottom:6px;">
                     <label class="switch">
-                        <input type="checkbox" id="setDiceEnabled" checked onchange="config.diceEnabled=this.checked; persistNow(); updateDiceVisibility(); Presentation.broadcast('DICE_TOGGLE', { diceEnabled: config.diceEnabled });">
+                        <input type="checkbox" id="setDiceEnabled" checked onchange="config.diceEnabled=this.checked; persistNow(true); updateDiceVisibility(); Presentation.broadcast('DICE_TOGGLE', { diceEnabled: config.diceEnabled });">
                         <span class="slider"></span>
                     </label>
                     <span>Dado de categoría aleatoria</span>
@@ -3669,6 +3679,46 @@
         let config = { teamsCount: 3, ptsCorrect: 10, ptsRebound: 5, ptsChallengeMax: 50, ptsMultiple: 10, allowDouble: true, allowFifty: true, allowDoN: true, allowRebounds: true, isDouble: false, isDoubleOrNothing: false, isFiftyFifty: false, timeQuestion: 30, timeAcertijos: 90, timeMultiple: 30, timePictionary: 60, timeTabu: 60, timeStop: 120, timeCharadas: 60, ptsPicFacil: 2, ptsPicIntermedia: 3, ptsPicDificil: 10, ptsChaFacil: 2, ptsChaIntermedia: 3, ptsChaDificil: 10, ptsTabu: 5, ptsStopUnique: 10, ptsStopRepeated: 5, soundEnabled: true, streakThreshold: 3, streakMultiplier: 1.5, streakStep: 2, streakIncrement: 0.5, streakShieldAt: 6, easyMode: false, diceEnabled: false, ytApiKey: getSavedYtApiKey(), ptsCancionMax: 20, ptsCancionMin: 10, timeCancionMax: 30, timeCancionRound: 180, cancionStartOffset: 35 };
         let state = { db: [], categories: {}, catNames: [], teams: [], currentTurn: null, activeCat: null, activeQ: null, challenges: [], picPools: { facil: [], intermedia: [], dificil: [] }, charadasPools: { facil: [], intermedia: [], dificil: [] }, tabuPools: {}, tabuCategories: new Set(["Aleatoria"]), teamPools: {}, multiplePool: [], acertijosPool: [], stopCategories: [], stopLetters: [], history: [], undoStack: [], gameLog: [], lastScoreUpdated: null, lastScoreDelta: null, roundRespondedCount: 0, roundStartTurn: null, blockedCategories: [], scoreHistory: [], chaosModeActive: false, chaosModeRemaining: 0, chaosCardGatePending: false, songCategories: [], songPlaylistIds: {}, songPools: {}, wildcardLog: [] };
 
+        /**
+         * ════════════════════════════════════════════════════════════════
+         * MODO FÁCIL — filtrado EN VIVO
+         * ════════════════════════════════════════════════════════════════
+         * Los pools de "Preguntas" (state.categories) y "Opción múltiple"
+         * (state.multiplePool) SIEMPRE contienen todas las preguntas de
+         * todas las dificultades — nunca se recortan al cargar los datos.
+         * El filtro se aplica en el momento exacto de SACAR una pregunta,
+         * consultando el valor actual de config.easyMode, de modo que el
+         * moderador puede activar o desactivar el toggle en cualquier
+         * punto de la partida y el efecto se nota en la SIGUIENTE
+         * pregunta que se reparta, sin perder progreso ni reiniciar nada.
+         */
+        // Una pregunta del tablero (state.categories) es "jugable" ahora
+        // mismo si no se ha usado y, si Modo fácil está activo, si su
+        // celda de dificultad contiene "Fácil".
+        function isQuestionPlayable(qObj) {
+            if(!qObj || qObj.used) return false;
+            if(!config.easyMode) return true;
+            return (qObj.difficulty || '').includes('facil');
+        }
+        // Cuántas preguntas de Opción Múltiple se pueden sacar AHORA MISMO
+        // (respetando Modo fácil en vivo) — usado para el contador
+        // "X disponibles" de la tarjeta destacada del tablero.
+        function getAvailableMultipleCount() {
+            return state.multiplePool.filter(q => !q.used && (!config.easyMode || (q.difficulty || '').includes('facil'))).length;
+        }
+        // Saca al azar una pregunta de Opción Múltiple disponible AHORA
+        // MISMO (respetando Modo fácil en vivo) y la marca como usada.
+        // Sustituye al antiguo `state.multiplePool.pop()`, que no permitía
+        // "revivir" preguntas de otra dificultad si se cambiaba el toggle
+        // a mitad de partida.
+        function drawMultipleQuestion() {
+            const available = state.multiplePool.filter(q => !q.used && (!config.easyMode || (q.difficulty || '').includes('facil')));
+            if(!available.length) return null;
+            const qData = available[Math.floor(Math.random() * available.length)];
+            qData.used = true;
+            return qData;
+        }
+
         // --- PERSISTENCIA, CACHÉ E HISTORIAL -------------------------------
         const STORAGE_KEYS = {
             session: 'trivia_session_v5_3_4',
@@ -3995,6 +4045,21 @@
         function updateEasyModeIndicator() {
             const el = document.getElementById('easyModeIndicator');
             if(el) el.style.display = config.easyMode ? 'flex' : 'none';
+        }
+        // Se llama al cambiar el toggle de Modo fácil en Ajustes técnicos.
+        // El filtrado en sí ya es dinámico (ver isQuestionPlayable/
+        // getAvailableMultipleCount), así que aquí solo hace falta refrescar
+        // lo que ya está en pantalla (contadores "X disponibles" del
+        // tablero) y avisar al moderador de que el cambio ya es efectivo
+        // desde la próxima pregunta que se reparta — sin reiniciar nada.
+        function refreshEasyModeLive() {
+            if(document.getElementById('boardScreen')?.classList.contains('active')) renderBoard();
+            if(state.teams?.length) {
+                showToast(config.easyMode
+                    ? '✅ Modo fácil activado: la próxima pregunta será fácil.'
+                    : '🔄 Modo fácil desactivado: vuelven a estar disponibles todas las dificultades.',
+                    'ok', 3200);
+            }
         }
         function restoreGameUI() {
             document.querySelectorAll('.screen').forEach(s => { s.classList.remove('active'); s.style.display = ''; });
@@ -4328,7 +4393,7 @@
                     // un cronómetro "fantasma" sobre la ronda nueva.
                     if(this._revealTimeoutId) { clearTimeout(this._revealTimeoutId); this._revealTimeoutId = null; }
 
-                    if(state.multiplePool.length === 0) { showToast("Se agotaron las preguntas de Opción Múltiple.", "warn"); this.exit(); return; }
+                    if(getAvailableMultipleCount() === 0) { showToast(`Se agotaron las preguntas de Opción Múltiple${config.easyMode ? ' en Modo fácil.' : '.'}`, "warn"); this.exit(); return; }
                     // MODO CAOS: se resuelve antes de mostrar la pregunta y
                     // las opciones — nada del resto de esta ronda ocurre
                     // hasta que el moderador cierre la carta.
@@ -4338,7 +4403,14 @@
                     pill.innerHTML = `<span style="font-family:'Apple Color Emoji',sans-serif;">${t.emoji}</span> ${t.id}. ${t.countryName}${streakBadgeHTML(state.currentTurn)}`;
                     pill.style.backgroundColor = t.color; pill.style.color = getContrastYIQ(t.color);
 
-                    let qData = state.multiplePool.pop();
+                    // drawMultipleQuestion() respeta Modo fácil EN VIVO: si
+                    // el toggle cambió a mitad de partida, esta llamada ya
+                    // considera el valor actual, no el de cuando se cargó
+                    // el Sheet. Puede devolver null si justo se agotaron
+                    // las preguntas disponibles entre el chequeo de arriba
+                    // y este punto (poco probable, pero se cubre igual).
+                    let qData = drawMultipleQuestion();
+                    if(!qData) { showToast(`Se agotaron las preguntas de Opción Múltiple${config.easyMode ? ' en Modo fácil.' : '.'}`, "warn"); this.exit(); return; }
                     // Paso 1: mostrar la pregunta con una breve animación de entrada.
                     let qEl = document.getElementById('multipleQuestionText');
                     qEl.innerText = qData.q;
@@ -5864,6 +5936,34 @@
         if(!tryRestoreSession()) loadGameData();
         let autosaveInterval = setInterval(() => persistNow(true), 30000);
 
+        /**
+         * forceReloadSheetData()
+         * Botón "Forzar recarga desde Google Sheets" en Ajustes técnicos.
+         * Ignora por completo la caché de 24h (STORAGE_KEYS.dataCache) y
+         * el globalJsonData ya cargado en memoria, y vuelve a pedir el
+         * Sheet completo desde cero. Útil cuando el moderador acaba de
+         * editar el Sheet (p.ej. la columna Dificultad de Opción Múltiple)
+         * mientras la pestaña del juego seguía abierta: sin esto, el juego
+         * seguiría usando los datos viejos hasta que la caché expirara.
+         * No reinicia la partida en curso — solo actualiza los datos
+         * fuente; hay que pulsar "Nueva partida" para que el cambio se
+         * refleje en los pools de preguntas.
+         */
+        function forceReloadSheetData() {
+            showToast('🔄 Recargando datos desde Google Sheets…', 'info', 2500);
+            fetch(SCRIPT_URL)
+                .then(r => r.json())
+                .then(fullData => {
+                    globalJsonData = fullData;
+                    cacheData(fullData);
+                    showToast('✅ Datos actualizados. Inicia "Nueva partida" para aplicarlos.', 'ok', 5000);
+                })
+                .catch(e => {
+                    console.warn('forceReloadSheetData error', e);
+                    showToast('❌ No se pudo recargar: revisa tu conexión.', 'error', 4500);
+                });
+        }
+
         function enterGame() {
             try { playSoundEffect('transition'); playMusic('question'); setTimeout(()=>stopMusic(), 50); } catch(e){}
             document.getElementById('splashScreen').style.display = 'none'; document.getElementById('splashScreen').classList.remove('active'); document.getElementById('setupScreen').classList.add('active');
@@ -5876,6 +5976,7 @@
             Presentation.broadcast('END_GAME', {});
             // Resetear preguntas usadas para que estén disponibles en la nueva partida
             Object.values(state.categories).forEach(pool => pool.forEach(q => q.used = false));
+            state.multiplePool.forEach(q => q.used = false);
             state.teams = []; state.currentTurn = null; state.activeCat = null; state.activeQ = null; state.history = []; state.undoStack = []; state.gameLog = []; state.lastScoreUpdated = null; state.lastScoreDelta = null;
             state.scoreHistory = []; state.blockedCategories = []; state.chaosModeActive = false; state.chaosModeRemaining = 0; state.chaosCardGatePending = false;
             updateChaosModeButton();
@@ -6346,21 +6447,24 @@
                     });
                 }
             }
-            // MODO FÁCIL: filtra el pool de cada categoría para dejar SOLO
-            // las preguntas cuya columna de dificultad dice "Fácil". Las
-            // categorías que se quedan sin ninguna simplemente aparecen
-            // agotadas en el tablero (misma UX que "0 disponibles"), sin
-            // desaparecer. Se compara por "contiene" (no igualdad estricta)
-            // para tolerar variantes de tipeo en la celda.
+            // MODO FÁCIL — filtrado EN VIVO (no destructivo): el pool de
+            // cada categoría se queda siempre completo (todas las
+            // dificultades). El recorte real ocurre cada vez que se saca
+            // una pregunta (ver isQuestionPlayable()), consultando el
+            // valor ACTUAL de config.easyMode en ese instante — así el
+            // moderador puede activar/desactivar el toggle EN CUALQUIER
+            // momento de la partida sin perder preguntas ni tener que
+            // reiniciar. Aquí solo se calculan estadísticas informativas
+            // para el toast de confirmación.
+            let easyModeQStats = null, easyModeMultStats = null;
             if(config.easyMode) {
-                let totalBefore = 0, totalAfter = 0;
+                let totalBefore = 0, totalFacil = 0;
                 Object.keys(state.categories).forEach(cat => {
                     totalBefore += state.categories[cat].length;
-                    state.categories[cat] = state.categories[cat].filter(qObj => qObj.difficulty.includes('facil'));
-                    totalAfter += state.categories[cat].length;
+                    totalFacil += state.categories[cat].filter(qObj => qObj.difficulty.includes('facil')).length;
                 });
-                console.log(`[Modo fácil] ${totalAfter} de ${totalBefore} preguntas marcadas como "Fácil".`);
-                if(totalBefore > 0) showToast(`✅ Modo fácil: ${totalAfter} de ${totalBefore} preguntas coinciden con "Fácil".`, totalAfter > 0 ? 'ok' : 'warn', 4500);
+                console.log(`[Modo fácil] Preguntas: ${totalFacil} de ${totalBefore} marcadas como "Fácil".`);
+                easyModeQStats = { before: totalBefore, after: totalFacil };
             }
             state.catNames = Object.keys(state.categories);
 
@@ -6380,8 +6484,51 @@
             state.tabuPools["Aleatoria"] = allTabu; for(let c in state.tabuPools) state.tabuPools[c].sort(()=>0.5-Math.random());
 
             let mData = jsonData["Opción múltiple"] || jsonData[Object.keys(jsonData).find(k=>k.toLowerCase().replace(/[óí]/g,l=>l==='ó'?'o':'i').includes('opcion multiple'))];
-            state.multiplePool = []; if(mData?.length) { const mK=Object.keys(mData.find(r=>r&&typeof r==='object')||{}); mData.forEach(r => { let q=r[mK[0]], a=r[mK[1]]; if(q&&a) state.multiplePool.push({q:q.toString().trim(), a:a.toString().trim(), d1:r[mK[2]]?.toString().trim()||"", d2:r[mK[3]]?.toString().trim()||"", d3:r[mK[4]]?.toString().trim()||""}); }); } else { state.multiplePool=[{q:"?", a:"!", d1:"x", d2:"y", d3:"z"}]; }
+            // Orden de columnas esperado: Pregunta, Respuesta correcta,
+            // Distractor 1, Distractor 2, Distractor 3, Dificultad (al
+            // final, columna G). La dificultad se busca PRIMERO por el
+            // nombre del encabezado ("Dificultad"/"Nivel", sea cual sea su
+            // posición real) y solo si no hay ninguno así se cae de vuelta
+            // a "la última columna de la fila" — más robusto que asumir un
+            // índice fijo, que se rompe si sobra o falta alguna columna.
+            state.multiplePool = []; if(mData?.length) {
+                const mK=Object.keys(mData.find(r=>r&&typeof r==='object')||{});
+                const normalizeMK = s => s.toString().toLowerCase().trim().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+                const mDiffKeyByName = mK.find(k => { const nk = normalizeMK(k); return nk.includes('dificultad') || nk.includes('nivel'); });
+                const mDiffKey = mDiffKeyByName || mK[mK.length - 1];
+                mData.forEach(r => {
+                    let q=r[mK[0]], a=r[mK[1]];
+                    if(q&&a) state.multiplePool.push({
+                        q:q.toString().trim(), a:a.toString().trim(), used:false,
+                        d1:r[mK[2]]?.toString().trim()||"", d2:r[mK[3]]?.toString().trim()||"", d3:r[mK[4]]?.toString().trim()||"",
+                        difficulty: r[mDiffKey] ? normalizeMK(r[mDiffKey]) : ''
+                    });
+                });
+            } else { state.multiplePool=[{q:"?", a:"!", used:false, difficulty:"", d1:"x", d2:"y", d3:"z"}]; }
+            // MODO FÁCIL — filtrado EN VIVO (no destructivo), igual que con
+            // el tablero de "Preguntas": el pool completo se conserva
+            // siempre; el recorte real se aplica al sacar cada pregunta
+            // (ver drawMultipleQuestion()/getAvailableMultipleCount()),
+            // consultando config.easyMode en ese instante. Aquí solo se
+            // calculan estadísticas informativas para el toast.
+            if(config.easyMode) {
+                const totalMultBefore = state.multiplePool.length;
+                const totalMultFacil = state.multiplePool.filter(q => q.difficulty.includes('facil')).length;
+                console.log(`[Modo fácil] Opción múltiple: ${totalMultFacil} de ${totalMultBefore} marcadas como "Fácil".`);
+                easyModeMultStats = { before: totalMultBefore, after: totalMultFacil };
+            }
             state.multiplePool.sort(()=>0.5-Math.random());
+
+            // Toast combinado del Modo fácil: se muestra una sola vez, con
+            // el resumen de ambos pools (tablero de Preguntas + Opción
+            // Múltiple), en vez de dos avisos separados.
+            if(config.easyMode && (easyModeQStats || easyModeMultStats)) {
+                const parts = [];
+                if(easyModeQStats) parts.push(`Preguntas: ${easyModeQStats.after}/${easyModeQStats.before}`);
+                if(easyModeMultStats) parts.push(`Opción múltiple: ${easyModeMultStats.after}/${easyModeMultStats.before}`);
+                const anyAvailable = (easyModeQStats?.after || 0) + (easyModeMultStats?.after || 0) > 0;
+                showToast(`✅ Modo fácil activo — ${parts.join(' · ')} coinciden con "Fácil".`, anyAvailable ? 'ok' : 'warn', 5000);
+            }
 
             state.acertijosPool = []; let aData = jsonData[Object.keys(jsonData).find(k=>k.toLowerCase().includes('acertijo'))];
             if(aData?.length) { const aK=Object.keys(aData.find(r=>r&&typeof r==='object')||{}); aData.forEach(r => { let q=r[aK[0]], a=r[aK[1]]; if(q&&a) state.acertijosPool.push({q:q.toString().trim(), a:a.toString().trim()}); }); } else state.acertijosPool=[{q:"?",a:"!"}];
@@ -6821,9 +6968,12 @@
             // Comodín del Caos: se excluyen por completo del tablero (no
             // solo se muestran agotadas) por el resto de la partida.
             const visibleCatNames = state.catNames.filter(cat => !state.blockedCategories.includes(cat));
-            // Un solo .filter() por categoría, guardado en Map
+            // Un solo .filter() por categoría, guardado en Map. Se usa
+            // isQuestionPlayable() (no solo "!q.used") para que el
+            // contador refleje Modo fácil EN VIVO: si el toggle está
+            // activo, solo cuentan las preguntas marcadas "Fácil".
             const avMap = new Map(visibleCatNames.map(cat => [
-                cat, (state.categories[cat] || []).filter(q => !q.used).length
+                cat, (state.categories[cat] || []).filter(q => isQuestionPlayable(q)).length
             ]));
             const tot = [...avMap.values()].reduce((s, v) => s + v, 0);
 
@@ -6838,7 +6988,7 @@
             // ────────────────────────────────────────────────────────────
             const featuredParts = [];
             if(tot>0) featuredParts.push(`<div class="featured-card card-aleatoria" onclick="startRandomQuestion()"><div class="material-symbols-outlined ${iconAnimClassFor('casino')}">casino</div><div class="featured-title">Pregunta aleatoria</div><div class="featured-subtitle">${tot} disponibles</div></div>`);
-            featuredParts.push(`<div class="featured-card card-multiple" onclick="Minigames.Multiple.init()"><div class="material-symbols-outlined ${iconAnimClassFor('quiz')}">quiz</div><div class="featured-title">Opción múltiple</div><div class="featured-subtitle">${state.multiplePool.length} disponibles</div></div>`);
+            featuredParts.push(`<div class="featured-card card-multiple" onclick="Minigames.Multiple.init()"><div class="material-symbols-outlined ${iconAnimClassFor('quiz')}">quiz</div><div class="featured-title">Opción múltiple</div><div class="featured-subtitle">${getAvailableMultipleCount()} disponibles</div></div>`);
             featuredParts.push(`<div class="featured-card card-pruebas" onclick="openPruebas()"><div class="material-symbols-outlined ${iconAnimClassFor('fitness_center')}" style="color:var(--primary);">fitness_center</div><div class="featured-title">Pruebas especiales</div><div class="featured-subtitle">Minijuegos y más</div></div>`);
             featured.innerHTML = featuredParts.join('');
 
@@ -6859,7 +7009,7 @@
             Presentation.broadcast('RENDER_BOARD_CATEGORIES', {
                 featured: [
                     ...(tot > 0 ? [{ key:'aleatoria', cls:'card-aleatoria', icon:'casino', title:'Pregunta aleatoria', subtitle:`${tot} disponibles` }] : []),
-                    { key:'multiple', cls:'card-multiple', icon:'quiz', title:'Opción múltiple', subtitle:`${state.multiplePool.length} disponibles` },
+                    { key:'multiple', cls:'card-multiple', icon:'quiz', title:'Opción múltiple', subtitle:`${getAvailableMultipleCount()} disponibles` },
                     { key:'pruebas', cls:'card-pruebas', icon:'fitness_center', title:'Pruebas especiales', subtitle:'Minijuegos y más' }
                 ],
                 categories: visibleCatNames.map(cat => ({
@@ -6869,8 +7019,8 @@
                 }))
             });
         }
-        function startRandomQuestion() { let p=[]; state.catNames.forEach(c=>{ if(state.blockedCategories.includes(c)) return; state.categories[c]?.forEach(q=>{if(!q.used) p.push({c,q});}); }); if(p.length) { let x=p[Math.floor(Math.random()*p.length)]; executeQuestion(x.c,x.q); } }
-        function startQuestion(c) { let l = state.categories[c].filter(q=>!q.used); if(l.length) executeQuestion(c, l[Math.floor(Math.random()*l.length)]); }
+        function startRandomQuestion() { let p=[]; state.catNames.forEach(c=>{ if(state.blockedCategories.includes(c)) return; state.categories[c]?.forEach(q=>{if(isQuestionPlayable(q)) p.push({c,q});}); }); if(p.length) { let x=p[Math.floor(Math.random()*p.length)]; executeQuestion(x.c,x.q); } }
+        function startQuestion(c) { let l = state.categories[c].filter(q=>isQuestionPlayable(q)); if(l.length) executeQuestion(c, l[Math.floor(Math.random()*l.length)]); }
         
         /**
          * executeQuestion(cat, qObj)
