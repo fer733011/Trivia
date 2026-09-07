@@ -1240,6 +1240,15 @@
         .cancion-overlay-text { font-weight:700; letter-spacing:0.5px; animation: cancionPulseText 1.6s ease-in-out infinite; }
         @keyframes cancionPulseText { 0%,100%{ opacity:1; } 50%{ opacity:0.55; } }
 
+        /* ADIVINA LA CANCIÓN (LOCAL) 🎵📁 — carátula extraída del propio MP3 en vez
+           de video de YouTube. Reutiliza .cancion-overlay para el "escuchando…". */
+        #cancionLocalCoverWrap, #pjSongLocalCoverWrap { position:relative; width:100%; max-width:340px; aspect-ratio:1/1; background:#111; border-radius:16px; overflow:hidden; margin:0 auto 18px; box-shadow:0 8px 24px rgba(0,0,0,0.35); }
+        #cancionLocalCoverWrap img, #pjSongLocalCoverWrap img { width:100%; height:100%; object-fit:cover; display:block; }
+        #pjSongLocalCoverWrap { max-width:420px; }
+        .folder-pick-status { font-size:0.82rem; color:var(--text-muted); margin-top:8px; }
+        .folder-pick-status.ok { color:var(--correct-color); }
+        .folder-pick-status.err { color:var(--incorrect-color); }
+
         #pjSongView { display:none; flex-direction:column; align-items:center; gap:8px; width:100%; max-width:820px; }
         /* Categorías a la izquierda, letra+cronómetro a la derecha, siempre
            en fila (nunca apiladas): con las fuentes más grandes de Stop, el
@@ -1369,7 +1378,7 @@
     <div id="streakBanner"><span id="streakBannerText"></span></div>
 
     <div style="position: fixed; bottom: 12px; right: 24px; font-size: 0.75rem; color: var(--text-muted); opacity: 0.8; font-weight: 400; letter-spacing: 0.3px; z-index: 5000;">
-        © 2026 Fernando Ros • <span onclick="document.getElementById('changelogModal').style.display='block'" style="cursor:pointer; text-decoration:underline; font-weight:500; color:var(--secondary);">Versión 7.9.1</span>
+        © 2026 Fernando Ros • <span onclick="document.getElementById('changelogModal').style.display='block'" style="cursor:pointer; text-decoration:underline; font-weight:500; color:var(--secondary);">Versión 7.10.0</span>
     </div>
 
     <!-- Indicador LED discreto de "Modo fácil" — solo visible para el
@@ -1415,6 +1424,16 @@
             <button onclick="document.getElementById('changelogModal').style.display='none'" style="background:none; border:none; color:var(--text-main); font-size:1.6rem; padding:0; width:auto;">×</button>
         </div>
         <div>
+            <div class="changelog-version">
+                <h4><strong>v7.10.0 – Nuevo Minijuego: Adivina la Canción (Local) 🎵📁</strong></h4>
+                <ul>
+                    <li><strong>Nueva variante 100% local del minijuego musical:</strong> en vez de YouTube, reproduce archivos de audio directamente desde una carpeta de tu computadora (ej. <code>Music/</code>), eliminando los bloqueos por derechos de autor y los videos eliminados.</li>
+                    <li><strong>Categorías automáticas por subcarpeta:</strong> cada subcarpeta dentro de la carpeta elegida (80s, 90s, Disney...) se detecta sola como categoría jugable, sin mantener ninguna lista aparte.</li>
+                    <li><strong>Carátula extraída del propio MP3:</strong> se lee la etiqueta ID3 (APIC) de cada archivo para mostrar su carátula real mientras suena, con un disco genérico de respaldo si el archivo no la trae.</li>
+                    <li><strong>Sin subir nada a ningún servidor:</strong> los archivos se leen con la API de archivos del navegador; el audio y la carátula viajan al proyector como datos binarios reales, no como URLs.</li>
+                    <li>No hay persistencia entre sesiones: hay que volver a seleccionar la carpeta al recargar la página.</li>
+                </ul>
+            </div>
             <div class="changelog-version">
                 <h4><strong>v7.9.1 – Racha Robada, Comodín Robado y Modo fácil en vivo</strong></h4>
                 <ul>
@@ -1689,7 +1708,7 @@
     
    <div id="infoModal" style="display: none; position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); background: var(--surface); padding: 28px; border-radius: 20px; border: 1px solid var(--border-color); animation: modalPop 0.22s cubic-bezier(0.4,0,0.2,1); z-index: 10000; width: 90%; max-width: 340px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
     <p style="color: var(--primary); font-weight: 700; margin-bottom: 6px; font-size: 1.5rem;">Trivia Cultural</p>
-    <p style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 20px;">Versión 7.9.1</p>
+    <p style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 20px;">Versión 7.10.0</p>
     <p style="margin-bottom: 8px; font-size: 0.95rem; font-weight: 600;">Desarrollado por Fernando Ros</p>
     <p style="margin-bottom: 20px; font-size: 0.9rem;">
         <a href="mailto:rosfernando@gmail.com" style="color: var(--primary); text-decoration: none; display:inline-flex; align-items:center; gap:5px;">
@@ -2178,6 +2197,32 @@
                 </div>
             </div>
             <p id="pjSongRevealTitle" style="display:none; font-size:clamp(1.2rem,3vw,1.8rem); font-weight:800; margin-top:18px;"></p>
+        </div>
+
+        <!-- ADIVINA LA CANCIÓN (LOCAL) 🎵📁 — espejo con carátula en vez de
+             video; el audio y la imagen llegan como Blobs por postMessage
+             (no por URL, ya que cada ventana tiene su propia memoria). -->
+        <div id="pjSongLocalView" style="display:none; flex-direction:column; align-items:center; gap:8px; width:100%; max-width:600px;">
+            <span id="pjSongLocalTeamPill" class="minigame-team-pill" style="font-size:1.1rem;"></span>
+            <div style="display:flex; gap:26px; align-items:center; justify-content:center; margin:14px 0;">
+                <div style="text-align:center;">
+                    <div id="pjSongLocalTimer" class="timer-text" style="color:#db2777;">0</div>
+                    <div style="font-size:0.85rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;">Segundos</div>
+                </div>
+                <div style="text-align:center;">
+                    <div id="pjSongLocalPoints" style="font-size:clamp(2.2rem,5vw,3.2rem); font-weight:800; color:var(--correct-color); line-height:1;">20</div>
+                    <div style="font-size:0.85rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;">Puntos si acierta ahora</div>
+                </div>
+            </div>
+            <div id="pjSongLocalCoverWrap">
+                <img id="pjSongLocalCoverImg" src="" alt="Carátula" style="display:none;">
+                <div id="pjSongLocalOverlay" class="cancion-overlay" onclick="Projector.songLocalNudge()">
+                    <span class="material-symbols-outlined cancion-disc" style="font-size:5rem;">album</span>
+                    <span class="cancion-overlay-text" style="font-size:1.4rem;">🎵 Escuchando…</span>
+                </div>
+            </div>
+            <audio id="pjSongLocalAudio" style="display:none;"></audio>
+            <p id="pjSongLocalRevealTitle" style="display:none; font-size:clamp(1.2rem,3vw,1.8rem); font-weight:800; margin-top:18px;"></p>
         </div>
 
         <!-- Espejo de #resultsScreen: mismo markup/clases (podio + tabla de
@@ -2680,6 +2725,73 @@
         </div>
     </div>
 
+    <div id="cancionLocalScreen" class="screen" style="max-width: 900px;">
+        <h2 style="display:flex; align-items:center; justify-content:center; gap:10px;"><span class="material-symbols-outlined" style="font-size:2rem; color:#db2777;">library_music</span> Minijuego: Adivina la Canción (Local) 🎵</h2>
+        <div id="cancionLocalSetupArea" style="width: 100%; text-align: center;">
+            <p style="color:var(--text-muted); margin-bottom:16px;">Usa tus propios archivos de audio (carpeta <code>Music/</code> en esta computadora). Cada subcarpeta es una categoría (ej. 80s, 90s, Disney). No se sube nada a ningún servidor.</p>
+            <button id="btnCancionLocalPickFolder" class="btn-primary" style="background:#db2777; color:white; width:auto; padding:12px 26px; margin-bottom:6px;" onclick="Minigames.CancionLocal.pickFolder()">
+                <span class="material-symbols-outlined" style="vertical-align:middle;">folder_open</span> Seleccionar carpeta Music
+            </button>
+            <input type="file" id="cancionLocalFolderInput" class="hidden-file-input" webkitdirectory multiple onchange="Minigames.CancionLocal.handleFolderInput(event)">
+            <p id="cancionLocalFolderStatus" class="folder-pick-status">Ninguna carpeta seleccionada todavía.</p>
+            <div class="setup-group" style="max-width:360px; margin:14px auto 20px;">
+                <label>Categoría</label>
+                <select id="cancionLocalCategorySelect" style="width: 100%; padding: 12px 14px; background: transparent; border: 1px solid var(--border-color); border-radius: 12px; color: var(--text-main); font-size: 1rem; outline: none;" disabled>
+                    <option value="">Selecciona primero una carpeta</option>
+                </select>
+            </div>
+            <div style="display:flex; gap:12px; justify-content:center;">
+                <button class="btn-secondary" onclick="Minigames.CancionLocal.exit()">Volver al tablero</button>
+                <button id="btnCancionLocalStart" class="btn-primary" style="background:#db2777; color:white; width:auto; padding:12px 28px;" disabled onclick="Minigames.CancionLocal.start()">Iniciar minijuego</button>
+            </div>
+        </div>
+        <div id="cancionLocalGameArea" style="display:none; text-align:center; width: 100%; flex-direction: column; align-items: center;">
+            <div class="minigame-header">
+                <span id="cancionLocalTeamPill" class="minigame-team-pill">Equipo</span>
+                <span class="minigame-cat-pill"><span class="material-symbols-outlined" style="font-size:1rem;">library_music</span> Adivina la Canción (Local)</span>
+            </div>
+            <div style="display:flex; gap:22px; align-items:center; justify-content:center; margin-bottom:10px; flex-wrap:wrap;">
+                <div style="text-align:center;">
+                    <div id="cancionLocalRoundTimer" class="timer-text" style="color:#db2777; font-size:2.2rem; min-width:80px; padding:8px;">3:00</div>
+                    <div style="font-size:0.7rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;">Tiempo de turno</div>
+                </div>
+                <div style="text-align:center;">
+                    <div id="cancionLocalRoundScore" style="font-size:2.2rem; font-weight:800; color:var(--primary); line-height:1;">0</div>
+                    <div style="font-size:0.7rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;">Puntos del turno</div>
+                </div>
+            </div>
+            <div id="cancionLocalTimerRow" style="display:flex; gap:22px; align-items:center; justify-content:center; margin-bottom:18px; flex-wrap:wrap;">
+                <div style="text-align:center;">
+                    <div id="cancionLocalTimer" class="timer-text" style="color:#db2777; font-size:2.6rem; min-width:80px; padding:10px;">0</div>
+                    <div style="font-size:0.7rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;">Segundos de esta canción</div>
+                </div>
+                <div style="text-align:center;">
+                    <div id="cancionLocalPoints" style="font-size:2.6rem; font-weight:800; color:var(--correct-color); line-height:1;">20</div>
+                    <div style="font-size:0.7rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;">Puntos si acierta ahora</div>
+                </div>
+            </div>
+            <div id="cancionLocalCoverWrap">
+                <img id="cancionLocalCoverImg" src="" alt="Carátula" style="display:none;">
+                <div id="cancionLocalOverlay" class="cancion-overlay">
+                    <span class="material-symbols-outlined cancion-disc" style="font-size:4.5rem;">album</span>
+                    <span class="cancion-overlay-text">🎵 Escuchando…</span>
+                </div>
+            </div>
+            <p id="cancionLocalRevealTitle" style="display:none; font-size:1.1rem; font-weight:700; margin-bottom:16px;"></p>
+            <audio id="cancionLocalAudio" style="display:none;"></audio>
+
+            <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
+                <button id="btnCancionLocalPlay" class="btn-primary" style="background:#db2777; color:white; width:auto; padding:14px 30px;" onclick="Minigames.CancionLocal.play()"><span class="material-symbols-outlined" style="vertical-align:middle;">play_arrow</span> Reproducir</button>
+            </div>
+            <div id="cancionLocalActiveControls" style="display:none; gap:12px; justify-content:center; flex-wrap:wrap;">
+                <button id="btnCancionLocalCorrect" class="btn-correct" style="width:auto; padding:14px 30px; border-radius:100px;" onclick="Minigames.CancionLocal.handleCorrect()"><span class="material-symbols-outlined" style="vertical-align:middle;">check</span> Correcto</button>
+                <button id="btnCancionLocalNext" class="btn-primary" style="background:var(--primary); width:auto; padding:14px 30px;" onclick="Minigames.CancionLocal.nextSongClick()"><span class="material-symbols-outlined" style="vertical-align:middle;">skip_next</span> Siguiente Canción</button>
+                <button id="btnCancionLocalNudge" class="btn-secondary" style="width:auto; padding:14px 20px;" onclick="Minigames.CancionLocal.nudge()" title="Si no suena en el proyector, pulsa aquí"><span class="material-symbols-outlined" style="vertical-align:middle; font-size:1.1rem;">volume_up</span> 🔊 No suena</button>
+                <button id="btnCancionLocalExit" class="btn-secondary" style="border-color: var(--incorrect-color); color: var(--incorrect-color); width:auto; padding:14px 20px;" onclick="Minigames.CancionLocal.confirmExit()"><span class="material-symbols-outlined" style="vertical-align:middle; font-size:1.1rem;">stop_circle</span> Terminar minijuego</button>
+            </div>
+        </div>
+    </div>
+
     <!-- ── PANTALLA DE RESULTADOS FINALES ──
          Accesible desde el botón "Terminar" del toolbar (confirmShowResults).
          Renderizada por showResultsScreen() → renderResultsPodium() +
@@ -2919,6 +3031,10 @@
                     document.body.classList.add('mode-spectator');
                     document.documentElement.classList.add('pj-scale');
                     window.addEventListener('message', evt => {
+                        if(evt.data && typeof evt.data === 'object' && evt.data.__localSong) {
+                            this.onMessage(evt.data.action, evt.data.payload || {}, evt.data);
+                            return;
+                        }
                         try { const msg = JSON.parse(evt.data); this.onMessage(msg.action, msg.payload || {}); }
                         catch(e) { /* mensajes ajenos a nuestro protocolo: se ignoran */ }
                     });
@@ -3032,6 +3148,19 @@
                 conn.onclose = () => { this.receiverConnections = this.receiverConnections.filter(c => c !== conn); };
             },
 
+            // Variante de broadcast() para "Adivina la Canción (Local)": en vez
+            // de JSON.stringify (que no puede llevar binarios), manda un objeto
+            // real por postMessage (structured clone), único camino que soporta
+            // Blobs de audio/carátula. Solo funciona con el fallback de ventana
+            // (childWindow); la Presentation API nativa no está cubierta aquí
+            // por ser un caso muy poco frecuente en este proyecto.
+            broadcastLocalSong(action, payload, audioBlob, coverBlob) {
+                if(this.childWindow && !this.childWindow.closed) {
+                    try { this.childWindow.postMessage({ __localSong: true, action, payload, audioBlob: audioBlob || null, coverBlob: coverBlob || null }, '*'); }
+                    catch(e) { console.warn('broadcastLocalSong error', e); }
+                }
+            },
+
             // Emisor → Receptor. No hace nada si no hay proyector conectado.
             broadcast(action, payload = {}) {
                 const msg = JSON.stringify({ action, payload });
@@ -3050,8 +3179,13 @@
              * de #projectorScreen. Ninguna rama de este switch toca
              * `state`/`config` del moderador: el receptor no los tiene.
              */
-            onMessage(action, payload) {
+            onMessage(action, payload, raw) {
                 switch(action) {
+                    case 'SONG_LOCAL_PLAY':   Projector.songLocalPlay(payload, raw); break;
+                    case 'SONG_LOCAL_TICK':   Projector.songLocalTick(payload); break;
+                    case 'SONG_LOCAL_REVEAL': Projector.songLocalReveal(payload); break;
+                    case 'SONG_LOCAL_STOP':   Projector.songLocalStop(); break;
+                    case 'SONG_LOCAL_NUDGE':  Projector.songLocalNudge(); break;
                     case 'START_GAME':      Projector.showBoard(payload); break;
                     case 'RETURN_BOARD':    Projector.showBoard(payload); break;
                     case 'END_GAME':        Projector.showIdle(); break;
@@ -3134,7 +3268,7 @@
             lastDelta: null,
             _stopLetterInterval: null,
             _stopLetterSafety: null,
-            _panels: ['pjIdle','pjBoard','pjCategoryReveal','pjQuestionView','pjMinigameView','pjSongView','pjResults'],
+            _panels: ['pjIdle','pjBoard','pjCategoryReveal','pjQuestionView','pjMinigameView','pjSongView','pjSongLocalView','pjResults'],
             _showPanel(id) {
                 this._panels.forEach(p => { const el = document.getElementById(p); if(el) el.style.display = (p === id) ? (p === 'pjCategoryReveal' ? 'block' : 'flex') : 'none'; });
                 // El marcador no tiene sentido en la pantalla de espera (aún
@@ -3329,6 +3463,7 @@
             },
             startMinigame(payload) {
                 if(payload.type === 'cancion') { this.songMinigameStart(payload); return; }
+                if(payload.type === 'cancionLocal') { this.songLocalMinigameStart(payload); return; }
                 this._showPanel('pjMinigameView');
                 const view = document.getElementById('pjMinigameView');
                 view.classList.toggle('stop-active', payload.type === 'stop');
@@ -3414,6 +3549,53 @@
             songStop() {
                 const iframe = document.getElementById('pjSongYtIframe');
                 if(iframe) iframe.src = 'about:blank';
+            },
+            songLocalMinigameStart(payload) {
+                this._showPanel('pjSongLocalView');
+                const pill = document.getElementById('pjSongLocalTeamPill');
+                const team = this.teams[payload.teamIndex];
+                if(team) { pill.textContent = `${team.emoji} ${team.id}. ${team.countryName}`; pill.style.background = team.color; pill.style.color = getContrastYIQ(team.color); }
+                document.getElementById('pjSongLocalOverlay').style.display = 'flex';
+                document.getElementById('pjSongLocalOverlay').classList.remove('cancion-revealed');
+                document.getElementById('pjSongLocalRevealTitle').style.display = 'none';
+                document.getElementById('pjSongLocalCoverImg').style.display = 'none';
+                document.getElementById('pjSongLocalTimer').textContent = '0';
+            },
+            // payload viaja por broadcast normal (JSON); raw trae los Blobs
+            // reales de audio/carátula, imposibles de meter en JSON.
+            songLocalPlay(payload, raw) {
+                const audio = document.getElementById('pjSongLocalAudio');
+                const img = document.getElementById('pjSongLocalCoverImg');
+                document.getElementById('pjSongLocalPoints').textContent = payload.initialPoints ?? 20;
+                if(raw?.coverBlob) { img.src = URL.createObjectURL(raw.coverBlob); img.style.display = 'block'; }
+                else { img.style.display = 'none'; }
+                if(raw?.audioBlob) {
+                    audio.src = URL.createObjectURL(raw.audioBlob);
+                    audio.currentTime = 0;
+                    audio.play().catch(e => console.log('Audio local bloqueado en el proyector', e));
+                }
+            },
+            songLocalTick(payload) {
+                const t = document.getElementById('pjSongLocalTimer'); if(t) t.textContent = payload.elapsed;
+                const p = document.getElementById('pjSongLocalPoints'); if(p) p.textContent = payload.points;
+            },
+            songLocalReveal(payload) {
+                document.getElementById('pjSongLocalOverlay').classList.add('cancion-revealed');
+                setTimeout(() => { const el = document.getElementById('pjSongLocalOverlay'); if(el) el.style.display = 'none'; }, 400);
+                const revealEl = document.getElementById('pjSongLocalRevealTitle');
+                revealEl.innerHTML = `🎵 <strong>${payload.title || 'Título desconocido'}</strong>${payload.artist ? ' · ' + payload.artist : ''}`;
+                revealEl.style.display = 'block';
+            },
+            songLocalStop() {
+                const audio = document.getElementById('pjSongLocalAudio');
+                if(audio) { audio.pause(); audio.src = ''; }
+            },
+            // Respaldo manual: si el navegador bloqueó el autoplay del <audio>
+            // en el proyector, un clic real (disco o botón del moderador)
+            // nunca se bloquea.
+            songLocalNudge() {
+                const audio = document.getElementById('pjSongLocalAudio');
+                if(audio) { audio.muted = false; audio.play().catch(()=>{}); }
             },
             stopLetter(payload) {
                 clearInterval(this._stopLetterInterval);
@@ -4286,6 +4468,95 @@
         function formatMMSS(totalSeconds) {
             const s = Math.max(0, totalSeconds | 0);
             return `${Math.floor(s / 60)}:${(s % 60).toString().padStart(2, '0')}`;
+        }
+
+        /**
+         * ════════════════════════════════════════════════════════════════
+         * BIBLIOTECA MUSICAL LOCAL — "Adivina la Canción (Local)"
+         * ════════════════════════════════════════════════════════════════
+         * Lee archivos de audio directamente de la computadora del
+         * moderador (input[webkitdirectory]): nada se sube a ningún
+         * servidor. Cada subcarpeta de la carpeta elegida se trata como
+         * una categoría (ej. Music/80s/, Music/Disney/). No hay
+         * persistencia entre sesiones: hay que reelegir la carpeta al
+         * recargar la página.
+         */
+        const LocalMusicLibrary = {
+            categories: {}, // { "80s": [File, File, ...], ... }
+            ready: false,
+            folderName: '',
+            AUDIO_EXT: ['.mp3', '.m4a', '.ogg', '.wav', '.flac'],
+            isAudioFile(name) { const n = name.toLowerCase(); return this.AUDIO_EXT.some(ext => n.endsWith(ext)); },
+            // A partir de webkitRelativePath (p.ej. "Music/80s/cancion.mp3")
+            // arma {categoría: [File...]}. Los archivos sueltos en la raíz
+            // (sin subcarpeta) se agrupan en "General".
+            buildFromFileList(fileList) {
+                const cats = {}; let root = '';
+                [...fileList].forEach(file => {
+                    if(!this.isAudioFile(file.name)) return;
+                    const rel = file.webkitRelativePath || file.name;
+                    const parts = rel.split('/');
+                    if(!root) root = parts[0] || '';
+                    const cat = parts.length >= 3 ? parts[1] : 'General';
+                    if(!cats[cat]) cats[cat] = [];
+                    cats[cat].push(file);
+                });
+                this.categories = cats; this.folderName = root;
+                this.ready = Object.keys(cats).length > 0;
+                return this.ready;
+            }
+        };
+
+        // --- Parseo de etiquetas ID3v2 (carátula + título + artista) -------
+        // Implementación propia mínima (sin librerías externas): soporta
+        // ID3v2.2 (frames de 3 letras, ej. "PIC") y ID3v2.3/2.4 (frames de
+        // 4 letras, ej. "APIC"/"TIT2"/"TPE1"). Cubre la inmensa mayoría de
+        // MP3 etiquetados con herramientas normales. Si no hay ID3 o no se
+        // puede leer la carátula, se devuelve cover:null y el minijuego usa
+        // el icono genérico de disco sin romper nada.
+        function _id3ReadSynchsafe32(dv, offset) {
+            return ((dv.getUint8(offset) & 0x7f) << 21) | ((dv.getUint8(offset+1) & 0x7f) << 14) | ((dv.getUint8(offset+2) & 0x7f) << 7) | (dv.getUint8(offset+3) & 0x7f);
+        }
+        function _id3ReadAscii(dv, offset, len) { let s = ''; for(let i = 0; i < len; i++) s += String.fromCharCode(dv.getUint8(offset + i)); return s; }
+        function _id3ReadTextFrame(buffer, offset, len) {
+            const bytes = new Uint8Array(buffer, offset, len);
+            if(!bytes.length) return '';
+            const encoding = bytes[0]; const body = bytes.subarray(1);
+            try {
+                if(encoding === 1 || encoding === 2) return new TextDecoder('utf-16').decode(body).replace(/\u0000/g, '').trim();
+                return new TextDecoder('latin1').decode(body).replace(/\u0000/g, '').trim();
+            } catch(e) { return ''; }
+        }
+        function extractID3Tags(buffer) {
+            const result = { cover: null, title: '', artist: '' };
+            try {
+                const dv = new DataView(buffer);
+                if(buffer.byteLength < 10 || _id3ReadAscii(dv, 0, 3) !== 'ID3') return result;
+                const version = dv.getUint8(3), flags = dv.getUint8(5), tagSize = _id3ReadSynchsafe32(dv, 6);
+                let offset = 10; const end = Math.min(10 + tagSize, buffer.byteLength);
+                if(flags & 0x40) offset += version === 4 ? _id3ReadSynchsafe32(dv, offset) : dv.getUint32(offset);
+                const isV2 = version === 2, idLen = isV2 ? 3 : 4;
+                while(offset < end - idLen - (isV2 ? 3 : 6)) {
+                    const frameId = _id3ReadAscii(dv, offset, idLen); offset += idLen;
+                    let frameSize;
+                    if(isV2) { frameSize = (dv.getUint8(offset) << 16) | (dv.getUint8(offset+1) << 8) | dv.getUint8(offset+2); offset += 3; }
+                    else { frameSize = version === 4 ? _id3ReadSynchsafe32(dv, offset) : dv.getUint32(offset); offset += 6; }
+                    if(!frameId.trim() || frameSize <= 0 || offset + frameSize > buffer.byteLength) break;
+                    if(frameId === 'APIC' || frameId === 'PIC') {
+                        let p = offset; const encoding = dv.getUint8(p); p += 1; let mime = 'image/jpeg';
+                        if(frameId === 'PIC') { mime = 'image/' + _id3ReadAscii(dv, p, 3).toLowerCase().replace('jpg','jpeg'); p += 3; }
+                        else { let m = ''; while(p < offset + frameSize && dv.getUint8(p) !== 0) { m += String.fromCharCode(dv.getUint8(p)); p++; } p++; if(m) mime = m; }
+                        p += 1; // tipo de imagen
+                        if(encoding === 1 || encoding === 2) { while(p < offset + frameSize - 1 && !(dv.getUint8(p) === 0 && dv.getUint8(p+1) === 0)) p += 2; p += 2; }
+                        else { while(p < offset + frameSize && dv.getUint8(p) !== 0) p++; p++; }
+                        const imgEnd = offset + frameSize;
+                        if(p < imgEnd) result.cover = new Blob([buffer.slice(p, imgEnd)], { type: mime });
+                    } else if(frameId === 'TIT2' || frameId === 'TT2') { result.title = _id3ReadTextFrame(buffer, offset, frameSize); }
+                    else if(frameId === 'TPE1' || frameId === 'TP1') { result.artist = _id3ReadTextFrame(buffer, offset, frameSize); }
+                    offset += frameSize;
+                }
+            } catch(e) { console.warn('extractID3Tags error (se ignora, se usa icono genérico)', e); }
+            return result;
         }
 
         const Minigames = {
@@ -5163,6 +5434,225 @@
                     const iframe = document.getElementById('cancionYtIframe');
                     if(iframe) iframe.src = 'about:blank';
                     Presentation.broadcast('STOP_MINIGAME', {});
+                    returnToBoard(false);
+                }
+            },
+
+            /**
+             * CancionLocal — "Adivina la Canción (Local)". Misma dinámica que
+             * Cancion (turno cronometrado, puntaje decreciente, revelado),
+             * pero la fuente es una carpeta local y la carátula sale del
+             * propio MP3 (ID3) en vez de un video de YouTube.
+             */
+            CancionLocal: {
+                currentCat: null, pool: [], activeFile: null, activeCoverBlob: null, activeAudioBlobUrl: null,
+                activeTitle: '', activeArtist: '', _activeBuffer: null,
+                playing: false, revealed: false, roundScore: 0, roundActive: false, _playBufferTimeout: null,
+                _clearPlayBuffer() { if(this._playBufferTimeout) { clearTimeout(this._playBufferTimeout); this._playBufferTimeout = null; } },
+                _revokeActiveUrls() {
+                    if(this.activeAudioBlobUrl) { try { URL.revokeObjectURL(this.activeAudioBlobUrl); } catch(e){} }
+                    this.activeAudioBlobUrl = null; this.activeCoverBlob = null; this._activeBuffer = null;
+                },
+                init() {
+                    playSoundEffect('transition');
+                    if(state.currentTurn === null) { showToast('Asigna un turno antes de iniciar.', 'warn'); return; }
+                    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+                    document.getElementById('cancionLocalScreen').classList.add('active');
+                    document.getElementById('cancionLocalSetupArea').style.display = 'block';
+                    document.getElementById('cancionLocalGameArea').style.display = 'none';
+                    this.renderCategorySelect();
+                },
+                renderCategorySelect() {
+                    const sel = document.getElementById('cancionLocalCategorySelect');
+                    const status = document.getElementById('cancionLocalFolderStatus');
+                    const btnStart = document.getElementById('btnCancionLocalStart');
+                    if(LocalMusicLibrary.ready) {
+                        const cats = Object.keys(LocalMusicLibrary.categories);
+                        sel.innerHTML = cats.map(c => `<option value="${c.replace(/"/g,'&quot;')}">${c} (${LocalMusicLibrary.categories[c].length} canciones)</option>`).join('');
+                        sel.disabled = false; btnStart.disabled = false;
+                        status.textContent = `✅ Carpeta "${LocalMusicLibrary.folderName || 'Music'}" cargada — ${cats.length} categoría(s) encontradas.`;
+                        status.className = 'folder-pick-status ok';
+                    } else {
+                        sel.innerHTML = '<option value="">Selecciona primero una carpeta</option>';
+                        sel.disabled = true; btnStart.disabled = true;
+                    }
+                },
+                pickFolder() { document.getElementById('cancionLocalFolderInput').click(); },
+                handleFolderInput(event) {
+                    const files = event.target.files;
+                    const status = document.getElementById('cancionLocalFolderStatus');
+                    if(!files || !files.length) { status.textContent = '❌ No se seleccionó ninguna carpeta.'; status.className = 'folder-pick-status err'; return; }
+                    const ok = LocalMusicLibrary.buildFromFileList(files);
+                    if(!ok) { status.textContent = '❌ No se encontraron archivos de audio (.mp3/.m4a/.ogg/.wav) en subcarpetas.'; status.className = 'folder-pick-status err'; }
+                    this.renderCategorySelect();
+                },
+                start() {
+                    this.currentCat = document.getElementById('cancionLocalCategorySelect').value;
+                    if(!this.currentCat || !LocalMusicLibrary.categories[this.currentCat]?.length) { showToast('Elige una categoría con canciones.', 'warn'); return; }
+                    this.pool = [...LocalMusicLibrary.categories[this.currentCat]].sort(() => 0.5 - Math.random());
+                    document.getElementById('cancionLocalSetupArea').style.display = 'none';
+                    document.getElementById('cancionLocalGameArea').style.display = 'flex';
+                    this.startRound();
+                },
+                startRound() {
+                    consumeChaosCardGate(() => {
+                        this.roundScore = 0; this.roundActive = true;
+                        const roundSeconds = config.timeCancionRound || 180;
+                        document.getElementById('cancionLocalRoundScore').textContent = '0';
+                        cancionRoundTimer.startPaused(roundSeconds, t => { document.getElementById('cancionLocalRoundTimer').textContent = formatMMSS(t); }, () => this.endRound());
+                        this.nextSong();
+                    });
+                },
+                async nextSong() {
+                    if(!this.pool.length) { showToast('Se agotaron las canciones de esta categoría.', 'warn'); this.endRound(); return; }
+                    this._clearPlayBuffer(); this._revokeActiveUrls();
+                    this.activeFile = this.pool.pop();
+                    this.playing = false; this.revealed = false;
+                    this.activeTitle = this.activeFile.name.replace(/\.[^.]+$/, ''); this.activeArtist = '';
+                    const t = state.teams[state.currentTurn];
+                    const pill = document.getElementById('cancionLocalTeamPill');
+                    pill.innerHTML = `<span style="font-family:'Apple Color Emoji',sans-serif;">${t.emoji}</span> ${t.id}. ${t.countryName}${streakBadgeHTML(state.currentTurn)}`;
+                    pill.style.backgroundColor = t.color; pill.style.color = getContrastYIQ(t.color);
+                    document.getElementById('cancionLocalTimer').innerText = '0';
+                    document.getElementById('cancionLocalPoints').innerText = config.ptsCancionMax;
+                    document.getElementById('cancionLocalOverlay').style.display = 'flex';
+                    document.getElementById('cancionLocalOverlay').classList.remove('cancion-revealed');
+                    document.getElementById('cancionLocalRevealTitle').style.display = 'none';
+                    document.getElementById('cancionLocalCoverImg').style.display = 'none';
+                    document.getElementById('btnCancionLocalPlay').style.display = 'inline-block';
+                    document.getElementById('cancionLocalActiveControls').style.display = 'none';
+                    Presentation.broadcast('START_MINIGAME', { type: 'cancionLocal', teamIndex: state.currentTurn });
+                    autoScrollTo('cancionLocalScreen');
+                    try {
+                        const buffer = await this.activeFile.arrayBuffer();
+                        this._activeBuffer = buffer;
+                        const tags = extractID3Tags(buffer);
+                        if(tags.title) this.activeTitle = tags.title;
+                        if(tags.artist) this.activeArtist = tags.artist;
+                        this.activeCoverBlob = tags.cover || null;
+                        this.activeAudioBlobUrl = URL.createObjectURL(new Blob([buffer]));
+                        const img = document.getElementById('cancionLocalCoverImg');
+                        if(this.activeCoverBlob) { img.src = URL.createObjectURL(this.activeCoverBlob); img.style.display = 'block'; }
+                        else { img.style.display = 'none'; }
+                    } catch(e) {
+                        console.warn('No se pudo leer el archivo de audio', e);
+                        showToast('No se pudo leer este archivo, se salta a la siguiente.', 'warn');
+                        this.nextSong();
+                    }
+                },
+                play() {
+                    if(this.playing || !this.activeFile) return;
+                    this.playing = true; this.revealed = false;
+                    document.getElementById('btnCancionLocalPlay').style.display = 'none';
+                    document.getElementById('cancionLocalActiveControls').style.display = 'flex';
+                    document.getElementById('btnCancionLocalCorrect').disabled = true;
+                    document.getElementById('cancionLocalTimer').innerText = '…';
+                    const audio = document.getElementById('cancionLocalAudio');
+                    audio.muted = Presentation.isConnected();
+                    audio.src = this.activeAudioBlobUrl; audio.currentTime = 0;
+                    audio.play().catch(e => console.log('Audio local bloqueado', e));
+                    if(Presentation.isConnected() && this._activeBuffer) {
+                        Presentation.broadcastLocalSong('SONG_LOCAL_PLAY', { teamIndex: state.currentTurn, initialPoints: config.ptsCancionMax }, new Blob([this._activeBuffer]), this.activeCoverBlob);
+                    }
+                    this._clearPlayBuffer();
+                    this._playBufferTimeout = setTimeout(() => {
+                        this._playBufferTimeout = null;
+                        if(!this.playing) return;
+                        document.getElementById('btnCancionLocalCorrect').disabled = false;
+                        cancionRoundTimer.resume();
+                        songTimer.start(
+                            t => {
+                                document.getElementById('cancionLocalTimer').innerText = t;
+                                const pts = currentSongPoints(t);
+                                document.getElementById('cancionLocalPoints').innerText = pts;
+                                Presentation.broadcast('SONG_LOCAL_TICK', { elapsed: t, points: pts });
+                            },
+                            () => this.handleTimeout(),
+                            config.timeCancionMax
+                        );
+                    }, 4000);
+                },
+                handleCorrect() {
+                    if(!this.playing || this.revealed) return;
+                    this.playing = false; songTimer.stop();
+                    const secs = songTimer.elapsed, pts = currentSongPoints(secs);
+                    pushUndo('Adivina la Canción (Local): acierto');
+                    playSoundEffect('miniCorrect');
+                    addExtra(state.currentTurn, pts, true);
+                    this.roundScore += pts;
+                    document.getElementById('cancionLocalRoundScore').textContent = this.roundScore;
+                    recordHistory({ type:'score', title:'Adivina la Canción (Local)', detail:`${teamLabel(state.currentTurn)} · +${pts} pts en ${secs}s · "${this.activeTitle}"` });
+                    this._pauseAndReveal();
+                },
+                handleTimeout() {
+                    this.playing = false;
+                    playSoundEffect('timeout');
+                    recordHistory({ type:'timeout', title:'Adivina la Canción (Local)', detail:`Canción perdida (0 pts) · "${this.activeTitle}" · ${teamLabel(state.currentTurn)}` });
+                    this._pauseAndReveal();
+                },
+                _pauseAndReveal() {
+                    this.revealed = true;
+                    cancionRoundTimer.pause();
+                    const btnCorrect = document.getElementById('btnCancionLocalCorrect');
+                    if(btnCorrect) btnCorrect.disabled = true;
+                    document.getElementById('cancionLocalOverlay').classList.add('cancion-revealed');
+                    setTimeout(() => { const el = document.getElementById('cancionLocalOverlay'); if(el) el.style.display = 'none'; }, 400);
+                    const revealEl = document.getElementById('cancionLocalRevealTitle');
+                    revealEl.innerHTML = `🎵 <strong>${this.activeTitle}</strong>${this.activeArtist ? ' · ' + this.activeArtist : ''}`;
+                    revealEl.style.display = 'block';
+                    Presentation.broadcast('SONG_LOCAL_REVEAL', { title: this.activeTitle, artist: this.activeArtist });
+                },
+                nextSongClick() {
+                    const audio = document.getElementById('cancionLocalAudio');
+                    this._clearPlayBuffer();
+                    if(this.revealed) {
+                        audio.pause(); audio.src = '';
+                        Presentation.broadcast('SONG_LOCAL_STOP', {});
+                        this.nextSong();
+                    } else if(this.playing) {
+                        this.playing = false; songTimer.stop(); cancionRoundTimer.pause();
+                        playSoundEffect('timeout');
+                        recordHistory({ type:'question', title:'Canción saltada', detail:`"${this.activeTitle}" · ${teamLabel(state.currentTurn)}` });
+                        audio.pause(); audio.src = '';
+                        Presentation.broadcast('SONG_LOCAL_STOP', {});
+                        this.nextSong();
+                    }
+                },
+                nudge() { if(this.playing) Presentation.broadcast('SONG_LOCAL_NUDGE', {}); },
+                confirmExit() {
+                    document.querySelectorAll('.toast-confirm').forEach(t => t.remove());
+                    const el = document.createElement('div');
+                    el.className = 'toast toast-warn toast-confirm';
+                    el.style.cssText = 'pointer-events:all; display:flex; gap:8px; align-items:center; flex-wrap:wrap; white-space:normal;';
+                    el.innerHTML = `<span style="flex:1 1 100%;">¿Terminar "Adivina la Canción (Local)"? El equipo conserva los puntos ya ganados en este turno.</span>`
+                        + `<button onclick="this.closest('.toast-confirm').remove(); Minigames.CancionLocal.exit();" `
+                        + `style="background:var(--incorrect-color);color:white;border:none;border-radius:8px;padding:5px 12px;font-size:0.82rem;font-weight:700;cursor:pointer;width:auto;min-height:0;">Sí, terminar</button>`
+                        + `<button onclick="this.closest('.toast-confirm').remove()" `
+                        + `style="background:rgba(128,128,128,0.2);color:var(--text-main);border:none;border-radius:8px;padding:5px 12px;font-size:0.82rem;font-weight:700;cursor:pointer;width:auto;min-height:0;">Cancelar</button>`;
+                    document.body.appendChild(el);
+                    requestAnimationFrame(() => { requestAnimationFrame(() => el.classList.add('visible')); });
+                    setTimeout(() => { el.classList.remove('visible'); setTimeout(() => el.remove(), 280); }, 6000);
+                },
+                endRound() {
+                    this.roundActive = false; this._clearPlayBuffer();
+                    cancionRoundTimer.stop(); songTimer.stop();
+                    const audio = document.getElementById('cancionLocalAudio'); audio.pause(); audio.src = '';
+                    Presentation.broadcast('SONG_LOCAL_STOP', {});
+                    this._revokeActiveUrls();
+                    playSoundEffect('timeout');
+                    showToast(`⏱ Turno de ${teamLabel(state.currentTurn)} terminado: ${this.roundScore} pts.`, 'ok', 3200);
+                    recordHistory({ type:'timeout', title:'Adivina la Canción (Local): fin de turno', detail:`${teamLabel(state.currentTurn)} · ${this.roundScore} pts en total` });
+                    setTurn((state.currentTurn + 1) % state.teams.length);
+                    this.startRound();
+                },
+                exit() {
+                    this.roundActive = false; this._clearPlayBuffer();
+                    cancionRoundTimer.stop(); songTimer.stop();
+                    const audio = document.getElementById('cancionLocalAudio');
+                    if(audio) { audio.pause(); audio.src = ''; }
+                    Presentation.broadcast('SONG_LOCAL_STOP', {});
+                    Presentation.broadcast('STOP_MINIGAME', {});
+                    this._revokeActiveUrls();
                     returnToBoard(false);
                 }
             }
@@ -7235,6 +7725,7 @@
             cM.innerHTML += `<div class="tooltip" style="background:linear-gradient(135deg, var(--correct-color), #059669); ${bS}" onclick="Minigames.Acertijos.init()"><span class="material-symbols-outlined" style="vertical-align:middle; margin-right:6px;">psychology</span> ACERTIJOS</div>`;
             cM.innerHTML += `<div class="tooltip" style="background:linear-gradient(135deg, var(--incorrect-color), #e11d48); ${bS}" onclick="Minigames.Stop.init()"><span class="material-symbols-outlined" style="vertical-align:middle; margin-right:6px;">front_hand</span> STOP!</div>`;
             cM.innerHTML += `<div class="tooltip" style="background:linear-gradient(135deg, #ec4899, #db2777); ${bS}" onclick="Minigames.Cancion.init()"><span class="material-symbols-outlined" style="vertical-align:middle; margin-right:6px;">music_note</span> ADIVINA LA CANCIÓN</div>`;
+            cM.innerHTML += `<div class="tooltip" style="background:linear-gradient(135deg, #db2777, #831843); ${bS}" onclick="Minigames.CancionLocal.init()"><span class="material-symbols-outlined" style="vertical-align:middle; margin-right:6px;">library_music</span> ADIVINA LA CANCIÓN (LOCAL)</div>`;
             cO.innerHTML = state.challenges.length ? state.challenges.map(ch => `<div class="tooltip" style="padding:10px 15px; background:rgba(128,128,128,0.1); border:1px solid var(--border-color);">${ch.name}${ch.link?`<a href="${ch.link}" target="_blank" style="margin-left:5px; color:#f59e0b;"><span class="material-symbols-outlined" style="font-size:1.1rem; vertical-align:middle;">open_in_new</span></a>`:''}${ch.desc?`<span class="tooltiptext">${ch.desc}</span>`:''}</div>`).join('') : `<p style="color:var(--text-muted); font-size:0.85rem; padding:10px;">No hay retos extras.</p>`;
             let l=document.getElementById('pruebasList'), o=''; for(let i=0; i<config.teamsCount; i++) { let v=Math.round(config.ptsChallengeMax-(i*config.ptsChallengeMax/(config.teamsCount-1||1))); o+=`<option value="${v}">${v} pts</option>`; }
             l.innerHTML = state.teams.map((t,i) => `<div class="pruebas-row"><strong>${t.id}. ${t.countryName} <span style="font-family:'Apple Color Emoji',sans-serif;">${t.emoji}</span></strong><select id="pr-t-${i}">${o}</select></div>`).join('');
