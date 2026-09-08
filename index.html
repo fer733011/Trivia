@@ -1378,7 +1378,7 @@
     <div id="streakBanner"><span id="streakBannerText"></span></div>
 
     <div style="position: fixed; bottom: 12px; right: 24px; font-size: 0.75rem; color: var(--text-muted); opacity: 0.8; font-weight: 400; letter-spacing: 0.3px; z-index: 5000;">
-        © 2026 Fernando Ros • <span onclick="document.getElementById('changelogModal').style.display='block'" style="cursor:pointer; text-decoration:underline; font-weight:500; color:var(--secondary);">Versión 7.10.0</span>
+        © 2026 Fernando Ros • <span onclick="document.getElementById('changelogModal').style.display='block'" style="cursor:pointer; text-decoration:underline; font-weight:500; color:var(--secondary);">Versión 7.10.1</span>
     </div>
 
     <!-- Indicador LED discreto de "Modo fácil" — solo visible para el
@@ -1424,6 +1424,12 @@
             <button onclick="document.getElementById('changelogModal').style.display='none'" style="background:none; border:none; color:var(--text-main); font-size:1.6rem; padding:0; width:auto;">×</button>
         </div>
         <div>
+            <div class="changelog-version">
+                <h4><strong>v7.10.1 – Corrección: título visible al moderador desde el inicio</strong></h4>
+                <ul>
+                    <li><strong>Adivina la Canción (Local):</strong> el moderador ahora ve el título (y artista, si el MP3 lo trae en su etiqueta) desde que arranca cada canción, igual que en la versión de YouTube — antes quedaba oculto hasta pulsar "Correcto", lo cual no tenía sentido para poder verificar el acierto.</li>
+                </ul>
+            </div>
             <div class="changelog-version">
                 <h4><strong>v7.10.0 – Nuevo Minijuego: Adivina la Canción (Local) 🎵📁</strong></h4>
                 <ul>
@@ -1708,7 +1714,7 @@
     
    <div id="infoModal" style="display: none; position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); background: var(--surface); padding: 28px; border-radius: 20px; border: 1px solid var(--border-color); animation: modalPop 0.22s cubic-bezier(0.4,0,0.2,1); z-index: 10000; width: 90%; max-width: 340px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
     <p style="color: var(--primary); font-weight: 700; margin-bottom: 6px; font-size: 1.5rem;">Trivia Cultural</p>
-    <p style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 20px;">Versión 7.10.0</p>
+    <p style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 20px;">Versión 7.10.1</p>
     <p style="margin-bottom: 8px; font-size: 0.95rem; font-weight: 600;">Desarrollado por Fernando Ros</p>
     <p style="margin-bottom: 20px; font-size: 0.9rem;">
         <a href="mailto:rosfernando@gmail.com" style="color: var(--primary); text-decoration: none; display:inline-flex; align-items:center; gap:5px;">
@@ -2760,6 +2766,7 @@
                     <div style="font-size:0.7rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;">Puntos del turno</div>
                 </div>
             </div>
+            <p id="cancionLocalModeratorTitle" style="font-size:0.85rem; color:var(--text-muted); background:rgba(128,128,128,0.08); border:1px dashed var(--border-color); border-radius:10px; padding:6px 14px; margin-bottom:14px;">🎧 Suena: <strong>—</strong></p>
             <div id="cancionLocalTimerRow" style="display:flex; gap:22px; align-items:center; justify-content:center; margin-bottom:18px; flex-wrap:wrap;">
                 <div style="text-align:center;">
                     <div id="cancionLocalTimer" class="timer-text" style="color:#db2777; font-size:2.6rem; min-width:80px; padding:10px;">0</div>
@@ -5521,6 +5528,11 @@
                     document.getElementById('cancionLocalCoverImg').style.display = 'none';
                     document.getElementById('btnCancionLocalPlay').style.display = 'inline-block';
                     document.getElementById('cancionLocalActiveControls').style.display = 'none';
+                    // El moderador SIEMPRE ve el título — igual que en la versión
+                    // YouTube (cancionModeratorTitle) — nunca queda oculto hasta
+                    // marcar "Correcto". Al proyector, en cambio, jamás se le
+                    // envía este dato (solo llega al revelar con SONG_LOCAL_REVEAL).
+                    document.getElementById('cancionLocalModeratorTitle').innerHTML = `🎧 Suena: <strong>${this.activeTitle}</strong>`;
                     Presentation.broadcast('START_MINIGAME', { type: 'cancionLocal', teamIndex: state.currentTurn });
                     autoScrollTo('cancionLocalScreen');
                     try {
@@ -5530,6 +5542,10 @@
                         if(tags.title) this.activeTitle = tags.title;
                         if(tags.artist) this.activeArtist = tags.artist;
                         this.activeCoverBlob = tags.cover || null;
+                        // Se refresca con el título/artista reales del ID3 (si el
+                        // archivo los trae), reemplazando el nombre de archivo
+                        // usado como respaldo inicial.
+                        document.getElementById('cancionLocalModeratorTitle').innerHTML = `🎧 Suena: <strong>${this.activeTitle}</strong>${this.activeArtist ? ' — ' + this.activeArtist : ''}`;
                         this.activeAudioBlobUrl = URL.createObjectURL(new Blob([buffer]));
                         const img = document.getElementById('cancionLocalCoverImg');
                         if(this.activeCoverBlob) { img.src = URL.createObjectURL(this.activeCoverBlob); img.style.display = 'block'; }
