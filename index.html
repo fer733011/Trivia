@@ -1378,7 +1378,7 @@
     <div id="streakBanner"><span id="streakBannerText"></span></div>
 
     <div style="position: fixed; bottom: 12px; right: 24px; font-size: 0.75rem; color: var(--text-muted); opacity: 0.8; font-weight: 400; letter-spacing: 0.3px; z-index: 5000;">
-        © 2026 Fernando Ros • <span onclick="document.getElementById('changelogModal').style.display='block'" style="cursor:pointer; text-decoration:underline; font-weight:500; color:var(--secondary);">Versión 7.11.0</span>
+        © 2026 Fernando Ros • <span onclick="document.getElementById('changelogModal').style.display='block'" style="cursor:pointer; text-decoration:underline; font-weight:500; color:var(--secondary);">Versión 7.11.1</span>
     </div>
 
     <!-- Indicador LED discreto de "Modo fácil" — solo visible para el
@@ -1424,6 +1424,15 @@
             <button onclick="document.getElementById('changelogModal').style.display='none'" style="background:none; border:none; color:var(--text-main); font-size:1.6rem; padding:0; width:auto;">×</button>
         </div>
         <div>
+            <div class="changelog-version">
+                <h4><strong>v7.11.1 – Ajustes finos de "Adivina la Canción" (ambas variantes)</strong></h4>
+                <ul>
+                    <li><strong>Restaurado el margen de 4 segundos</strong> antes de que arranquen los cronómetros al pulsar "Reproducir" (en ambas variantes) — da tiempo a que el audio/video realmente empiece a sonar (y a que el proyector reciba y monte el Blob, en la versión local) antes de que se pueda marcar "Correcto" o corra el reloj.</li>
+                    <li><strong>Quitado el botón "🔊 No suena" de Adivina la Canción (Local):</strong> al ser audio local sin las restricciones de reproducción de YouTube, no hacía falta ese respaldo manual; se mantiene únicamente en la versión YouTube, donde sí es relevante.</li>
+                    <li><strong>Corregidos los valores por defecto obsoletos</strong> que quedaban en el código de respaldo de Ajustes técnicos (usaban 180s/20-10 pts en vez de los 120s/10-4 pts vigentes desde v7.11.0); además, "Nueva partida" ahora repone estos tres valores explícitamente, por si una sesión autoguardada antigua los había sobrescrito.</li>
+                    <li><strong>Distribución de información durante el minijuego reorganizada:</strong> los segundos de la canción sonando y los puntos si se acierta ahora aparecen a la derecha de la carátula/video, en blanco y bien destacados; el tiempo y puntaje del turno completo pasan a un tamaño más discreto en amarillo, arriba, para no competir visualmente con el dato que de verdad importa segundo a segundo.</li>
+                </ul>
+            </div>
             <div class="changelog-version">
                 <h4><strong>v7.11.0 – Reequilibrio de "Adivina la Canción" (ambas variantes)</strong></h4>
                 <ul>
@@ -1724,7 +1733,7 @@
     
    <div id="infoModal" style="display: none; position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); background: var(--surface); padding: 28px; border-radius: 20px; border: 1px solid var(--border-color); animation: modalPop 0.22s cubic-bezier(0.4,0,0.2,1); z-index: 10000; width: 90%; max-width: 340px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
     <p style="color: var(--primary); font-weight: 700; margin-bottom: 6px; font-size: 1.5rem;">Trivia Cultural</p>
-    <p style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 20px;">Versión 7.11.0</p>
+    <p style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 20px;">Versión 7.11.1</p>
     <p style="margin-bottom: 8px; font-size: 0.95rem; font-weight: 600;">Desarrollado por Fernando Ros</p>
     <p style="margin-bottom: 20px; font-size: 0.9rem;">
         <a href="mailto:rosfernando@gmail.com" style="color: var(--primary); text-decoration: none; display:inline-flex; align-items:center; gap:5px;">
@@ -2686,36 +2695,43 @@
                 <span class="minigame-cat-pill"><span class="material-symbols-outlined" style="font-size:1rem;">music_note</span> Adivina la Canción</span>
             </div>
 
-            <div style="display:flex; gap:22px; align-items:center; justify-content:center; margin-bottom:10px; flex-wrap:wrap;">
+            <!-- Info de TURNO (2 min totales, puntos acumulados): discreta,
+                 en amarillo — nunca debe competir visualmente con los datos
+                 de la canción sonando ahora mismo (ver fila de abajo). -->
+            <div style="display:flex; gap:20px; align-items:center; justify-content:center; margin-bottom:8px; flex-wrap:wrap;">
                 <div style="text-align:center;">
-                    <div id="cancionRoundTimer" class="timer-text" style="color:#ec4899; font-size:2.2rem; min-width:80px; padding:8px;">2:00</div>
-                    <div id="cancionRoundTimerLabel" style="font-size:0.7rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;">Tiempo de turno</div>
+                    <div id="cancionRoundTimer" style="font-size:1.3rem; font-weight:800; color:#facc15; line-height:1;">2:00</div>
+                    <div id="cancionRoundTimerLabel" style="font-size:0.62rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;">Tiempo de turno</div>
                 </div>
                 <div style="text-align:center;">
-                    <div id="cancionRoundScore" style="font-size:2.2rem; font-weight:800; color:var(--primary); line-height:1;">0</div>
-                    <div style="font-size:0.7rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;">Puntos del turno</div>
+                    <div id="cancionRoundScore" style="font-size:1.3rem; font-weight:800; color:#facc15; line-height:1;">0</div>
+                    <div style="font-size:0.62rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;">Puntos del turno</div>
                 </div>
             </div>
 
             <p id="cancionModeratorTitle" style="font-size:0.85rem; color:var(--text-muted); background:rgba(128,128,128,0.08); border:1px dashed var(--border-color); border-radius:10px; padding:6px 14px; margin-bottom:14px;">🎧 Suena: <strong>—</strong></p>
 
-            <div id="cancionTimerRow" style="display:flex; gap:22px; align-items:center; justify-content:center; margin-bottom:18px; flex-wrap:wrap;">
-                <div style="text-align:center;">
-                    <div id="cancionTimer" class="timer-text" style="color:#ec4899; font-size:2.6rem; min-width:80px; padding:10px;">0</div>
-                    <div style="font-size:0.7rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;">Segundos de esta canción</div>
+            <!-- Info de la CANCIÓN ACTUAL (segundos + puntos si acierta ya):
+                 lo más importante en pantalla mientras suena — en blanco,
+                 grande, a la derecha del video. -->
+            <div style="display:flex; gap:28px; align-items:center; justify-content:center; margin-bottom:18px; flex-wrap:wrap;">
+                <div id="cancionVideoWrap" style="position:relative; width:100%; max-width:380px; aspect-ratio:16/9; background:#000; border-radius:16px; overflow:hidden; margin:0; box-shadow:0 8px 24px rgba(0,0,0,0.35);">
+                    <iframe id="cancionYtIframe" style="width:100%; height:100%; border:0;" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                    <div id="cancionOverlay" class="cancion-overlay" onclick="Minigames.Cancion.nudge()" style="cursor:pointer;" title="¿No suena? Toca aquí">
+                        <span class="material-symbols-outlined cancion-disc">album</span>
+                        <span class="cancion-overlay-text">🎵 Escuchando…</span>
+                        <span style="font-size:0.72rem; opacity:0.8; font-weight:600;">🔊 ¿No suena? Toca aquí</span>
+                    </div>
                 </div>
-                <div style="text-align:center;">
-                    <div id="cancionPoints" style="font-size:2.6rem; font-weight:800; color:var(--correct-color); line-height:1;">20</div>
-                    <div style="font-size:0.7rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;">Puntos si acierta ahora</div>
-                </div>
-            </div>
-
-            <div id="cancionVideoWrap" style="position:relative; width:100%; max-width:480px; aspect-ratio:16/9; background:#000; border-radius:16px; overflow:hidden; margin:0 auto 18px; box-shadow:0 8px 24px rgba(0,0,0,0.35);">
-                <iframe id="cancionYtIframe" style="width:100%; height:100%; border:0;" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-                <div id="cancionOverlay" class="cancion-overlay" onclick="Minigames.Cancion.nudge()" style="cursor:pointer;" title="¿No suena? Toca aquí">
-                    <span class="material-symbols-outlined cancion-disc">album</span>
-                    <span class="cancion-overlay-text">🎵 Escuchando…</span>
-                    <span style="font-size:0.72rem; opacity:0.8; font-weight:600;">🔊 ¿No suena? Toca aquí</span>
+                <div style="display:flex; flex-direction:column; gap:16px; align-items:center;">
+                    <div style="text-align:center;">
+                        <div id="cancionTimer" class="timer-text" style="color:#ffffff !important; border-color:#ffffff !important; box-shadow:0 0 0 5px rgba(255,255,255,0.18) !important; font-size:2.8rem; min-width:100px; padding:16px;">0</div>
+                        <div style="font-size:0.72rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px; margin-top:6px;">Segundos</div>
+                    </div>
+                    <div style="text-align:center;">
+                        <div id="cancionPoints" style="font-size:3rem; font-weight:800; color:#ffffff; line-height:1;">10</div>
+                        <div style="font-size:0.72rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;">Puntos si acierta ahora</div>
+                    </div>
                 </div>
             </div>
             <p id="cancionRevealTitle" style="display:none; font-size:1.1rem; font-weight:700; margin-bottom:16px;"></p>
@@ -2766,32 +2782,40 @@
                 <span id="cancionLocalTeamPill" class="minigame-team-pill">Equipo</span>
                 <span class="minigame-cat-pill"><span class="material-symbols-outlined" style="font-size:1rem;">library_music</span> Adivina la Canción (Local)</span>
             </div>
-            <div style="display:flex; gap:22px; align-items:center; justify-content:center; margin-bottom:10px; flex-wrap:wrap;">
+            <!-- Info de TURNO (2 min totales, puntos acumulados): discreta,
+                 en amarillo — nunca debe competir visualmente con los datos
+                 de la canción sonando ahora mismo (ver fila de abajo). -->
+            <div style="display:flex; gap:20px; align-items:center; justify-content:center; margin-bottom:8px; flex-wrap:wrap;">
                 <div style="text-align:center;">
-                    <div id="cancionLocalRoundTimer" class="timer-text" style="color:#db2777; font-size:2.2rem; min-width:80px; padding:8px;">2:00</div>
-                    <div style="font-size:0.7rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;">Tiempo de turno</div>
+                    <div id="cancionLocalRoundTimer" style="font-size:1.3rem; font-weight:800; color:#facc15; line-height:1;">2:00</div>
+                    <div style="font-size:0.62rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;">Tiempo de turno</div>
                 </div>
                 <div style="text-align:center;">
-                    <div id="cancionLocalRoundScore" style="font-size:2.2rem; font-weight:800; color:var(--primary); line-height:1;">0</div>
-                    <div style="font-size:0.7rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;">Puntos del turno</div>
+                    <div id="cancionLocalRoundScore" style="font-size:1.3rem; font-weight:800; color:#facc15; line-height:1;">0</div>
+                    <div style="font-size:0.62rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;">Puntos del turno</div>
                 </div>
             </div>
             <p id="cancionLocalModeratorTitle" style="font-size:0.85rem; color:var(--text-muted); background:rgba(128,128,128,0.08); border:1px dashed var(--border-color); border-radius:10px; padding:6px 14px; margin-bottom:14px;">🎧 Suena: <strong>—</strong></p>
-            <div id="cancionLocalTimerRow" style="display:flex; gap:22px; align-items:center; justify-content:center; margin-bottom:18px; flex-wrap:wrap;">
-                <div style="text-align:center;">
-                    <div id="cancionLocalTimer" class="timer-text" style="color:#db2777; font-size:2.6rem; min-width:80px; padding:10px;">0</div>
-                    <div style="font-size:0.7rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;">Segundos de esta canción</div>
+            <!-- Info de la CANCIÓN ACTUAL (segundos + puntos si acierta ya):
+                 lo más importante en pantalla mientras suena — en blanco,
+                 grande, a la derecha de la carátula. -->
+            <div style="display:flex; gap:28px; align-items:center; justify-content:center; margin-bottom:18px; flex-wrap:wrap;">
+                <div id="cancionLocalCoverWrap" style="margin:0;">
+                    <img id="cancionLocalCoverImg" src="" alt="Carátula" style="display:none;">
+                    <div id="cancionLocalOverlay" class="cancion-overlay">
+                        <span class="material-symbols-outlined cancion-disc" style="font-size:4.5rem;">album</span>
+                        <span class="cancion-overlay-text">🎵 Escuchando…</span>
+                    </div>
                 </div>
-                <div style="text-align:center;">
-                    <div id="cancionLocalPoints" style="font-size:2.6rem; font-weight:800; color:var(--correct-color); line-height:1;">20</div>
-                    <div style="font-size:0.7rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;">Puntos si acierta ahora</div>
-                </div>
-            </div>
-            <div id="cancionLocalCoverWrap">
-                <img id="cancionLocalCoverImg" src="" alt="Carátula" style="display:none;">
-                <div id="cancionLocalOverlay" class="cancion-overlay">
-                    <span class="material-symbols-outlined cancion-disc" style="font-size:4.5rem;">album</span>
-                    <span class="cancion-overlay-text">🎵 Escuchando…</span>
+                <div style="display:flex; flex-direction:column; gap:16px; align-items:center;">
+                    <div style="text-align:center;">
+                        <div id="cancionLocalTimer" class="timer-text" style="color:#ffffff !important; border-color:#ffffff !important; box-shadow:0 0 0 5px rgba(255,255,255,0.18) !important; font-size:2.8rem; min-width:100px; padding:16px;">0</div>
+                        <div style="font-size:0.72rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px; margin-top:6px;">Segundos</div>
+                    </div>
+                    <div style="text-align:center;">
+                        <div id="cancionLocalPoints" style="font-size:3rem; font-weight:800; color:#ffffff; line-height:1;">10</div>
+                        <div style="font-size:0.72rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;">Puntos si acierta ahora</div>
+                    </div>
                 </div>
             </div>
             <p id="cancionLocalRevealTitle" style="display:none; font-size:1.1rem; font-weight:700; margin-bottom:16px;"></p>
@@ -2803,7 +2827,6 @@
             <div id="cancionLocalActiveControls" style="display:none; gap:12px; justify-content:center; flex-wrap:wrap;">
                 <button id="btnCancionLocalCorrect" class="btn-correct" style="width:auto; padding:14px 30px; border-radius:100px;" onclick="Minigames.CancionLocal.handleCorrect()"><span class="material-symbols-outlined" style="vertical-align:middle;">check</span> Correcto</button>
                 <button id="btnCancionLocalNext" class="btn-primary" style="background:var(--primary); width:auto; padding:14px 30px;" onclick="Minigames.CancionLocal.nextSongClick()"><span class="material-symbols-outlined" style="vertical-align:middle;">skip_next</span> Siguiente Canción</button>
-                <button id="btnCancionLocalNudge" class="btn-secondary" style="width:auto; padding:14px 20px;" onclick="Minigames.CancionLocal.nudge()" title="Si no suena en el proyector, pulsa aquí"><span class="material-symbols-outlined" style="vertical-align:middle; font-size:1.1rem;">volume_up</span> 🔊 No suena</button>
                 <button id="btnCancionLocalExit" class="btn-secondary" style="border-color: var(--incorrect-color); color: var(--incorrect-color); width:auto; padding:14px 20px;" onclick="Minigames.CancionLocal.confirmExit()"><span class="material-symbols-outlined" style="vertical-align:middle; font-size:1.1rem;">stop_circle</span> Terminar minijuego</button>
             </div>
         </div>
@@ -3202,7 +3225,6 @@
                     case 'SONG_LOCAL_TICK':   Projector.songLocalTick(payload); break;
                     case 'SONG_LOCAL_REVEAL': Projector.songLocalReveal(payload); break;
                     case 'SONG_LOCAL_STOP':   Projector.songLocalStop(); break;
-                    case 'SONG_LOCAL_NUDGE':  Projector.songLocalNudge(); break;
                     case 'START_GAME':      Projector.showBoard(payload); break;
                     case 'RETURN_BOARD':    Projector.showBoard(payload); break;
                     case 'END_GAME':        Projector.showIdle(); break;
@@ -5264,9 +5286,9 @@
                 // canciones tardan en cargar) el video ya se está pidiendo
                 // pero NINGÚN cronómetro corre todavía — ni el de puntaje de
                 // la canción ni el turno global de 2 minutos — y "Correcto"
-                // queda deshabilitado. Arrancan de inmediato al pulsar
-                // "Reproducir" (sin colchón de espera: el video/audio ya
-                // carga por su cuenta mientras suena).
+                // queda deshabilitado. Pasados los 4s (y solo si el
+                // moderador no saltó la canción mientras tanto), arrancan
+                // ambos cronómetros a la vez.
                 play() {
                     if(this.playing || !this.activeSong) return;
                     this.playing = true; this.revealed = false;
@@ -5285,17 +5307,21 @@
                         }
                     }
                     this._clearPlayBuffer();
-                    document.getElementById('btnCancionCorrect').disabled = false;
-                    cancionRoundTimer.resume();
-                    songTimer.start(
-                        t => {
-                            document.getElementById('cancionTimer').innerText = t;
-                            document.getElementById('cancionPoints').innerText = currentSongPoints(t);
-                            Presentation.broadcast('SONG_TICK', { elapsed: t, points: currentSongPoints(t) });
-                        },
-                        () => this.handleTimeout(),
-                        config.timeCancionMax
-                    );
+                    this._playBufferTimeout = setTimeout(() => {
+                        this._playBufferTimeout = null;
+                        if(!this.playing) return; // se saltó/canceló durante el colchón
+                        document.getElementById('btnCancionCorrect').disabled = false;
+                        cancionRoundTimer.resume();
+                        songTimer.start(
+                            t => {
+                                document.getElementById('cancionTimer').innerText = t;
+                                document.getElementById('cancionPoints').innerText = currentSongPoints(t);
+                                Presentation.broadcast('SONG_TICK', { elapsed: t, points: currentSongPoints(t) });
+                            },
+                            () => this.handleTimeout(),
+                            config.timeCancionMax
+                        );
+                    }, 4000);
                 },
                 // Ajuste manual sobre la marcha: si el estribillo todavía no
                 // llegó (o el salto por defecto se pasó de largo), recarga
@@ -5578,21 +5604,26 @@
                         Presentation.broadcastLocalSong('SONG_LOCAL_PLAY', { teamIndex: state.currentTurn, initialPoints: config.ptsCancionMax }, new Blob([this._activeBuffer]), this.activeCoverBlob);
                     }
                     this._clearPlayBuffer();
-                    // Sin colchón de espera: al ser un archivo local ya cargado
-                    // en memoria (arrayBuffer leído en nextSong()), no hay
-                    // buffering de red que esperar — arranca de inmediato.
-                    document.getElementById('btnCancionLocalCorrect').disabled = false;
-                    cancionRoundTimer.resume();
-                    songTimer.start(
-                        t => {
-                            document.getElementById('cancionLocalTimer').innerText = t;
-                            const pts = currentSongPoints(t);
-                            document.getElementById('cancionLocalPoints').innerText = pts;
-                            Presentation.broadcast('SONG_LOCAL_TICK', { elapsed: t, points: pts });
-                        },
-                        () => this.handleTimeout(),
-                        config.timeCancionMax
-                    );
+                    // Margen de 4 segundos antes de arrancar los cronómetros:
+                    // da tiempo a que el audio realmente empiece a sonar (y a
+                    // que el proyector reciba y monte el Blob) antes de que
+                    // el equipo pueda marcar "Correcto" o corra el reloj.
+                    this._playBufferTimeout = setTimeout(() => {
+                        this._playBufferTimeout = null;
+                        if(!this.playing) return; // se saltó/canceló durante el colchón
+                        document.getElementById('btnCancionLocalCorrect').disabled = false;
+                        cancionRoundTimer.resume();
+                        songTimer.start(
+                            t => {
+                                document.getElementById('cancionLocalTimer').innerText = t;
+                                const pts = currentSongPoints(t);
+                                document.getElementById('cancionLocalPoints').innerText = pts;
+                                Presentation.broadcast('SONG_LOCAL_TICK', { elapsed: t, points: pts });
+                            },
+                            () => this.handleTimeout(),
+                            config.timeCancionMax
+                        );
+                    }, 4000);
                 },
                 handleCorrect() {
                     if(!this.playing || this.revealed) return;
@@ -5640,7 +5671,6 @@
                         this.nextSong();
                     }
                 },
-                nudge() { if(this.playing) Presentation.broadcast('SONG_LOCAL_NUDGE', {}); },
                 confirmExit() {
                     document.querySelectorAll('.toast-confirm').forEach(t => t.remove());
                     const el = document.createElement('div');
@@ -6484,6 +6514,12 @@
         function newGame() {
             pushUndo('Nueva partida');
             localStorage.removeItem(STORAGE_KEYS.session);
+            // Salvaguarda: si una sesión guardada anterior (localStorage)
+            // había traído valores viejos de Adivina la Canción (turno,
+            // puntos, ventana), "Nueva partida" los repone a los valores
+            // por defecto del código actual, sin depender de recargar la
+            // página entera.
+            config.timeCancionRound = 120; config.ptsCancionMax = 10; config.ptsCancionMin = 4;
             gameTimer.stop(); stopMusic(); clearInterval(Minigames.Stop.intervalLetter);
             Presentation.broadcast('END_GAME', {});
             // Resetear preguntas usadas para que estén disponibles en la nueva partida
@@ -7815,11 +7851,11 @@
             config.ptsTabu = parseInt(document.getElementById('setPtsTabu').value) || 5;
             config.ptsStopUnique = parseInt(document.getElementById('setPtsStopUnique').value) || 10;
             config.ptsStopRepeated = parseInt(document.getElementById('setPtsStopRepeated').value) || 5;
-            config.timeCancionRound = parseInt(document.getElementById('setTimeCancionRound').value) || 180;
+            config.timeCancionRound = parseInt(document.getElementById('setTimeCancionRound').value) || 120;
             config.timeCancionMax = parseInt(document.getElementById('setTimeCancionMax').value) || 30;
             config.cancionStartOffset = Math.max(0, parseInt(document.getElementById('setCancionStartOffset').value) || 0);
-            config.ptsCancionMax = parseInt(document.getElementById('setPtsCancionMax').value) || 20;
-            config.ptsCancionMin = parseInt(document.getElementById('setPtsCancionMin').value) || 10;
+            config.ptsCancionMax = parseInt(document.getElementById('setPtsCancionMax').value) || 10;
+            config.ptsCancionMin = parseInt(document.getElementById('setPtsCancionMin').value) || 4;
             config.ytApiKey = document.getElementById('setYtApiKey').value.trim();
             saveYtApiKey(config.ytApiKey);
             config.streakThreshold = parseInt(document.getElementById('setStreakThreshold').value) || 3;
