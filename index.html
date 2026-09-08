@@ -1378,7 +1378,7 @@
     <div id="streakBanner"><span id="streakBannerText"></span></div>
 
     <div style="position: fixed; bottom: 12px; right: 24px; font-size: 0.75rem; color: var(--text-muted); opacity: 0.8; font-weight: 400; letter-spacing: 0.3px; z-index: 5000;">
-        © 2026 Fernando Ros • <span onclick="document.getElementById('changelogModal').style.display='block'" style="cursor:pointer; text-decoration:underline; font-weight:500; color:var(--secondary);">Versión 7.10.1</span>
+        © 2026 Fernando Ros • <span onclick="document.getElementById('changelogModal').style.display='block'" style="cursor:pointer; text-decoration:underline; font-weight:500; color:var(--secondary);">Versión 7.11.0</span>
     </div>
 
     <!-- Indicador LED discreto de "Modo fácil" — solo visible para el
@@ -1424,6 +1424,16 @@
             <button onclick="document.getElementById('changelogModal').style.display='none'" style="background:none; border:none; color:var(--text-main); font-size:1.6rem; padding:0; width:auto;">×</button>
         </div>
         <div>
+            <div class="changelog-version">
+                <h4><strong>v7.11.0 – Reequilibrio de "Adivina la Canción" (ambas variantes)</strong></h4>
+                <ul>
+                    <li><strong>Turno por equipo reducido de 3 a 2 minutos</strong> (<code>timeCancionRound</code>): menos canciones encadenadas por turno, para que el puntaje total no se dispare tan por encima de las preguntas normales.</li>
+                    <li><strong>Puntaje máximo/mínimo por canción bajado de 20/10 a 10/4 pts</strong> (<code>ptsCancionMax</code>/<code>ptsCancionMin</code>).</li>
+                    <li><strong>Ventana de puntaje completo acortada de 10 a 6 segundos:</strong> ahora solo quien reconoce la canción muy rápido se lleva el máximo; el resto entra antes en la caída progresiva de puntos.</li>
+                    <li><strong>Eliminado el colchón de 4 segundos</strong> antes de arrancar los cronómetros al pulsar "Reproducir": en Adivina la Canción (Local) ya no aplicaba (el audio se lee entero en memoria antes de reproducirlo, sin buffering de red) y se retiró también de la versión YouTube para mantener ambas coherentes.</li>
+                    <li>Con esta combinación, un equipo "promedio" pasa de rondar ~180-220 pts por turno a ~45-55 pts — mucho más en línea con lo que se gana respondiendo preguntas normales de trivia.</li>
+                </ul>
+            </div>
             <div class="changelog-version">
                 <h4><strong>v7.10.1 – Corrección: título visible al moderador desde el inicio</strong></h4>
                 <ul>
@@ -1714,7 +1724,7 @@
     
    <div id="infoModal" style="display: none; position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); background: var(--surface); padding: 28px; border-radius: 20px; border: 1px solid var(--border-color); animation: modalPop 0.22s cubic-bezier(0.4,0,0.2,1); z-index: 10000; width: 90%; max-width: 340px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
     <p style="color: var(--primary); font-weight: 700; margin-bottom: 6px; font-size: 1.5rem;">Trivia Cultural</p>
-    <p style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 20px;">Versión 7.10.1</p>
+    <p style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 20px;">Versión 7.11.0</p>
     <p style="margin-bottom: 8px; font-size: 0.95rem; font-weight: 600;">Desarrollado por Fernando Ros</p>
     <p style="margin-bottom: 20px; font-size: 0.9rem;">
         <a href="mailto:rosfernando@gmail.com" style="color: var(--primary); text-decoration: none; display:inline-flex; align-items:center; gap:5px;">
@@ -1985,7 +1995,7 @@
                         <div class="setup-group" style="margin-bottom:8px;"><label>Tiempo máx. por canción (s)</label><input type="number" id="setTimeCancionMax" min="10"></div>
                         <div class="setup-group" style="margin-bottom:8px;"><label>Saltar intro al reproducir (s)</label><input type="number" id="setCancionStartOffset" min="0"></div>
                         <p style="font-size:0.68rem; color:var(--text-muted); line-height:1.4; margin:0 0 8px;">Arranca cada canción ese número de segundos, saltando la intro para caer más cerca del estribillo (aproximado, no exacto). Con el botón "+10s" durante el juego puedes adelantar más si hace falta.</p>
-                        <div class="setup-group" style="margin-bottom:8px; display:flex; gap:6px;"><input type="number" id="setPtsCancionMax" title="Pts máx (primeros 10s)" placeholder="Pts máx"><input type="number" id="setPtsCancionMin" title="Pts mín (justo antes del límite)" placeholder="Pts mín"></div>
+                        <div class="setup-group" style="margin-bottom:8px; display:flex; gap:6px;"><input type="number" id="setPtsCancionMax" title="Pts máx (primeros 6s)" placeholder="Pts máx"><input type="number" id="setPtsCancionMin" title="Pts mín (justo antes del límite)" placeholder="Pts mín"></div>
                         <p style="font-size:0.68rem; color:var(--text-muted); line-height:1.4; margin:0 0 8px;">Puntaje: máx. en los primeros 10s, baja poco a poco hasta el mínimo cerca del límite, y 0 si se agota el tiempo sin acertar.</p>
                         <div class="setup-group" style="margin-bottom:0;">
                             <label>API key de YouTube Data v3</label>
@@ -2678,7 +2688,7 @@
 
             <div style="display:flex; gap:22px; align-items:center; justify-content:center; margin-bottom:10px; flex-wrap:wrap;">
                 <div style="text-align:center;">
-                    <div id="cancionRoundTimer" class="timer-text" style="color:#ec4899; font-size:2.2rem; min-width:80px; padding:8px;">3:00</div>
+                    <div id="cancionRoundTimer" class="timer-text" style="color:#ec4899; font-size:2.2rem; min-width:80px; padding:8px;">2:00</div>
                     <div id="cancionRoundTimerLabel" style="font-size:0.7rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;">Tiempo de turno</div>
                 </div>
                 <div style="text-align:center;">
@@ -2758,7 +2768,7 @@
             </div>
             <div style="display:flex; gap:22px; align-items:center; justify-content:center; margin-bottom:10px; flex-wrap:wrap;">
                 <div style="text-align:center;">
-                    <div id="cancionLocalRoundTimer" class="timer-text" style="color:#db2777; font-size:2.2rem; min-width:80px; padding:8px;">3:00</div>
+                    <div id="cancionLocalRoundTimer" class="timer-text" style="color:#db2777; font-size:2.2rem; min-width:80px; padding:8px;">2:00</div>
                     <div style="font-size:0.7rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;">Tiempo de turno</div>
                 </div>
                 <div style="text-align:center;">
@@ -3865,7 +3875,7 @@
         function getSavedYtApiKey() { try { return localStorage.getItem('trivia_yt_api_key') || DEFAULT_YT_API_KEY; } catch(e) { return DEFAULT_YT_API_KEY; } }
         function saveYtApiKey(key) { try { localStorage.setItem('trivia_yt_api_key', key || ''); } catch(e) {} }
 
-        let config = { teamsCount: 3, ptsCorrect: 10, ptsRebound: 5, ptsChallengeMax: 50, ptsMultiple: 10, allowDouble: true, allowFifty: true, allowDoN: true, allowRebounds: true, isDouble: false, isDoubleOrNothing: false, isFiftyFifty: false, timeQuestion: 30, timeAcertijos: 90, timeMultiple: 30, timePictionary: 60, timeTabu: 60, timeStop: 120, timeCharadas: 60, ptsPicFacil: 2, ptsPicIntermedia: 3, ptsPicDificil: 10, ptsChaFacil: 2, ptsChaIntermedia: 3, ptsChaDificil: 10, ptsTabu: 5, ptsStopUnique: 10, ptsStopRepeated: 5, soundEnabled: true, streakThreshold: 3, streakMultiplier: 1.5, streakStep: 2, streakIncrement: 0.5, streakShieldAt: 6, easyMode: false, diceEnabled: false, ytApiKey: getSavedYtApiKey(), ptsCancionMax: 20, ptsCancionMin: 10, timeCancionMax: 30, timeCancionRound: 180, cancionStartOffset: 35 };
+        let config = { teamsCount: 3, ptsCorrect: 10, ptsRebound: 5, ptsChallengeMax: 50, ptsMultiple: 10, allowDouble: true, allowFifty: true, allowDoN: true, allowRebounds: true, isDouble: false, isDoubleOrNothing: false, isFiftyFifty: false, timeQuestion: 30, timeAcertijos: 90, timeMultiple: 30, timePictionary: 60, timeTabu: 60, timeStop: 120, timeCharadas: 60, ptsPicFacil: 2, ptsPicIntermedia: 3, ptsPicDificil: 10, ptsChaFacil: 2, ptsChaIntermedia: 3, ptsChaDificil: 10, ptsTabu: 5, ptsStopUnique: 10, ptsStopRepeated: 5, soundEnabled: true, streakThreshold: 3, streakMultiplier: 1.5, streakStep: 2, streakIncrement: 0.5, streakShieldAt: 6, easyMode: false, diceEnabled: false, ytApiKey: getSavedYtApiKey(), ptsCancionMax: 10, ptsCancionMin: 4, timeCancionMax: 30, timeCancionRound: 120, cancionStartOffset: 35 };
         let state = { db: [], categories: {}, catNames: [], teams: [], currentTurn: null, activeCat: null, activeQ: null, challenges: [], picPools: { facil: [], intermedia: [], dificil: [] }, charadasPools: { facil: [], intermedia: [], dificil: [] }, tabuPools: {}, tabuCategories: new Set(["Aleatoria"]), teamPools: {}, multiplePool: [], acertijosPool: [], stopCategories: [], stopLetters: [], history: [], undoStack: [], gameLog: [], lastScoreUpdated: null, lastScoreDelta: null, roundRespondedCount: 0, roundStartTurn: null, blockedCategories: [], scoreHistory: [], chaosModeActive: false, chaosModeRemaining: 0, chaosCardGatePending: false, songCategories: [], songPlaylistIds: {}, songPools: {}, wildcardLog: [] };
 
         /**
@@ -4460,13 +4470,14 @@
             stop() { if(this.interval) { clearInterval(this.interval); this.interval = null; } }
         };
 
-        // Puntaje disponible en el segundo `t`: completo hasta los 10s,
+        // Puntaje disponible en el segundo `t`: completo hasta los 6s,
         // luego baja linealmente hasta ptsCancionMin al llegar a timeCancionMax.
+        const CANCION_MAX_POINTS_WINDOW_S = 6;
         function currentSongPoints(t) {
-            const max = config.ptsCancionMax, min = config.ptsCancionMin, limit = config.timeCancionMax;
-            if(t <= 10) return max;
+            const max = config.ptsCancionMax, min = config.ptsCancionMin, limit = config.timeCancionMax, w = CANCION_MAX_POINTS_WINDOW_S;
+            if(t <= w) return max;
             if(t >= limit) return min;
-            const ratio = (t - 10) / (limit - 10);
+            const ratio = (t - w) / (limit - w);
             return Math.round(max - (max - min) * ratio);
         }
 
@@ -5252,10 +5263,10 @@
                 // Arranca ESTA canción. Por un margen de 4 segundos (algunas
                 // canciones tardan en cargar) el video ya se está pidiendo
                 // pero NINGÚN cronómetro corre todavía — ni el de puntaje de
-                // la canción ni el turno global de 3 minutos — y "Correcto"
-                // queda deshabilitado. Pasados los 4s (y solo si el
-                // moderador no saltó la canción mientras tanto), arrancan
-                // ambos cronómetros a la vez.
+                // la canción ni el turno global de 2 minutos — y "Correcto"
+                // queda deshabilitado. Arrancan de inmediato al pulsar
+                // "Reproducir" (sin colchón de espera: el video/audio ya
+                // carga por su cuenta mientras suena).
                 play() {
                     if(this.playing || !this.activeSong) return;
                     this.playing = true; this.revealed = false;
@@ -5274,21 +5285,17 @@
                         }
                     }
                     this._clearPlayBuffer();
-                    this._playBufferTimeout = setTimeout(() => {
-                        this._playBufferTimeout = null;
-                        if(!this.playing) return; // se saltó/canceló durante el colchón
-                        document.getElementById('btnCancionCorrect').disabled = false;
-                        cancionRoundTimer.resume();
-                        songTimer.start(
-                            t => {
-                                document.getElementById('cancionTimer').innerText = t;
-                                document.getElementById('cancionPoints').innerText = currentSongPoints(t);
-                                Presentation.broadcast('SONG_TICK', { elapsed: t, points: currentSongPoints(t) });
-                            },
-                            () => this.handleTimeout(),
-                            config.timeCancionMax
-                        );
-                    }, 4000);
+                    document.getElementById('btnCancionCorrect').disabled = false;
+                    cancionRoundTimer.resume();
+                    songTimer.start(
+                        t => {
+                            document.getElementById('cancionTimer').innerText = t;
+                            document.getElementById('cancionPoints').innerText = currentSongPoints(t);
+                            Presentation.broadcast('SONG_TICK', { elapsed: t, points: currentSongPoints(t) });
+                        },
+                        () => this.handleTimeout(),
+                        config.timeCancionMax
+                    );
                 },
                 // Ajuste manual sobre la marcha: si el estribillo todavía no
                 // llegó (o el salto por defecto se pasó de largo), recarga
@@ -5571,22 +5578,21 @@
                         Presentation.broadcastLocalSong('SONG_LOCAL_PLAY', { teamIndex: state.currentTurn, initialPoints: config.ptsCancionMax }, new Blob([this._activeBuffer]), this.activeCoverBlob);
                     }
                     this._clearPlayBuffer();
-                    this._playBufferTimeout = setTimeout(() => {
-                        this._playBufferTimeout = null;
-                        if(!this.playing) return;
-                        document.getElementById('btnCancionLocalCorrect').disabled = false;
-                        cancionRoundTimer.resume();
-                        songTimer.start(
-                            t => {
-                                document.getElementById('cancionLocalTimer').innerText = t;
-                                const pts = currentSongPoints(t);
-                                document.getElementById('cancionLocalPoints').innerText = pts;
-                                Presentation.broadcast('SONG_LOCAL_TICK', { elapsed: t, points: pts });
-                            },
-                            () => this.handleTimeout(),
-                            config.timeCancionMax
-                        );
-                    }, 4000);
+                    // Sin colchón de espera: al ser un archivo local ya cargado
+                    // en memoria (arrayBuffer leído en nextSong()), no hay
+                    // buffering de red que esperar — arranca de inmediato.
+                    document.getElementById('btnCancionLocalCorrect').disabled = false;
+                    cancionRoundTimer.resume();
+                    songTimer.start(
+                        t => {
+                            document.getElementById('cancionLocalTimer').innerText = t;
+                            const pts = currentSongPoints(t);
+                            document.getElementById('cancionLocalPoints').innerText = pts;
+                            Presentation.broadcast('SONG_LOCAL_TICK', { elapsed: t, points: pts });
+                        },
+                        () => this.handleTimeout(),
+                        config.timeCancionMax
+                    );
                 },
                 handleCorrect() {
                     if(!this.playing || this.revealed) return;
