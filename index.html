@@ -763,7 +763,7 @@
         .theme-swatch { width: 28px; height: 28px; min-height: 28px !important; border-radius: 50%; border: 2px solid transparent; cursor: pointer; padding: 0; transition: transform 0.15s, box-shadow 0.15s; flex-shrink: 0; aspect-ratio: 1 / 1; }
         .theme-swatch:hover { transform: scale(1.18); }
         .theme-swatch.active-theme { box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--text-main); }
-        body.game-active { padding-bottom: 68px; }
+        body.game-active { padding-bottom: 68px; padding-top: 44px; }
         /* En pantalla completa, dar más aire entre los botones */
         :fullscreen #gameToolbar,
         :-webkit-full-screen #gameToolbar { gap: 12px; padding: 0 24px; }
@@ -870,16 +870,16 @@
         .btn-toggle-side.active { color: #ffffff !important; border-color: transparent;}
 
         .question-box { text-align: center; margin: 15px 0; width: 100%;}
-        .question-text { font-size: 2rem; line-height: 1.3; margin-bottom: 25px; font-weight: 500; letter-spacing: -0.5px; }
-        .question-text.q-compact { line-height: 1.1; }
+        .question-text { font-size: 2rem; line-height: 1.2; margin-bottom: 25px; font-weight: 500; letter-spacing: -0.5px; }
+        .question-text.q-compact { line-height: 1.05; }
         /* Cabecera estándar de minijuego: equipo + tipo */
         .minigame-header { display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
         .minigame-team-pill { padding: 5px 14px; border-radius: 100px; font-weight: 700; color: white; font-size: 0.9rem; display: inline-flex; align-items: center; gap: 6px; }
         .minigame-cat-pill  { padding: 5px 14px; border-radius: 100px; font-weight: 600; font-size: 0.85rem; display: inline-flex; align-items: center; gap: 5px; background: rgba(128,128,128,0.1); border: 1px solid var(--border-color); color: var(--secondary); }
 
         /* Texto de pregunta unificado para todos los minijuegos: mismo tamaño que opción múltiple */
-        .game-question-text { font-size: 2.2rem; font-weight: 700; line-height: 1.3; margin-bottom: 25px; letter-spacing: -0.3px; }
-        .game-question-text.q-compact { line-height: 1.1; }
+        .game-question-text { font-size: 2.2rem; font-weight: 700; line-height: 1.18; margin-bottom: 25px; letter-spacing: -0.3px; }
+        .game-question-text.q-compact { line-height: 1.05; }
         /* Palabras grandes (Pictionary, Charadas, Tabú) */
         .game-word-text { font-size: 3.2rem; font-weight: 700; line-height: 1.2; margin-bottom: 25px; word-break: break-word; }
         .game-word-text.q-compact { line-height: 1.0; }
@@ -1007,8 +1007,8 @@
                (2.2rem) que obligaba a más líneas y letra excesiva.
                Las respuestas quedan siempre algo más pequeñas que las
                preguntas. */
-            .game-question-text { font-size: clamp(1.15rem, 4.6vw, 1.5rem); line-height: 1.28; margin-bottom: 15px; }
-            .game-question-text.q-compact { line-height: 1.12; }
+            .game-question-text { font-size: clamp(1.15rem, 4.6vw, 1.5rem); line-height: 1.16; margin-bottom: 15px; }
+            .game-question-text.q-compact { line-height: 1.05; }
             .answer-text { font-size: clamp(1rem, 3.8vw, 1.2rem); }
             #acertijosAnswer { font-size: clamp(1rem, 3.8vw, 1.2rem) !important; }
             .timer-text { font-size: 2.8rem; }
@@ -1200,7 +1200,7 @@
         }
         #pjCategoryReveal { display:none; font-size: clamp(2.4rem, 7vw, 5rem); font-weight: 800; text-shadow: 0 0 30px var(--pulse-ring); animation: podiumPopFirst 0.6s cubic-bezier(.34,1.56,.64,1) both; }
         #pjQuestionView { display:none; flex-direction:column; align-items:center; gap:20px; width:100%; max-width: 1500px; }
-        #pjQuestionText { font-size: clamp(1.8rem, 4.4vw, 3.2rem); font-weight: 700; line-height: 1.25; }
+        #pjQuestionText { font-size: clamp(1.8rem, 4.4vw, 3.2rem); font-weight: 700; line-height: 1.12; width: 100%; }
         #pjOptionsGrid { display:grid; grid-template-columns: 1fr 1fr; gap:18px; width:100%; }
         #pjOptionsGrid .pj-option { padding: 26px 20px; font-size: clamp(1.1rem, 2.4vw, 1.6rem); font-weight:700; border-radius: 16px; border: 2px solid var(--border-color); background: var(--card-bg); }
         #pjOptionsGrid .pj-option.pj-opt-correct { background:#1f9d4d !important; border-color:#1f9d4d !important; color:#fff !important; }
@@ -1248,6 +1248,22 @@
         .folder-pick-status { font-size:0.82rem; color:var(--text-muted); margin-top:8px; }
         .folder-pick-status.ok { color:var(--correct-color); }
         .folder-pick-status.err { color:var(--incorrect-color); }
+
+        /* TARJETAS DE CATEGORÍA DE CANCIÓN — reemplazan los <select> de los
+           3 minijuegos de "Adivina la Canción" (YouTube/Local/Drive) por
+           tarjetas clicables que también se reflejan en el proyector, para
+           que los participantes vean (y puedan señalar/votar) qué categoría
+           jugar, no solo el moderador. Reutiliza .category-card/.categories-grid
+           ya existentes (mismo look que el tablero de preguntas), con un
+           tamaño algo más compacto porque suele haber menos categorías. */
+        .song-category-cards { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
+        .song-category-cards .category-card, #pjSongCategoryGrid .category-card { cursor:pointer; }
+        .song-category-cards .category-card.song-cat-selected, #pjSongCategoryGrid .category-card.song-cat-selected {
+            box-shadow: 0 0 0 4px var(--primary), 0 10px 24px rgba(0,0,0,0.3);
+            transform: translateY(-3px);
+        }
+        #pjSongCategoryBoard { display:none; flex-direction:column; align-items:center; gap:18px; width:100%; max-width:1100px; }
+        #pjSongCategoryBoard h2 { margin:0; }
 
         #pjSongView { display:none; flex-direction:column; align-items:center; gap:8px; width:100%; max-width:820px; }
         /* Categorías a la izquierda, letra+cronómetro a la derecha, siempre
@@ -1356,8 +1372,31 @@
 
         #pjChaosOverlay { display:none; position:fixed; inset:0; z-index:6000; background:rgba(5,2,15,0.85); backdrop-filter:blur(6px); flex-direction:column; align-items:center; justify-content:center; gap:24px; padding:30px; text-align:center; }
         #pjChaosOverlay h2 { color:#f5f0ff; text-shadow:0 0 20px rgba(168,85,247,0.6); font-size: clamp(1.4rem, 3vw, 2.2rem); }
-        #pjChaosOverlay .chaos-fan { transform: scale(1.15); margin-top: 30px; }
-        #pjChaosResultText { font-size: clamp(1.1rem, 2.6vw, 1.7rem); font-weight:800; color:#f5f0ff; max-width:900px; margin-top: 20px; }
+        /* Cartas del Caos en el proyector: mucho más grandes (se ajustan al ancho y al alto de la pantalla) */
+        #pjChaosOverlay { gap: 14px; padding: 20px; }
+        #pjChaosOverlay .chaos-fan { gap: clamp(20px, 3vw, 48px); margin-top: 6px; flex-wrap: nowrap; }
+        #pjChaosOverlay .chaos-card { width: min(clamp(200px, 24vw, 420px), 37vh); height: auto; aspect-ratio: 5 / 7; }
+        #pjChaosOverlay .chaos-card-front .material-symbols-outlined { font-size: 5rem !important; }
+        #pjChaosOverlay .chaos-card-title { font-size: 1.6rem; line-height: 1.15; }
+        #pjChaosDesc { font-size: clamp(1.3rem, 2.6vw, 2.3rem); font-weight:700; color:#f5f0ff; max-width:1300px; line-height:1.2; min-height:1.2em; }
+        #pjChaosDesc strong { color:#d8b4fe; }
+        #pjChaosResultText { font-size: clamp(1.1rem, 2.4vw, 1.9rem); font-weight:800; color:#fde68a; max-width:1300px; margin-top: 4px; line-height:1.2; }
+
+        /* Respuesta revelada en el proyector, con el estilo del tema activo (igual que en la pantalla del moderador) */
+        #pjAnswerReveal { width: 100%; }
+        body[data-theme^="millionaire_"] #pjAnswerReveal {
+            border: 3px solid transparent; border-radius: 4px; padding: 26px 50px; color: var(--hex-text);
+            background: linear-gradient(135deg, var(--hex-fill-1), var(--hex-fill-2)) padding-box, linear-gradient(120deg, var(--correct-color), #fff6d8 45%, var(--correct-color)) border-box;
+            clip-path: polygon(2% 0, 98% 0, 100% 50%, 98% 100%, 2% 100%, 0 50%);
+        }
+        body[data-theme^="tv_"] #pjAnswerReveal { background: linear-gradient(135deg, #2a1f00, #1a1200); border: 3px solid #7a5c00; color: #ffe9ad; }
+        /* Resultados en el proyector: el moderador controla el scroll (sincronizado); sin barra visible */
+        #pjResults { scrollbar-width: none; }
+        #pjResults::-webkit-scrollbar { display: none; }
+        /* Indicador fijo del equipo en turno (solo moderador) */
+        #currentTurnChip { display:none; position:fixed; top:8px; left:50%; transform:translateX(-50%); z-index:9400; align-items:center; gap:7px; padding:5px 16px; border-radius:100px; font-size:0.85rem; font-weight:800; letter-spacing:0.3px; box-shadow:0 4px 14px rgba(0,0,0,0.35); white-space:nowrap; max-width:46vw; overflow:hidden; text-overflow:ellipsis; pointer-events:none; }
+        body.mode-spectator #currentTurnChip { display:none !important; }
+        @media (max-width: 600px) { #currentTurnChip { font-size:0.72rem; padding:4px 10px; } }
         @media (max-width: 900px) {
             #projectorScreen { padding: 14px 18px 24px; gap: 10px; }
             #pjContent { gap: 14px; }
@@ -1378,13 +1417,15 @@
     <div id="streakBanner"><span id="streakBannerText"></span></div>
 
     <div style="position: fixed; bottom: 12px; right: 24px; font-size: 0.75rem; color: var(--text-muted); opacity: 0.8; font-weight: 400; letter-spacing: 0.3px; z-index: 5000;">
-        © 2026 Fernando Ros • <span onclick="document.getElementById('changelogModal').style.display='block'" style="cursor:pointer; text-decoration:underline; font-weight:500; color:var(--secondary);">Versión 7.11.1</span>
+        © 2026 Fernando Ros • <span onclick="document.getElementById('changelogModal').style.display='block'" style="cursor:pointer; text-decoration:underline; font-weight:500; color:var(--secondary);">Versión 7.13.0</span>
     </div>
 
     <!-- Indicador LED discreto de "Modo fácil" — solo visible para el
          moderador (nunca en el proyector), oculto por defecto y activado/
          desactivado por updateEasyModeIndicator(). Deliberadamente pequeño
          y en una esquina propia para no competir con el resto de la UI. -->
+    <div id="currentTurnChip" title="Equipo que tiene el turno ahora mismo"></div>
+
     <div id="easyModeIndicator" style="display:none; align-items:center; gap:6px; position: fixed; top: 12px; left: 16px; font-size: 0.72rem; color: var(--text-muted); opacity: 0.85; font-weight: 500; letter-spacing: 0.3px; z-index: 9500; background: rgba(0,0,0,0.0);" title="Modo fácil activado: solo preguntas marcadas como Fácil (hoja Preguntas y hoja Opción múltiple)">
         <span style="width:8px; height:8px; border-radius:50%; background:#30d158; box-shadow:0 0 6px rgba(48,209,88,0.75); display:inline-block; animation: easyLedPulse 2.2s ease-in-out infinite;"></span> Modo fácil
     </div>
@@ -1424,6 +1465,34 @@
             <button onclick="document.getElementById('changelogModal').style.display='none'" style="background:none; border:none; color:var(--text-main); font-size:1.6rem; padding:0; width:auto;">×</button>
         </div>
         <div>
+            <div class="changelog-version">
+                <h4><strong>v7.13.0 – Turnos corregidos, Modo Caos rediseñado, intro inteligente y mejoras de proyector</strong></h4>
+                <ul>
+                    <li><strong>Turnos (corrección):</strong> al terminar una ronda el turno se quedaba en el último equipo que respondió, que jugaba dos veces seguidas; ahora pasa al siguiente. Además, volver al tablero (terminar ronda, minijuegos) deja a cero los contadores de ronda —antes la ronda siguiente podía cortarse antes de tiempo y dar el turno al equipo equivocado—, "Guardar y terminar" en los minijuegos pasa el turno al siguiente equipo, Opción múltiple ya no duplica puntos al agotarse las preguntas y Deshacer restaura también el estado de la ronda.</li>
+                    <li><strong>Modo Caos:</strong> solo se puede activar al inicio de una ronda (en el tablero); a media ronda aparece un aviso. Dura una ronda completa —cada equipo debe elegir y aplicar su carta antes de su pregunta— y no se puede apagar antes. Solo se puede activar <em>una vez por partida</em> (cada equipo conserva además su Comodín del Caos).</li>
+                    <li><strong>Cartas del Caos más agresivas:</strong> sorteo ponderado (las agresivas salen más y "Nada pasó…" casi nunca), Robo Relámpago sube al 35% (mín. 15), Maldición del Líder usa las últimas 5 rondas y nueva carta <em>Saqueo General</em>.</li>
+                    <li><strong>Proyector:</strong> al elegir una carta del Caos el público ve su descripción y las cartas se ven mucho más grandes; las preguntas, opciones y respuestas usan el estilo del tema activo (que además se sincroniza al cambiarlo); interlineado de preguntas más compacto; en Resultados el proyector sigue el scroll del moderador.</li>
+                    <li><strong>Moderador:</strong> chip fijo arriba con el equipo que tiene el turno; Charadas con dificultad aleatoria (cada palabra puntúa según su nivel).</li>
+                    <li><strong>Adivina la Canción (Local y Drive):</strong> detección de silencio o intro muy suave —mide el volumen de cada canción y empieza donde suena con fuerza (salto máximo configurable, desactivable en Ajustes técnicos)—. El margen de 4 s se mantiene.</li>
+                </ul>
+            </div>
+            <div class="changelog-version">
+                <h4><strong>v7.12.1 – Carátula visible al moderador y puntaje mínimo de 1</strong></h4>
+                <ul>
+                    <li><strong>Adivina la Canción (Local y Drive):</strong> el moderador ve la carátula real desde que carga cada canción (antes quedaba tapada por el disco hasta el revelado). El proyector sigue mostrando el disco girando hasta revelar; si el MP3 no trae carátula, se mantiene el disco.</li>
+                    <li><strong>Puntaje al final de la ventana de 30s:</strong> el mínimo pasa de 4 a 1 punto (curva 10 → 1 en las 3 variantes), de modo que acertar sobre la hora solo vale 1 punto.</li>
+                </ul>
+            </div>
+            <div class="changelog-version">
+                <h4><strong>v7.12.0 – Nuevo Minijuego: Adivina la Canción (Drive) ☁️ + Categorías visibles para el público</strong></h4>
+                <ul>
+                    <li><strong>Tercera variante del minijuego musical:</strong> "Adivina la Canción (Drive)" reproduce archivos alojados en Google Drive, sin depender del almacenamiento de una computadora concreta ni de que YouTube tenga la canción disponible.</li>
+                    <li><strong>Categorías por subcarpeta, detectadas solas:</strong> solo hay que configurar el ID/enlace de UNA carpeta principal en Ajustes técnicos; cada subcarpeta dentro (ej. "80s", "Disney") se detecta automáticamente como categoría jugable — igual que la carpeta "Music/" de la versión Local — sin tocar el Google Sheet.</li>
+                    <li>Reutiliza el mismo lector de carátula ID3 que la versión Local (el archivo se descarga completo y se procesa igual), y requiere que la carpeta esté compartida como "Cualquiera con el enlace puede ver".</li>
+                    <li><strong>Nueva API key configurable</strong> en Ajustes técnicos (Google Drive API, sin valor por defecto — da acceso a archivos propios).</li>
+                    <li><strong>Categorías de canción ahora visibles para el público en las 3 variantes</strong> (YouTube, Local y Drive): el selector desplegable de siempre se reemplazó por tarjetas clicables (mismo estilo que el tablero de categorías de trivia), que también se reflejan en el proyector — el público ve y puede señalar/votar qué categoría jugar, ya no es una decisión invisible del moderador.</li>
+                </ul>
+            </div>
             <div class="changelog-version">
                 <h4><strong>v7.11.1 – Ajustes finos de "Adivina la Canción" (ambas variantes)</strong></h4>
                 <ul>
@@ -1733,7 +1802,7 @@
     
    <div id="infoModal" style="display: none; position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); background: var(--surface); padding: 28px; border-radius: 20px; border: 1px solid var(--border-color); animation: modalPop 0.22s cubic-bezier(0.4,0,0.2,1); z-index: 10000; width: 90%; max-width: 340px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
     <p style="color: var(--primary); font-weight: 700; margin-bottom: 6px; font-size: 1.5rem;">Trivia Cultural</p>
-    <p style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 20px;">Versión 7.11.1</p>
+    <p style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 20px;">Versión 7.13.0</p>
     <p style="margin-bottom: 8px; font-size: 0.95rem; font-weight: 600;">Desarrollado por Fernando Ros</p>
     <p style="margin-bottom: 20px; font-size: 0.9rem;">
         <a href="mailto:rosfernando@gmail.com" style="color: var(--primary); text-decoration: none; display:inline-flex; align-items:center; gap:5px;">
@@ -2002,8 +2071,11 @@
                         <h5 style="color:#ec4899; margin: 0 0 10px 0; display:flex; align-items:center; gap:6px; font-weight:700;"><span class="material-symbols-outlined" style="font-size:1.1rem;">music_note</span> Adivina la Canción</h5>
                         <div class="setup-group" style="margin-bottom:8px;"><label>Tiempo por turno de equipo (s)</label><input type="number" id="setTimeCancionRound" min="30"></div>
                         <div class="setup-group" style="margin-bottom:8px;"><label>Tiempo máx. por canción (s)</label><input type="number" id="setTimeCancionMax" min="10"></div>
-                        <div class="setup-group" style="margin-bottom:8px;"><label>Saltar intro al reproducir (s)</label><input type="number" id="setCancionStartOffset" min="0"></div>
+                        <div class="setup-group" style="margin-bottom:8px;"><label>Saltar intro al reproducir (s) — solo YouTube</label><input type="number" id="setCancionStartOffset" min="0"></div>
                         <p style="font-size:0.68rem; color:var(--text-muted); line-height:1.4; margin:0 0 8px;">Arranca cada canción ese número de segundos, saltando la intro para caer más cerca del estribillo (aproximado, no exacto). Con el botón "+10s" durante el juego puedes adelantar más si hace falta.</p>
+                        <div class="toggle-row" style="margin:6px 0 6px;"><label class="switch"><input type="checkbox" id="setCancionSkipIntro" checked><span class="slider"></span></label><span>Saltar silencio / intro muy suave (Local y Drive)</span></div>
+                        <div class="setup-group" style="margin-bottom:8px;"><label>Salto máximo por detección (s)</label><input type="number" id="setCancionSkipIntroMax" min="3"></div>
+                        <p style="font-size:0.68rem; color:var(--text-muted); line-height:1.4; margin:0 0 8px;">Analiza cada canción al cargarla y empieza a reproducirla cuando suena con fuerza (en proporción al volumen de esa canción), saltando el silencio o la intro casi inaudible. Si no encuentra un punto claro o queda más allá del máximo, suena desde el inicio. No afecta a los cronómetros ni al puntaje.</p>
                         <div class="setup-group" style="margin-bottom:8px; display:flex; gap:6px;"><input type="number" id="setPtsCancionMax" title="Pts máx (primeros 6s)" placeholder="Pts máx"><input type="number" id="setPtsCancionMin" title="Pts mín (justo antes del límite)" placeholder="Pts mín"></div>
                         <p style="font-size:0.68rem; color:var(--text-muted); line-height:1.4; margin:0 0 8px;">Puntaje: máx. en los primeros 10s, baja poco a poco hasta el mínimo cerca del límite, y 0 si se agota el tiempo sin acertar.</p>
                         <div class="setup-group" style="margin-bottom:0;">
@@ -2011,6 +2083,15 @@
                             <input type="text" id="setYtApiKey" placeholder="AIza…" style="width:100%; padding:8px 10px; border-radius:8px; border:1px solid var(--border-color); background:transparent; color:var(--text-main); font-size:0.85rem;">
                         </div>
                         <p style="font-size:0.68rem; color:var(--text-muted); line-height:1.4; margin:6px 0 0;">Ya viene con una clave incrustada por defecto — solo cámbiala si quieres usar la tuya propia. Gratis, sin login: se saca en <a href="https://console.cloud.google.com/" target="_blank" style="color:#ec4899;">Google Cloud Console</a> activando "YouTube Data API v3". Restríngela por dominio para mayor seguridad. Las playlists se configuran en la hoja "Canciones" del Google Sheet (columnas Categoría y Playlist).</p>
+                        <div class="setup-group" style="margin:12px 0 0; padding-top:12px; border-top:1px dashed var(--border-color);">
+                            <label>API key de Google Drive (para Adivina la Canción — Drive ☁️)</label>
+                            <input type="text" id="setDriveApiKey" placeholder="AIza…" style="width:100%; padding:8px 10px; border-radius:8px; border:1px solid var(--border-color); background:transparent; color:var(--text-main); font-size:0.85rem;">
+                        </div>
+                        <div class="setup-group" style="margin:10px 0 0;">
+                            <label>Carpeta principal de Drive (ID o enlace)</label>
+                            <input type="text" id="setDriveParentFolderId" placeholder="https://drive.google.com/drive/folders/…" style="width:100%; padding:8px 10px; border-radius:8px; border:1px solid var(--border-color); background:transparent; color:var(--text-main); font-size:0.85rem;">
+                        </div>
+                        <p style="font-size:0.68rem; color:var(--text-muted); line-height:1.4; margin:6px 0 0;">A diferencia de la de YouTube, esta API key NO trae valor por defecto — da acceso a tus propios archivos de Drive. Sácala en <a href="https://console.cloud.google.com/" target="_blank" style="color:#0891b2;">Google Cloud Console</a> activando "Google Drive API" (mismo proyecto donde ya activaste la de YouTube, si quieres). Pega el enlace o ID de UNA carpeta principal — sus subcarpetas (ej. "80s", "Disney") se detectan solas como categorías, sin tocar el Google Sheet. Esa carpeta (o al menos sus subcarpetas) debe estar compartida como "Cualquiera con el enlace puede ver".</p>
                     </div>
                 </div>
             </div>
@@ -2170,6 +2251,16 @@
 
         <div id="pjCategoryReveal"></div>
 
+        <!-- Tarjetas de categoría de "Adivina la Canción" (las 3 variantes):
+             se muestra mientras el moderador está en la pantalla de setup
+             del minijuego, ANTES de arrancar la ronda — así el público ve
+             (y puede señalar/votar) qué categoría jugar, igual que ve el
+             tablero de preguntas normal. De solo lectura: sin onclick. -->
+        <div id="pjSongCategoryBoard">
+            <h2 id="pjSongCategoryTitle">🎵 Elige una categoría</h2>
+            <div id="pjSongCategoryGrid" class="categories-grid song-category-cards" style="max-width:1100px; width:100%;"></div>
+        </div>
+
         <div id="pjQuestionView">
             <span id="pjTeamPill" class="minigame-team-pill" style="font-size:1.1rem;"></span>
             <div id="pjQuestionText" class="game-question-text"></div>
@@ -2255,7 +2346,7 @@
              mensaje 'SHOW_RESULTS'. El confetti y la música final del
              ganador ya son globales (#confetti-piece/#applause), así que
              se disparan igual en esta ventana sin duplicar nada. -->
-        <div id="pjResults" style="width:100%; max-width:950px; overflow-y:auto; max-height:94vh;">
+        <div id="pjResults" style="width:100%; max-width:950px; overflow-y:auto; flex:1 1 auto; min-height:0; scroll-behavior:smooth; justify-content:flex-start;">
             <h2 style="display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:4px;">🏆 Resultados finales</h2>
             <p id="pjResultsSubtitle" style="text-align:center;color:var(--text-muted);font-size:0.95rem;margin-bottom:0;">Partida completada</p>
             <div class="podium-row" id="pjPodiumRow"></div>
@@ -2281,6 +2372,7 @@
         <div id="pjChaosOverlay">
             <h2>🌀 <span id="pjChaosTeamName"></span> juega el Caos…</h2>
             <div id="pjChaosCardsRow" class="chaos-fan"></div>
+            <div id="pjChaosDesc"></div>
             <div id="pjChaosResultText"></div>
         </div>
     </div>
@@ -2448,6 +2540,7 @@
                 <button id="btnChaFacilSetup" class="btn-diff facil" onclick="Minigames.Charadas.setDifficulty('facil')">Fácil</button>
                 <button id="btnChaIntermediaSetup" class="btn-diff intermedia" onclick="Minigames.Charadas.setDifficulty('intermedia')">Media</button>
                 <button id="btnChaDificilSetup" class="btn-diff dificil" onclick="Minigames.Charadas.setDifficulty('dificil')">Difícil</button>
+                <button id="btnChaAleatoriaSetup" class="btn-diff tabu" onclick="Minigames.Charadas.setDifficulty('aleatoria')">🎲 Aleatoria</button>
             </div>
             <input type="hidden" id="chaDifficultySelect" value="facil">
             <div style="display:flex; gap:12px;">
@@ -2465,9 +2558,11 @@
                 <button id="btnChaFacil" class="btn-diff facil" onclick="Minigames.Charadas.setDifficulty('facil')">Fácil</button>
                 <button id="btnChaIntermedia" class="btn-diff intermedia" onclick="Minigames.Charadas.setDifficulty('intermedia')">Media</button>
                 <button id="btnChaDificil" class="btn-diff dificil" onclick="Minigames.Charadas.setDifficulty('dificil')">Difícil</button>
+                <button id="btnChaAleatoria" class="btn-diff tabu" onclick="Minigames.Charadas.setDifficulty('aleatoria')">🎲 Aleatoria</button>
             </div>
             <div style="text-transform:uppercase; font-size:0.8rem; font-weight:700; color:var(--secondary); letter-spacing:1px; margin-bottom:5px;">Actúa la palabra:</div>
             <div id="chaWordDisplay" class="game-word-text">- - -</div>
+            <div id="chaWordDiffBadge" style="display:none; font-size:0.9rem; font-weight:700; color:var(--secondary); margin:-14px 0 14px;"></div>
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; max-width:500px; margin:0 auto;">
                 <button class="btn-correct" style="border-radius:100px; padding:14px;" onclick="Minigames.Charadas.handleWord(true)"><span class="material-symbols-outlined" style="vertical-align:middle; font-size:1.2rem;">check</span> Correcta</button>
                 <button class="btn-incorrect" style="border-radius:100px; padding:14px;" onclick="Minigames.Charadas.handleWord(false)"><span class="material-symbols-outlined" style="vertical-align:middle; font-size:1.2rem;">close</span> Saltar / Error</button>
@@ -2679,14 +2774,11 @@
                 <p style="font-size:0.85rem; color:var(--text-main); line-height:1.5; margin-bottom:0;">Ahora mismo el archivo está abierto con doble clic (<code>file://…</code>). YouTube bloquea la reproducción incrustada en ese caso — <strong>por eso no suena ninguna canción, sin excepción</strong>. Abre el juego desde su enlace publicado (por ejemplo, la URL de <code>https://tu-usuario.github.io/…</code> si ya lo tienes en GitHub Pages) en vez de abrir el archivo directamente. El resto del juego (preguntas, minijuegos, comodines) funciona igual con o sin esto; solo Adivina la Canción lo necesita.</p>
             </div>
             <p style="color:var(--text-muted); margin-bottom:20px;">Cada equipo tiene un turno cronometrado: mientras dure el tiempo, adivina tantas canciones como pueda — entre más rápido, más puntos por canción.</p>
-            <div class="setup-group" style="max-width:360px; margin:0 auto 20px;">
-                <label>Categoría / Playlist</label>
-                <select id="cancionCategorySelect" style="width: 100%; padding: 12px 14px; background: transparent; border: 1px solid var(--border-color); border-radius: 12px; color: var(--text-main); font-size: 1rem; outline: none;"></select>
-            </div>
+            <div id="cancionCategoryCards" class="categories-grid song-category-cards" style="margin-bottom:16px;"></div>
             <p id="cancionSetupStatus" style="min-height: 1.2em; font-size: 0.85rem; margin-bottom: 12px;"></p>
             <div style="display:flex; gap:12px; justify-content:center;">
                 <button class="btn-secondary" onclick="Minigames.Cancion.exit()">Volver al tablero</button>
-                <button id="btnCancionStart" class="btn-primary" style="background:#ec4899; color:white; width:auto; padding:12px 28px;" onclick="Minigames.Cancion.start()">Iniciar minijuego</button>
+                <button id="btnCancionStart" class="btn-primary" style="background:#ec4899; color:white; width:auto; padding:12px 28px;" disabled onclick="Minigames.Cancion.start()">Iniciar minijuego</button>
             </div>
         </div>
         <div id="cancionGameArea" style="display:none; text-align:center; width: 100%; flex-direction: column; align-items: center;">
@@ -2766,12 +2858,7 @@
             </button>
             <input type="file" id="cancionLocalFolderInput" class="hidden-file-input" webkitdirectory multiple onchange="Minigames.CancionLocal.handleFolderInput(event)">
             <p id="cancionLocalFolderStatus" class="folder-pick-status">Ninguna carpeta seleccionada todavía.</p>
-            <div class="setup-group" style="max-width:360px; margin:14px auto 20px;">
-                <label>Categoría</label>
-                <select id="cancionLocalCategorySelect" style="width: 100%; padding: 12px 14px; background: transparent; border: 1px solid var(--border-color); border-radius: 12px; color: var(--text-main); font-size: 1rem; outline: none;" disabled>
-                    <option value="">Selecciona primero una carpeta</option>
-                </select>
-            </div>
+            <div id="cancionLocalCategoryCards" class="categories-grid song-category-cards" style="margin-bottom:16px;"></div>
             <div style="display:flex; gap:12px; justify-content:center;">
                 <button class="btn-secondary" onclick="Minigames.CancionLocal.exit()">Volver al tablero</button>
                 <button id="btnCancionLocalStart" class="btn-primary" style="background:#db2777; color:white; width:auto; padding:12px 28px;" disabled onclick="Minigames.CancionLocal.start()">Iniciar minijuego</button>
@@ -2828,6 +2915,70 @@
                 <button id="btnCancionLocalCorrect" class="btn-correct" style="width:auto; padding:14px 30px; border-radius:100px;" onclick="Minigames.CancionLocal.handleCorrect()"><span class="material-symbols-outlined" style="vertical-align:middle;">check</span> Correcto</button>
                 <button id="btnCancionLocalNext" class="btn-primary" style="background:var(--primary); width:auto; padding:14px 30px;" onclick="Minigames.CancionLocal.nextSongClick()"><span class="material-symbols-outlined" style="vertical-align:middle;">skip_next</span> Siguiente Canción</button>
                 <button id="btnCancionLocalExit" class="btn-secondary" style="border-color: var(--incorrect-color); color: var(--incorrect-color); width:auto; padding:14px 20px;" onclick="Minigames.CancionLocal.confirmExit()"><span class="material-symbols-outlined" style="vertical-align:middle; font-size:1.1rem;">stop_circle</span> Terminar minijuego</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="cancionDriveScreen" class="screen" style="max-width: 900px;">
+        <h2 style="display:flex; align-items:center; justify-content:center; gap:10px;"><span class="material-symbols-outlined" style="font-size:2rem; color:#0891b2;">cloud</span> Minijuego: Adivina la Canción (Drive) 🎵</h2>
+        <div id="cancionDriveSetupArea" style="width: 100%; text-align: center;">
+            <p style="color:var(--text-muted); margin-bottom:16px;">Canciones en tu carpeta de Google Drive: cada subcarpeta (ej. "80s", "Disney") se detecta sola como categoría. Configura la carpeta principal y la API key en Ajustes técnicos.</p>
+            <div id="cancionDriveCategoryCards" class="categories-grid song-category-cards" style="margin-bottom:10px;"></div>
+            <p id="cancionDriveSetupStatus" style="min-height: 1.2em; font-size: 0.85rem; margin-bottom: 6px;"></p>
+            <button type="button" onclick="Minigames.CancionDrive.refreshCategories()" style="width:auto; background:none; border:none; color:var(--secondary); font-size:0.78rem; text-decoration:underline; cursor:pointer; padding:0; margin-bottom:14px;"><span class="material-symbols-outlined" style="font-size:0.95rem; vertical-align:middle;">refresh</span> Actualizar categorías desde Drive</button>
+            <div style="display:flex; gap:12px; justify-content:center;">
+                <button class="btn-secondary" onclick="Minigames.CancionDrive.exit()">Volver al tablero</button>
+                <button id="btnCancionDriveStart" class="btn-primary" style="background:#0891b2; color:white; width:auto; padding:12px 28px;" disabled onclick="Minigames.CancionDrive.start()">Iniciar minijuego</button>
+            </div>
+        </div>
+        <div id="cancionDriveGameArea" style="display:none; text-align:center; width: 100%; flex-direction: column; align-items: center;">
+            <div class="minigame-header">
+                <span id="cancionDriveTeamPill" class="minigame-team-pill">Equipo</span>
+                <span class="minigame-cat-pill"><span class="material-symbols-outlined" style="font-size:1rem;">cloud</span> Adivina la Canción (Drive)</span>
+            </div>
+            <!-- Info de TURNO: discreta, en amarillo — igual que en Local. -->
+            <div style="display:flex; gap:20px; align-items:center; justify-content:center; margin-bottom:8px; flex-wrap:wrap;">
+                <div style="text-align:center;">
+                    <div id="cancionDriveRoundTimer" style="font-size:1.3rem; font-weight:800; color:#facc15; line-height:1;">2:00</div>
+                    <div style="font-size:0.62rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;">Tiempo de turno</div>
+                </div>
+                <div style="text-align:center;">
+                    <div id="cancionDriveRoundScore" style="font-size:1.3rem; font-weight:800; color:#facc15; line-height:1;">0</div>
+                    <div style="font-size:0.62rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;">Puntos del turno</div>
+                </div>
+            </div>
+            <p id="cancionDriveModeratorTitle" style="font-size:0.85rem; color:var(--text-muted); background:rgba(128,128,128,0.08); border:1px dashed var(--border-color); border-radius:10px; padding:6px 14px; margin-bottom:14px;">☁️ Suena: <strong>—</strong></p>
+            <!-- Info de la CANCIÓN ACTUAL: en blanco, grande, a la derecha
+                 de la carátula — igual que en Local. -->
+            <div style="display:flex; gap:28px; align-items:center; justify-content:center; margin-bottom:18px; flex-wrap:wrap;">
+                <div id="cancionDriveCoverWrap" class="song-cover-wrap" style="margin:0;">
+                    <img id="cancionDriveCoverImg" src="" alt="Carátula" style="display:none;">
+                    <div id="cancionDriveOverlay" class="cancion-overlay">
+                        <span class="material-symbols-outlined cancion-disc" style="font-size:4.5rem;">album</span>
+                        <span class="cancion-overlay-text">🎵 Escuchando…</span>
+                    </div>
+                </div>
+                <div style="display:flex; flex-direction:column; gap:16px; align-items:center;">
+                    <div style="text-align:center;">
+                        <div id="cancionDriveTimer" class="timer-text" style="color:#ffffff !important; border-color:#ffffff !important; box-shadow:0 0 0 5px rgba(255,255,255,0.18) !important; font-size:2.8rem; min-width:100px; padding:16px;">0</div>
+                        <div style="font-size:0.72rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px; margin-top:6px;">Segundos</div>
+                    </div>
+                    <div style="text-align:center;">
+                        <div id="cancionDrivePoints" style="font-size:3rem; font-weight:800; color:#ffffff; line-height:1;">10</div>
+                        <div style="font-size:0.72rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;">Puntos si acierta ahora</div>
+                    </div>
+                </div>
+            </div>
+            <p id="cancionDriveRevealTitle" style="display:none; font-size:1.1rem; font-weight:700; margin-bottom:16px;"></p>
+            <audio id="cancionDriveAudio" style="display:none;"></audio>
+
+            <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
+                <button id="btnCancionDrivePlay" class="btn-primary" style="background:#0891b2; color:white; width:auto; padding:14px 30px;" onclick="Minigames.CancionDrive.play()"><span class="material-symbols-outlined" style="vertical-align:middle;">play_arrow</span> Reproducir</button>
+            </div>
+            <div id="cancionDriveActiveControls" style="display:none; gap:12px; justify-content:center; flex-wrap:wrap;">
+                <button id="btnCancionDriveCorrect" class="btn-correct" style="width:auto; padding:14px 30px; border-radius:100px;" onclick="Minigames.CancionDrive.handleCorrect()"><span class="material-symbols-outlined" style="vertical-align:middle;">check</span> Correcto</button>
+                <button id="btnCancionDriveNext" class="btn-primary" style="background:var(--primary); width:auto; padding:14px 30px;" onclick="Minigames.CancionDrive.nextSongClick()"><span class="material-symbols-outlined" style="vertical-align:middle;">skip_next</span> Siguiente Canción</button>
+                <button id="btnCancionDriveExit" class="btn-secondary" style="border-color: var(--incorrect-color); color: var(--incorrect-color); width:auto; padding:14px 20px;" onclick="Minigames.CancionDrive.confirmExit()"><span class="material-symbols-outlined" style="vertical-align:middle; font-size:1.1rem;">stop_circle</span> Terminar minijuego</button>
             </div>
         </div>
     </div>
@@ -3230,6 +3381,7 @@
                     case 'END_GAME':        Projector.showIdle(); break;
                     case 'SELECT_CATEGORY': Projector.selectCategory(payload); break;
                     case 'RENDER_BOARD_CATEGORIES': Projector.renderBoardCategories(payload); break;
+                    case 'SONG_CATEGORY_BOARD': Projector.showSongCategoryBoard(payload); break;
                     case 'SHOW_QUESTION':   Projector.showQuestion(payload); break;
                     case 'REVEAL_OPTIONS':  Projector.revealOptions(payload); break;
                     case 'START_TIMER':     Projector.timerStart(payload); break;
@@ -3257,6 +3409,8 @@
                     case 'CHAOS_CLOSE':     Projector.chaosClose(); break;
                     case 'CHAOS_MODE_TOGGLE': Projector.setChaosModeTint(payload); break;
                     case 'DICE_TOGGLE':     Projector.toggleDiceVisibility(payload); break;
+                    case 'THEME':           if(THEMES[payload.themeKey]) applyTheme(payload.themeKey); break;
+                    case 'RESULTS_SCROLL':  Projector.resultsScroll(payload); break;
                     case 'SONG_PLAY':       Projector.songPlay(payload); break;
                     case 'SONG_NUDGE':      Projector.songNudge(); break;
                     case 'SONG_TICK':       Projector.songTick(payload); break;
@@ -3307,7 +3461,7 @@
             lastDelta: null,
             _stopLetterInterval: null,
             _stopLetterSafety: null,
-            _panels: ['pjIdle','pjBoard','pjCategoryReveal','pjQuestionView','pjMinigameView','pjSongView','pjSongLocalView','pjResults'],
+            _panels: ['pjIdle','pjBoard','pjCategoryReveal','pjSongCategoryBoard','pjQuestionView','pjMinigameView','pjSongView','pjSongLocalView','pjResults'],
             _showPanel(id) {
                 this._panels.forEach(p => { const el = document.getElementById(p); if(el) el.style.display = (p === id) ? (p === 'pjCategoryReveal' ? 'block' : 'flex') : 'none'; });
                 // El marcador no tiene sentido en la pantalla de espera (aún
@@ -3357,6 +3511,20 @@
                     `<div class="category-card ${c.available === 0 ? 'exhausted' : ''} ${c.style}" data-cat="${(c.name||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;')}"><div style="font-size:2rem; margin-bottom:2px;" class="material-symbols-outlined ${iconAnimClassFor(c.icon)}">${c.icon}</div><div class="category-title">${c.label}</div><div class="category-count">${c.available} disponibles</div></div>`
                 ).join('');
             },
+            // Espejo de las tarjetas de categoría de "Adivina la Canción"
+            // (las 3 variantes): de solo lectura, para que el público vea
+            // (y pueda señalar/votar) qué categoría jugar mientras el
+            // moderador todavía está en la pantalla de configuración del
+            // minijuego, antes de arrancar la ronda.
+            showSongCategoryBoard(payload) {
+                this._showPanel('pjSongCategoryBoard');
+                const titleEl = document.getElementById('pjSongCategoryTitle');
+                if(titleEl) titleEl.textContent = payload.title || '🎵 Elige una categoría';
+                const grid = document.getElementById('pjSongCategoryGrid');
+                if(grid) grid.innerHTML = (payload.categories || []).map(c =>
+                    `<div class="category-card ${c.style}"><div style="font-size:1.8rem; margin-bottom:2px;" class="material-symbols-outlined icon-anim-generic">music_note</div><div class="category-title">${c.name}</div></div>`
+                ).join('');
+            },
             // Réplica exacta del "modo foco" del moderador: en vez de tapar
             // el tablero con un cartel aparte, resalta con halo la categoría
             // elegida y atenúa el resto directamente sobre la parrilla
@@ -3404,7 +3572,7 @@
                 grid.innerHTML = '';
                 (payload.options || []).forEach((text, idx) => {
                     const div = document.createElement('div');
-                    div.className = 'pj-option mult-option-enter';
+                    div.className = 'pj-option mc-option mult-option-enter';
                     div.id = 'pj-opt-' + idx;
                     div.style.animationDelay = (idx * 260) + 'ms';
                     div.textContent = text;
@@ -3423,9 +3591,12 @@
             submitAnswer(payload) {
                 const grid = document.getElementById('pjOptionsGrid');
                 if(grid.children.length) {
-                    [...grid.children].forEach(el => el.classList.remove('pj-opt-correct','pj-opt-wrong'));
-                    if(typeof payload.correctIndex === 'number') { const c = document.getElementById('pj-opt-' + payload.correctIndex); if(c) c.classList.add('pj-opt-correct'); }
-                    if(typeof payload.pickedIndex === 'number' && !payload.correct) { const w = document.getElementById('pj-opt-' + payload.pickedIndex); if(w) w.classList.add('pj-opt-wrong'); }
+                    [...grid.children].forEach(el => el.classList.remove('pj-opt-correct','pj-opt-wrong','mc-correct-pick','mc-wrong-pick','mc-reveal-correct'));
+                    const cEl = typeof payload.correctIndex === 'number' ? document.getElementById('pj-opt-' + payload.correctIndex) : null;
+                    const pEl = typeof payload.pickedIndex === 'number' ? document.getElementById('pj-opt-' + payload.pickedIndex) : null;
+                    // Mismas clases de feedback que la pantalla del moderador (verde/granate, respetan el tema)
+                    if(payload.correct && cEl) cEl.classList.add('mc-correct-pick');
+                    else { if(pEl) pEl.classList.add('mc-wrong-pick'); if(cEl) cEl.classList.add('mc-reveal-correct'); }
                 } else if(payload.correctAnswerText) {
                     const box = document.getElementById('pjAnswerReveal');
                     box.style.display = 'block';
@@ -3502,7 +3673,7 @@
             },
             startMinigame(payload) {
                 if(payload.type === 'cancion') { this.songMinigameStart(payload); return; }
-                if(payload.type === 'cancionLocal') { this.songLocalMinigameStart(payload); return; }
+                if(payload.type === 'cancionLocal' || payload.type === 'cancionDrive') { this.songLocalMinigameStart(payload); return; }
                 this._showPanel('pjMinigameView');
                 const view = document.getElementById('pjMinigameView');
                 view.classList.toggle('stop-active', payload.type === 'stop');
@@ -3610,7 +3781,7 @@
                 else { img.style.display = 'none'; }
                 if(raw?.audioBlob) {
                     audio.src = URL.createObjectURL(raw.audioBlob);
-                    audio.currentTime = 0;
+                    startAudioAt(audio, payload.startAt || 0);
                     audio.play().catch(e => console.log('Audio local bloqueado en el proyector', e));
                 }
             },
@@ -3697,6 +3868,8 @@
                 if(row) row.innerHTML = this._chaosCardIds.map((id, i) => `<div class="chaos-card" id="pj-chaos-card-${i}"><div class="chaos-card-inner"><div class="chaos-card-face chaos-card-back"></div><div class="chaos-card-face chaos-card-front"></div></div></div>`).join('');
                 const resultEl = document.getElementById('pjChaosResultText');
                 if(resultEl) resultEl.textContent = '';
+                const descEl = document.getElementById('pjChaosDesc');
+                if(descEl) descEl.innerHTML = '';
                 const overlay = document.getElementById('pjChaosOverlay');
                 if(overlay) overlay.style.display = 'flex';
             },
@@ -3708,12 +3881,21 @@
                     const front = el.querySelector('.chaos-card-front');
                     if(front) front.innerHTML = `<span class="material-symbols-outlined" style="font-size:2.6rem;">${card.icon}</span><div class="chaos-card-title">${card.title}</div>`;
                     el.classList.add('flipped');
+                    // El público ve QUÉ hace la carta elegida (nombre + descripción), no solo su título
+                    const descEl = document.getElementById('pjChaosDesc');
+                    if(descEl) descEl.innerHTML = `<strong>${card.title}:</strong> ${card.desc}`;
                 }
                 [0,1,2].forEach(j => { if(j !== payload.index) { const o = document.getElementById('pj-chaos-card-' + j); if(o) o.classList.add('chaos-card-discarded'); } });
             },
             chaosResult(payload) {
                 const el = document.getElementById('pjChaosResultText');
                 if(el) el.textContent = payload.text || '';
+            },
+            // El moderador desplaza su pantalla de resultados y el proyector la sigue (proporcionalmente)
+            resultsScroll(payload) {
+                const el = document.getElementById('pjResults');
+                if(!el) return;
+                el.scrollTop = Math.min(1, Math.max(0, payload.fraction || 0)) * Math.max(0, el.scrollHeight - el.clientHeight);
             },
             chaosClose() {
                 const overlay = document.getElementById('pjChaosOverlay');
@@ -3732,6 +3914,7 @@
              */
             showResults(payload) {
                 this._showPanel('pjResults');
+                const _pjr = document.getElementById('pjResults'); if(_pjr) _pjr.scrollTop = 0;
                 const teams = payload.teams || [];
                 const sorted = [...teams].sort((a, b) => b.score - a.score);
                 const medals = ['🥇','🥈','🥉'];
@@ -3896,9 +4079,22 @@
         const DEFAULT_YT_API_KEY = 'AIzaSyATfHuOsWdwsFlGAg2NN9P4A0xlau6LKZY';
         function getSavedYtApiKey() { try { return localStorage.getItem('trivia_yt_api_key') || DEFAULT_YT_API_KEY; } catch(e) { return DEFAULT_YT_API_KEY; } }
         function saveYtApiKey(key) { try { localStorage.setItem('trivia_yt_api_key', key || ''); } catch(e) {} }
+        // API key de Google Drive (Adivina la Canción — Drive). A diferencia
+        // de la de YouTube, NO trae valor por defecto incrustado: da acceso
+        // a archivos de Drive del propio moderador, así que cada quien debe
+        // poner la suya (Ajustes técnicos), guardada aparte en localStorage
+        // para no tener que reescribirla en cada partida.
+        function getSavedDriveApiKey() { try { return localStorage.getItem('trivia_drive_api_key') || ''; } catch(e) { return ''; } }
+        function saveDriveApiKey(key) { try { localStorage.setItem('trivia_drive_api_key', key || ''); } catch(e) {} }
+        // ID (o enlace) de la carpeta PRINCIPAL de Drive: sus subcarpetas
+        // (80s, 90s, Disney...) se detectan solas como categorías — igual
+        // que la carpeta "Music/" local con webkitdirectory — sin tener que
+        // mantener ninguna lista en el Google Sheet.
+        function getSavedDriveParentFolderId() { try { return localStorage.getItem('trivia_drive_parent_folder') || ''; } catch(e) { return ''; } }
+        function saveDriveParentFolderId(id) { try { localStorage.setItem('trivia_drive_parent_folder', id || ''); } catch(e) {} }
 
-        let config = { teamsCount: 3, ptsCorrect: 10, ptsRebound: 5, ptsChallengeMax: 50, ptsMultiple: 10, allowDouble: true, allowFifty: true, allowDoN: true, allowRebounds: true, isDouble: false, isDoubleOrNothing: false, isFiftyFifty: false, timeQuestion: 30, timeAcertijos: 90, timeMultiple: 30, timePictionary: 60, timeTabu: 60, timeStop: 120, timeCharadas: 60, ptsPicFacil: 2, ptsPicIntermedia: 3, ptsPicDificil: 10, ptsChaFacil: 2, ptsChaIntermedia: 3, ptsChaDificil: 10, ptsTabu: 5, ptsStopUnique: 10, ptsStopRepeated: 5, soundEnabled: true, streakThreshold: 3, streakMultiplier: 1.5, streakStep: 2, streakIncrement: 0.5, streakShieldAt: 6, easyMode: false, diceEnabled: false, ytApiKey: getSavedYtApiKey(), ptsCancionMax: 10, ptsCancionMin: 4, timeCancionMax: 30, timeCancionRound: 120, cancionStartOffset: 35 };
-        let state = { db: [], categories: {}, catNames: [], teams: [], currentTurn: null, activeCat: null, activeQ: null, challenges: [], picPools: { facil: [], intermedia: [], dificil: [] }, charadasPools: { facil: [], intermedia: [], dificil: [] }, tabuPools: {}, tabuCategories: new Set(["Aleatoria"]), teamPools: {}, multiplePool: [], acertijosPool: [], stopCategories: [], stopLetters: [], history: [], undoStack: [], gameLog: [], lastScoreUpdated: null, lastScoreDelta: null, roundRespondedCount: 0, roundStartTurn: null, blockedCategories: [], scoreHistory: [], chaosModeActive: false, chaosModeRemaining: 0, chaosCardGatePending: false, songCategories: [], songPlaylistIds: {}, songPools: {}, wildcardLog: [] };
+        let config = { teamsCount: 3, ptsCorrect: 10, ptsRebound: 5, ptsChallengeMax: 50, ptsMultiple: 10, allowDouble: true, allowFifty: true, allowDoN: true, allowRebounds: true, isDouble: false, isDoubleOrNothing: false, isFiftyFifty: false, timeQuestion: 30, timeAcertijos: 90, timeMultiple: 30, timePictionary: 60, timeTabu: 60, timeStop: 120, timeCharadas: 60, ptsPicFacil: 2, ptsPicIntermedia: 3, ptsPicDificil: 10, ptsChaFacil: 2, ptsChaIntermedia: 3, ptsChaDificil: 10, ptsTabu: 5, ptsStopUnique: 10, ptsStopRepeated: 5, soundEnabled: true, streakThreshold: 3, streakMultiplier: 1.5, streakStep: 2, streakIncrement: 0.5, streakShieldAt: 6, easyMode: false, diceEnabled: false, ytApiKey: getSavedYtApiKey(), driveApiKey: getSavedDriveApiKey(), driveParentFolderId: getSavedDriveParentFolderId(), ptsCancionMax: 10, ptsCancionMin: 1, timeCancionMax: 30, timeCancionRound: 120, cancionStartOffset: 35, cancionSkipIntro: true, cancionSkipIntroMax: 20 };
+        let state = { db: [], categories: {}, catNames: [], teams: [], currentTurn: null, activeCat: null, activeQ: null, challenges: [], picPools: { facil: [], intermedia: [], dificil: [] }, charadasPools: { facil: [], intermedia: [], dificil: [] }, tabuPools: {}, tabuCategories: new Set(["Aleatoria"]), teamPools: {}, multiplePool: [], acertijosPool: [], stopCategories: [], stopLetters: [], history: [], undoStack: [], gameLog: [], lastScoreUpdated: null, lastScoreDelta: null, roundRespondedCount: 0, roundStartTurn: null, blockedCategories: [], scoreHistory: [], chaosModeActive: false, chaosModeRemaining: 0, chaosCardGatePending: false, chaosModeUsed: false, chaosDoneTeams: [], songCategories: [], songPlaylistIds: {}, songPools: {}, driveSongCategories: [], driveFolderIds: {}, drivePools: {}, driveCategoriesLoaded: false, wildcardLog: [] };
 
         /**
          * ════════════════════════════════════════════════════════════════
@@ -3969,6 +4165,10 @@
             config = { ...config, ...payload.config };
             const savedYtKey = getSavedYtApiKey();
             if(savedYtKey) config.ytApiKey = savedYtKey;
+            const savedDriveKey = getSavedDriveApiKey();
+            if(savedDriveKey) config.driveApiKey = savedDriveKey;
+            const savedDriveFolder = getSavedDriveParentFolderId();
+            if(savedDriveFolder) config.driveParentFolderId = savedDriveFolder;
             state = { ...state, ...payload.state };
             state.tabuCategories = new Set(payload.state.tabuCategories || ["Aleatoria"]);
             state.history = [];
@@ -4007,6 +4207,7 @@
             const snapshot = {
                 label,
                 turn: state.currentTurn,
+                round: state.roundRespondedCount || 0, roundStart: state.roundStartTurn ?? null,
                 scores: state.teams.map(t => ({
                     score: t.score, correct: t.correct,
                     rebounds: t.rebounds, extra: t.extra,
@@ -4209,6 +4410,7 @@
                 state.teams[i].shield    = s.shield ?? false;
             });
             if (snapshot.turn !== null) setTurn(snapshot.turn);
+            state.roundRespondedCount = snapshot.round || 0; state.roundStartTurn = snapshot.roundStart ?? null;
             renderScoreboard();
             persistNow(true);
             showToast(`↩ Deshecho: ${snapshot.label}`, 'ok', 2500);
@@ -4282,6 +4484,16 @@
                     'ok', 3200);
             }
         }
+        // Chip fijo (solo moderador) con el equipo que tiene el turno ahora mismo, visible en todas las pantallas.
+        function updateTurnChip() {
+            const chip = document.getElementById('currentTurnChip');
+            if(!chip || Presentation.isReceiver) return;
+            const t = state.teams && state.teams[state.currentTurn];
+            if(!t || !document.body.classList.contains('game-active')) { chip.style.display = 'none'; return; }
+            chip.style.display = 'flex';
+            chip.style.background = t.color; chip.style.color = getContrastYIQ(t.color);
+            chip.innerHTML = `<span style="font-family:'Apple Color Emoji',sans-serif;">${t.emoji}</span><span>Turno: ${t.id}. ${t.countryName}</span>`;
+        }
         function restoreGameUI() {
             document.querySelectorAll('.screen').forEach(s => { s.classList.remove('active'); s.style.display = ''; });
             document.getElementById('splashScreen').style.display = 'none';
@@ -4294,6 +4506,7 @@
             updateEasyModeIndicator();
             updateChaosModeButton();
             renderScoreboard();
+            updateTurnChip();
             if(state.currentTurn !== null && state.teams[state.currentTurn]) {
                 const t = state.teams[state.currentTurn], ind = document.getElementById('turnIndicator');
                 ind.style.backgroundColor = t.color; ind.style.color = getContrastYIQ(t.color); ind.style.borderColor = t.color;
@@ -4436,6 +4649,71 @@
                 pageToken = data.nextPageToken || '';
             } while (pageToken);
             return songs;
+        }
+
+        /**
+         * ════════════════════════════════════════════════════════════════
+         * ADIVINA LA CANCIÓN (DRIVE) 🎵☁️ — utilidades de Google Drive
+         * ════════════════════════════════════════════════════════════════
+         * Misma filosofía que la playlist de YouTube (fetchFullPlaylist):
+         * el pool de archivos de cada categoría se pide una sola vez
+         * (Drive API v3, files.list) y se cachea en state.drivePools para
+         * no volver a pedirlo si se repite la categoría. La reproducción y
+         * el carátula-desde-ID3 reutilizan EXACTAMENTE el mismo camino que
+         * "Adivina la Canción (Local)" — se descarga el archivo completo
+         * como ArrayBuffer (fetch + alt=media) y se le pasa a
+         * extractID3Tags(), la misma función que ya usa la versión local.
+         * Requiere que las carpetas estén compartidas como "Cualquiera con
+         * el enlace puede ver" — si no, la API devuelve error 403.
+         */
+        function extractDriveFolderId(raw) {
+            if(!raw) return '';
+            const m = raw.match(/\/folders\/([a-zA-Z0-9_-]+)/) || raw.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+            return m ? m[1] : raw.trim();
+        }
+        // URL de descarga directa de un archivo de Drive vía API (soporta
+        // CORS y lectura de bytes crudos con fetch(), a diferencia de los
+        // enlaces típicos "drive.google.com/uc?id=...").
+        function driveMediaUrl(fileId) {
+            return `https://www.googleapis.com/drive/v3/files/${encodeURIComponent(fileId)}?alt=media&key=${config.driveApiKey}`;
+        }
+        // Lista TODOS los archivos de audio dentro de una carpeta de Drive
+        // (pagina de a 100). Filtra por mimeType de audio o extensión
+        // conocida, y descarta carpetas/accesos directos.
+        async function fetchDriveFolderFiles(folderId) {
+            if(!config.driveApiKey) throw new Error('Falta configurar la API key de Google Drive en Ajustes técnicos.');
+            let files = [], pageToken = '';
+            const q = encodeURIComponent(`'${folderId}' in parents and trashed = false`);
+            do {
+                const url = `https://www.googleapis.com/drive/v3/files?q=${q}&fields=nextPageToken,files(id,name,mimeType)&pageSize=100&pageToken=${pageToken}&key=${config.driveApiKey}`;
+                const res = await fetch(url);
+                const data = await res.json();
+                if(data.error) throw new Error(data.error.message || 'Error al consultar la API de Google Drive.');
+                (data.files || []).forEach(f => {
+                    const isAudio = (f.mimeType || '').startsWith('audio/') || LocalMusicLibrary.isAudioFile(f.name || '');
+                    if(isAudio) files.push({ id: f.id, name: f.name });
+                });
+                pageToken = data.nextPageToken || '';
+            } while (pageToken);
+            return files;
+        }
+        // Lista las SUBCARPETAS directas de una carpeta de Drive — cada una
+        // se trata como una categoría (mismo principio que las subcarpetas
+        // de "Music/" en la versión Local, vía webkitdirectory). No baja
+        // más de un nivel: subcarpetas dentro de subcarpetas se ignoran.
+        async function fetchDriveSubfolders(parentFolderId) {
+            if(!config.driveApiKey) throw new Error('Falta configurar la API key de Google Drive en Ajustes técnicos.');
+            let folders = [], pageToken = '';
+            const q = encodeURIComponent(`'${parentFolderId}' in parents and mimeType = 'application/vnd.google-apps.folder' and trashed = false`);
+            do {
+                const url = `https://www.googleapis.com/drive/v3/files?q=${q}&fields=nextPageToken,files(id,name)&pageSize=100&pageToken=${pageToken}&key=${config.driveApiKey}`;
+                const res = await fetch(url);
+                const data = await res.json();
+                if(data.error) throw new Error(data.error.message || 'Error al consultar la API de Google Drive.');
+                (data.files || []).forEach(f => folders.push({ id: f.id, name: f.name }));
+                pageToken = data.nextPageToken || '';
+            } while (pageToken);
+            return folders;
         }
 
         // Cronómetro de CONTEO ASCENDENTE (0 → timeCancionMax), independiente
@@ -4599,6 +4877,91 @@
             return result;
         }
 
+        /**
+         * DETECCIÓN DEL INICIO REAL DE LA MÚSICA (Local y Drive)
+         * Mide el volumen (RMS) por ventanas de 50 ms sobre el tramo inicial de la canción y lo
+         * compara con el nivel típico de ESA canción (percentil 90), no con un valor fijo: así
+         * funciona igual con silencio digital que con una intro suave. Devuelve los segundos desde
+         * los que conviene empezar (0 si no hace falta saltar o no hay un punto claro).
+         * Para MP3 solo se decodifica el tramo inicial (tras la etiqueta ID3 y su carátula).
+         */
+        async function analyzeSongStartOffset(buffer, fileName, maxSkipSec) {
+            try {
+                const ctx = _getAudioCtx();
+                const analyzeSec = (maxSkipSec || 20) + 8;
+                let decoded = null;
+                if(/\.mp3$/i.test(fileName || '')) {
+                    try {
+                        let audioStart = 0;
+                        const dv = new DataView(buffer);
+                        if(buffer.byteLength > 10 && _id3ReadAscii(dv, 0, 3) === 'ID3') audioStart = 10 + _id3ReadSynchsafe32(dv, 6);
+                        decoded = await ctx.decodeAudioData(buffer.slice(audioStart, Math.min(buffer.byteLength, audioStart + 1500000)));
+                    } catch(e) { decoded = null; }
+                }
+                if(!decoded) decoded = await ctx.decodeAudioData(buffer.slice(0));
+                const sr = decoded.sampleRate, ch0 = decoded.getChannelData(0), ch1 = decoded.numberOfChannels > 1 ? decoded.getChannelData(1) : null;
+                const win = Math.floor(sr * 0.05);
+                const nWin = Math.min(Math.floor(ch0.length / win), Math.floor(analyzeSec / 0.05));
+                if(nWin < 20) return 0;
+                const rms = new Float32Array(nWin);
+                for(let w = 0; w < nWin; w++) {
+                    let sum = 0; const s0 = w * win;
+                    for(let i = 0; i < win; i++) { let v = ch0[s0 + i]; if(ch1) v = (v + ch1[s0 + i]) * 0.5; sum += v * v; }
+                    rms[w] = Math.sqrt(sum / win);
+                }
+                const sorted = Array.from(rms).sort((a, b) => a - b);
+                const ref = sorted[Math.floor(nWin * 0.9)];
+                if(ref < 0.01) return 0;              // casi todo el tramo es silencio: no hay punto fiable
+                const thr = ref * 0.4, need = 6;      // "suena fuerte" = 40% del nivel típico, sostenido 300 ms
+                let acc = 0; for(let i = 0; i < need; i++) acc += rms[i];
+                for(let i = 0; i + need <= nWin; i++) {
+                    if(i > 0) acc += rms[i + need - 1] - rms[i - 1];
+                    if(rms[i] >= thr && acc / need >= thr) {
+                        const offset = i * 0.05 - 0.7;      // margen para que no entre cortado
+                        if(offset < 0.8 || offset > (maxSkipSec || 20)) return 0;
+                        return +offset.toFixed(2);
+                    }
+                }
+                return 0;
+            } catch(e) { console.warn('analyzeSongStartOffset falló (se reproduce desde 0)', e); return 0; }
+        }
+        // Coloca el audio en `offset` segundos (espera a los metadatos si aún no cargaron).
+        function startAudioAt(audio, offset) {
+            if(!offset) { try { audio.currentTime = 0; } catch(e) {} return; }
+            const seek = () => { try { audio.currentTime = offset; } catch(e) {} };
+            if(audio.readyState >= 1) seek(); else audio.addEventListener('loadedmetadata', seek, { once: true });
+        }
+
+        /**
+         * TARJETAS DE CATEGORÍA DE CANCIÓN (compartidas por las 3 variantes
+         * de "Adivina la Canción": YouTube/Local/Drive) — reemplazan el
+         * <select> de siempre por tarjetas clicables reutilizando el mismo
+         * look que el tablero de preguntas (.category-card), y se reflejan
+         * en el proyector para que el público vea (y pueda señalar/votar)
+         * qué categoría jugar, no solo el moderador.
+         */
+        const SONG_CAT_STYLES = ['cat-geografia','cat-ciencias','cat-historia','cat-deportes','cat-arte','cat-espectaculos','cat-sincategoria','cat-mixed'];
+        function songCategoryCardsData(categories) {
+            return (categories || []).map((name, i) => ({ name, style: SONG_CAT_STYLES[i % SONG_CAT_STYLES.length] }));
+        }
+        // Pinta las tarjetas dentro de containerId y engancha el clic de
+        // cada una a onPick(nombreCategoria). No incluye contador de
+        // "disponibles" (a diferencia de las categorías de trivia): estas
+        // categorías no se agotan por partida.
+        function renderSongCategoryCards(containerId, categories, onPick) {
+            const el = document.getElementById(containerId);
+            if(!el) return;
+            const data = songCategoryCardsData(categories);
+            el.innerHTML = data.map(c => `<div class="category-card ${c.style}" data-cat="${c.name.replace(/&/g,'&amp;').replace(/"/g,'&quot;')}"><div style="font-size:1.8rem; margin-bottom:2px;" class="material-symbols-outlined icon-anim-generic">music_note</div><div class="category-title">${c.name}</div></div>`).join('');
+            [...el.querySelectorAll('.category-card')].forEach(card => { card.onclick = () => onPick(card.dataset.cat); });
+        }
+        // Envía el mismo listado al proyector (SONG_CATEGORY_BOARD), que lo
+        // muestra de solo lectura en #pjSongCategoryBoard mientras el
+        // moderador sigue en la pantalla de configuración del minijuego.
+        function broadcastSongCategoryBoard(categories, title) {
+            Presentation.broadcast('SONG_CATEGORY_BOARD', { title: title || '🎵 Elige una categoría', categories: songCategoryCardsData(categories) });
+        }
+
         const Minigames = {
             Acertijos: {
                 init() {
@@ -4617,7 +4980,7 @@
                     this.startRound();
                 },
                 startRound() {
-                    if(state.acertijosPool.length === 0) { showToast("Se agotaron los acertijos.", "warn"); this.exit(); return; }
+                    if(state.acertijosPool.length === 0) { showToast("Se agotaron los acertijos.", "warn"); this.exit(false); return; }
                     consumeChaosCardGate(() => {
                         let t = state.teams[state.currentTurn];
                         let pill = document.getElementById('acertijosTeamPill');
@@ -4704,7 +5067,7 @@
                     // un cronómetro "fantasma" sobre la ronda nueva.
                     if(this._revealTimeoutId) { clearTimeout(this._revealTimeoutId); this._revealTimeoutId = null; }
 
-                    if(getAvailableMultipleCount() === 0) { showToast(`Se agotaron las preguntas de Opción Múltiple${config.easyMode ? ' en Modo fácil.' : '.'}`, "warn"); this.exit(); return; }
+                    if(getAvailableMultipleCount() === 0) { showToast(`Se agotaron las preguntas de Opción Múltiple${config.easyMode ? ' en Modo fácil.' : '.'}`, "warn"); this.exit(false); return; }
                     // MODO CAOS: se resuelve antes de mostrar la pregunta y
                     // las opciones — nada del resto de esta ronda ocurre
                     // hasta que el moderador cierre la carta.
@@ -4721,7 +5084,7 @@
                     // las preguntas disponibles entre el chequeo de arriba
                     // y este punto (poco probable, pero se cubre igual).
                     let qData = drawMultipleQuestion();
-                    if(!qData) { showToast(`Se agotaron las preguntas de Opción Múltiple${config.easyMode ? ' en Modo fácil.' : '.'}`, "warn"); this.exit(); return; }
+                    if(!qData) { showToast(`Se agotaron las preguntas de Opción Múltiple${config.easyMode ? ' en Modo fácil.' : '.'}`, "warn"); this.exit(false); return; }
                     // Paso 1: mostrar la pregunta con una breve animación de entrada.
                     let qEl = document.getElementById('multipleQuestionText');
                     qEl.innerText = qData.q;
@@ -4827,10 +5190,10 @@
                     document.getElementById('btnMultipleNext').style.display = 'block'; document.getElementById('btnMultipleExit').style.display = 'block';
                     autoScrollTo('multipleTimerContainer');
                 },
-                nextTeam() { addNormal(state.currentTurn, this.scoreGained, false, this.scoreGained > 0 ? config.ptsMultiple : 0); setTurn((state.currentTurn + 1) % state.teams.length); this.startRound(); },
-                exit() {
+                nextTeam() { addNormal(state.currentTurn, this.scoreGained, false, this.scoreGained > 0 ? config.ptsMultiple : 0); this.scoreGained = 0; setTurn((state.currentTurn + 1) % state.teams.length); this.startRound(); },
+                exit(advance = true) {
                     if(this._revealTimeoutId) { clearTimeout(this._revealTimeoutId); this._revealTimeoutId = null; }
-                    addNormal(state.currentTurn, this.scoreGained, false, this.scoreGained > 0 ? config.ptsMultiple : 0); gameTimer.stop(); returnToBoard(false);
+                    addNormal(state.currentTurn, this.scoreGained, false, this.scoreGained > 0 ? config.ptsMultiple : 0); this.scoreGained = 0; gameTimer.stop(); stopMusic(); returnToBoard(!!advance);
                 }
             },
 
@@ -4907,7 +5270,7 @@
                     document.getElementById('btnSavePictionary').style.display = 'inline-block'; this.updateSaveButtons(); autoScrollTo('picResultsArea');
                 },
                 saveAndNext() { addExtra(state.currentTurn, this.score); setTurn((state.currentTurn + 1) % state.teams.length); this.reset(); },
-                saveAndExit() { addExtra(state.currentTurn, this.score); this.exit(); },
+                saveAndExit() { addExtra(state.currentTurn, this.score); gameTimer.stop(); stopMusic(); returnToBoard(true); },
                 exit() { gameTimer.stop(); stopMusic(); returnToBoard(false); }
             },
 
@@ -4944,7 +5307,7 @@
                 },
                 setDifficulty(diff) {
                     this.currentCat = diff; document.getElementById('chaDifficultySelect').value = diff;
-                    ['Facil', 'Intermedia', 'Dificil'].forEach(lvl => {
+                    ['Facil', 'Intermedia', 'Dificil', 'Aleatoria'].forEach(lvl => {
                         let isMatch = (diff === lvl.toLowerCase());
                         let bs = document.getElementById('btnCha' + lvl + 'Setup'), bg = document.getElementById('btnCha' + lvl);
                         if(bs) bs.classList.toggle('active', isMatch); if(bg) bg.classList.toggle('active', isMatch);
@@ -4975,12 +5338,27 @@
                     });
                 },
                 nextWord() {
-                    if (!state.charadasPools[this.currentCat] || state.charadasPools[this.currentCat].length === 0) { showToast("Se agotaron las palabras de Charadas en esta dificultad.", "warn"); return; }
-                    this.activeWord = state.charadasPools[this.currentCat].pop();
+                    // Dificultad aleatoria: cada palabra sale de un nivel al azar (entre los que aún tienen palabras)
+                    let diff = this.currentCat;
+                    if(diff === 'aleatoria') {
+                        const avail = ['facil', 'intermedia', 'dificil'].filter(d => state.charadasPools[d] && state.charadasPools[d].length);
+                        if(!avail.length) { showToast("Se agotaron las palabras de Charadas.", "warn"); return; }
+                        diff = avail[Math.floor(Math.random() * avail.length)];
+                    }
+                    if (!state.charadasPools[diff] || state.charadasPools[diff].length === 0) { showToast("Se agotaron las palabras de Charadas en esta dificultad.", "warn"); return; }
+                    this.activeWordDiff = diff;
+                    this.activeWord = state.charadasPools[diff].pop();
                     const chaEl = document.getElementById('chaWordDisplay'); chaEl.innerText = this.activeWord; fitText(chaEl, 14);
+                    const badge = document.getElementById('chaWordDiffBadge');
+                    if(badge) {
+                        const names = { facil: 'Fácil', intermedia: 'Media', dificil: 'Difícil' };
+                        const pts = diff === 'facil' ? config.ptsChaFacil : (diff === 'intermedia' ? config.ptsChaIntermedia : config.ptsChaDificil);
+                        badge.textContent = `${names[diff]} · ${pts} pts`;
+                        badge.style.display = this.currentCat === 'aleatoria' ? 'block' : 'none';
+                    }
                 },
                 handleWord(isCorrect) {
-                    let pts = this.currentCat === 'facil' ? config.ptsChaFacil : (this.currentCat === 'intermedia' ? config.ptsChaIntermedia : config.ptsChaDificil);
+                    const wd = this.activeWordDiff || this.currentCat; let pts = wd === 'facil' ? config.ptsChaFacil : (wd === 'intermedia' ? config.ptsChaIntermedia : config.ptsChaDificil);
                     if(isCorrect) { playSoundEffect('miniCorrect'); this.correct.push(this.activeWord); this.score += pts; } else { playSoundEffect('miniIncorrect'); this.incorrect.push(this.activeWord); }
                     Presentation.broadcast('MINIGAME_FEEDBACK', { correct: isCorrect });
                     this.nextWord();
@@ -4997,7 +5375,7 @@
                     this.updateSaveButtons(); autoScrollTo('chaResultsArea');
                 },
                 saveAndNext() { addExtra(state.currentTurn, this.score); setTurn((state.currentTurn + 1) % state.teams.length); this.reset(); },
-                saveAndExit() { addExtra(state.currentTurn, this.score); this.exit(); },
+                saveAndExit() { addExtra(state.currentTurn, this.score); gameTimer.stop(); stopMusic(); returnToBoard(true); },
                 exit() { gameTimer.stop(); stopMusic(); returnToBoard(false); }
             },
 
@@ -5064,7 +5442,7 @@
                     this.updateSaveButtons(); autoScrollTo('tabuResultsArea');
                 },
                 saveAndNext() { addExtra(state.currentTurn, this.score); setTurn((state.currentTurn + 1) % state.teams.length); this.reset(); },
-                saveAndExit() { addExtra(state.currentTurn, this.score); this.exit(); },
+                saveAndExit() { addExtra(state.currentTurn, this.score); gameTimer.stop(); stopMusic(); returnToBoard(true); },
                 exit() { gameTimer.stop(); stopMusic(); returnToBoard(false); }
             },
 
@@ -5153,7 +5531,7 @@
                         let pts = ((parseInt(document.getElementById(`stop-unique-${i}`).value)||0) * config.ptsStopUnique) + ((parseInt(document.getElementById(`stop-rep-${i}`).value)||0) * config.ptsStopRepeated);
                         if(pts > 0) addExtra(i, pts);
                     });
-                    this.exit();
+                    gameTimer.stop(); clearInterval(this.intervalLetter); returnToBoard(true);
                 },
                 exit() { gameTimer.stop(); clearInterval(this.intervalLetter); returnToBoard(false); }
             },
@@ -5197,11 +5575,11 @@
                     document.getElementById('cancionScreen').classList.add('active');
                     document.getElementById('cancionSetupArea').style.display = 'block';
                     document.getElementById('cancionGameArea').style.display = 'none';
-                    const sel = document.getElementById('cancionCategorySelect');
-                    sel.innerHTML = state.songCategories.map(c => `<option value="${c.replace(/"/g,'&quot;')}">${c}</option>`).join('');
+                    this.currentCat = null;
+                    this.renderCategoryCards();
                     document.getElementById('cancionSetupStatus').textContent = '';
                     const btn = document.getElementById('btnCancionStart');
-                    btn.disabled = false; btn.classList.remove('btn-loading'); btn.innerText = 'Iniciar minijuego';
+                    btn.disabled = true; btn.classList.remove('btn-loading'); btn.innerText = 'Iniciar minijuego';
                     // YouTube bloquea la reproducción incrustada cuando la
                     // página se abre como file:// (no envía un Referer
                     // válido) — se avisa aquí, en vez de dejar que el
@@ -5209,8 +5587,17 @@
                     const warn = document.getElementById('cancionFileWarning');
                     if(warn) warn.style.display = (window.location.protocol === 'file:') ? 'block' : 'none';
                 },
+                renderCategoryCards() {
+                    renderSongCategoryCards('cancionCategoryCards', state.songCategories, (cat) => this.selectCategory(cat));
+                    broadcastSongCategoryBoard(state.songCategories, '🎵 Adivina la Canción');
+                },
+                selectCategory(cat) {
+                    this.currentCat = cat;
+                    document.querySelectorAll('#cancionCategoryCards .category-card').forEach(el => el.classList.toggle('song-cat-selected', el.dataset.cat === cat));
+                    document.getElementById('btnCancionStart').disabled = false;
+                },
                 async start() {
-                    this.currentCat = document.getElementById('cancionCategorySelect').value;
+                    if(!this.currentCat) { showToast('Elige una categoría.', 'warn'); return; }
                     const btn = document.getElementById('btnCancionStart');
                     const status = document.getElementById('cancionSetupStatus');
                     if(!state.songPools[this.currentCat] || !state.songPools[this.currentCat].length) {
@@ -5435,7 +5822,7 @@
                     el.className = 'toast toast-warn toast-confirm';
                     el.style.cssText = 'pointer-events:all; display:flex; gap:8px; align-items:center; flex-wrap:wrap; white-space:normal;';
                     el.innerHTML = `<span style="flex:1 1 100%;">¿Terminar "Adivina la Canción"? El equipo conserva los puntos ya ganados en este turno.</span>`
-                        + `<button onclick="this.closest('.toast-confirm').remove(); Minigames.Cancion.exit();" `
+                        + `<button onclick="this.closest('.toast-confirm').remove(); Minigames.Cancion.exit(true);" `
                         + `style="background:var(--incorrect-color);color:white;border:none;border-radius:8px;padding:5px 12px;font-size:0.82rem;font-weight:700;cursor:pointer;width:auto;min-height:0;">Sí, terminar</button>`
                         + `<button onclick="this.closest('.toast-confirm').remove()" `
                         + `style="background:rgba(128,128,128,0.2);color:var(--text-main);border:none;border-radius:8px;padding:5px 12px;font-size:0.82rem;font-weight:700;cursor:pointer;width:auto;min-height:0;">Cancelar</button>`;
@@ -5465,7 +5852,7 @@
                 // Corte manual de TODO el minijuego (cualquier equipo, en
                 // cualquier momento) — llamado únicamente tras confirmar en
                 // confirmExit().
-                exit() {
+                exit(advance) {
                     this.roundActive = false;
                     this._clearPlayBuffer();
                     cancionRoundTimer.stop();
@@ -5474,7 +5861,7 @@
                     const iframe = document.getElementById('cancionYtIframe');
                     if(iframe) iframe.src = 'about:blank';
                     Presentation.broadcast('STOP_MINIGAME', {});
-                    returnToBoard(false);
+                    returnToBoard(!!advance);
                 }
             },
 
@@ -5500,22 +5887,27 @@
                     document.getElementById('cancionLocalScreen').classList.add('active');
                     document.getElementById('cancionLocalSetupArea').style.display = 'block';
                     document.getElementById('cancionLocalGameArea').style.display = 'none';
-                    this.renderCategorySelect();
+                    this.currentCat = null;
+                    this.renderCategoryCards();
                 },
-                renderCategorySelect() {
-                    const sel = document.getElementById('cancionLocalCategorySelect');
+                renderCategoryCards() {
                     const status = document.getElementById('cancionLocalFolderStatus');
                     const btnStart = document.getElementById('btnCancionLocalStart');
                     if(LocalMusicLibrary.ready) {
                         const cats = Object.keys(LocalMusicLibrary.categories);
-                        sel.innerHTML = cats.map(c => `<option value="${c.replace(/"/g,'&quot;')}">${c} (${LocalMusicLibrary.categories[c].length} canciones)</option>`).join('');
-                        sel.disabled = false; btnStart.disabled = false;
+                        renderSongCategoryCards('cancionLocalCategoryCards', cats, (cat) => this.selectCategory(cat));
+                        broadcastSongCategoryBoard(cats, '📁 Adivina la Canción (Local)');
                         status.textContent = `✅ Carpeta "${LocalMusicLibrary.folderName || 'Music'}" cargada — ${cats.length} categoría(s) encontradas.`;
                         status.className = 'folder-pick-status ok';
                     } else {
-                        sel.innerHTML = '<option value="">Selecciona primero una carpeta</option>';
-                        sel.disabled = true; btnStart.disabled = true;
+                        document.getElementById('cancionLocalCategoryCards').innerHTML = '';
+                        btnStart.disabled = true;
                     }
+                },
+                selectCategory(cat) {
+                    this.currentCat = cat;
+                    document.querySelectorAll('#cancionLocalCategoryCards .category-card').forEach(el => el.classList.toggle('song-cat-selected', el.dataset.cat === cat));
+                    document.getElementById('btnCancionLocalStart').disabled = false;
                 },
                 pickFolder() { document.getElementById('cancionLocalFolderInput').click(); },
                 handleFolderInput(event) {
@@ -5524,10 +5916,9 @@
                     if(!files || !files.length) { status.textContent = '❌ No se seleccionó ninguna carpeta.'; status.className = 'folder-pick-status err'; return; }
                     const ok = LocalMusicLibrary.buildFromFileList(files);
                     if(!ok) { status.textContent = '❌ No se encontraron archivos de audio (.mp3/.m4a/.ogg/.wav) en subcarpetas.'; status.className = 'folder-pick-status err'; }
-                    this.renderCategorySelect();
+                    this.renderCategoryCards();
                 },
                 start() {
-                    this.currentCat = document.getElementById('cancionLocalCategorySelect').value;
                     if(!this.currentCat || !LocalMusicLibrary.categories[this.currentCat]?.length) { showToast('Elige una categoría con canciones.', 'warn'); return; }
                     this.pool = [...LocalMusicLibrary.categories[this.currentCat]].sort(() => 0.5 - Math.random());
                     document.getElementById('cancionLocalSetupArea').style.display = 'none';
@@ -5547,7 +5938,8 @@
                     if(!this.pool.length) { showToast('Se agotaron las canciones de esta categoría.', 'warn'); this.endRound(); return; }
                     this._clearPlayBuffer(); this._revokeActiveUrls();
                     this.activeFile = this.pool.pop();
-                    this.playing = false; this.revealed = false;
+                    this.playing = false; this.revealed = false; this._loadingSong = true; this.activeStartOffset = 0;
+                    document.getElementById('btnCancionLocalPlay').disabled = true;
                     this.activeTitle = this.activeFile.name.replace(/\.[^.]+$/, ''); this.activeArtist = '';
                     const t = state.teams[state.currentTurn];
                     const pill = document.getElementById('cancionLocalTeamPill');
@@ -5581,8 +5973,18 @@
                         document.getElementById('cancionLocalModeratorTitle').innerHTML = `🎧 Suena: <strong>${this.activeTitle}</strong>${this.activeArtist ? ' — ' + this.activeArtist : ''}`;
                         this.activeAudioBlobUrl = URL.createObjectURL(new Blob([buffer]));
                         const img = document.getElementById('cancionLocalCoverImg');
-                        if(this.activeCoverBlob) { img.src = URL.createObjectURL(this.activeCoverBlob); img.style.display = 'block'; }
+                        // El moderador ve la carátula real desde el inicio (el público sigue viendo
+                        // el disco girando en el proyector hasta el revelado). Sin carátula en el
+                        // archivo, se mantiene el disco como respaldo.
+                        if(this.activeCoverBlob) { img.src = URL.createObjectURL(this.activeCoverBlob); img.style.display = 'block'; document.getElementById('cancionLocalOverlay').style.display = 'none'; }
                         else { img.style.display = 'none'; }
+                        // Detecta dónde empieza a sonar "de verdad" (silencio o intro suave) para
+                        // adelantar ese primer tramo. Se hace aquí, antes de habilitar "Reproducir".
+                        const myFile = this.activeFile;
+                        if(config.cancionSkipIntro !== false) this.activeStartOffset = await analyzeSongStartOffset(buffer, myFile.name, config.cancionSkipIntroMax || 20);
+                        if(this.activeFile !== myFile) return; // se cambió de canción mientras se analizaba
+                        this._loadingSong = false;
+                        document.getElementById('btnCancionLocalPlay').disabled = false;
                     } catch(e) {
                         console.warn('No se pudo leer el archivo de audio', e);
                         showToast('No se pudo leer este archivo, se salta a la siguiente.', 'warn');
@@ -5590,7 +5992,7 @@
                     }
                 },
                 play() {
-                    if(this.playing || !this.activeFile) return;
+                    if(this.playing || this._loadingSong || !this.activeFile) return;
                     this.playing = true; this.revealed = false;
                     document.getElementById('btnCancionLocalPlay').style.display = 'none';
                     document.getElementById('cancionLocalActiveControls').style.display = 'flex';
@@ -5598,10 +6000,10 @@
                     document.getElementById('cancionLocalTimer').innerText = '…';
                     const audio = document.getElementById('cancionLocalAudio');
                     audio.muted = Presentation.isConnected();
-                    audio.src = this.activeAudioBlobUrl; audio.currentTime = 0;
+                    audio.src = this.activeAudioBlobUrl; startAudioAt(audio, this.activeStartOffset);
                     audio.play().catch(e => console.log('Audio local bloqueado', e));
                     if(Presentation.isConnected() && this._activeBuffer) {
-                        Presentation.broadcastLocalSong('SONG_LOCAL_PLAY', { teamIndex: state.currentTurn, initialPoints: config.ptsCancionMax }, new Blob([this._activeBuffer]), this.activeCoverBlob);
+                        Presentation.broadcastLocalSong('SONG_LOCAL_PLAY', { teamIndex: state.currentTurn, initialPoints: config.ptsCancionMax, startAt: this.activeStartOffset || 0 }, new Blob([this._activeBuffer]), this.activeCoverBlob);
                     }
                     this._clearPlayBuffer();
                     // Margen de 4 segundos antes de arrancar los cronómetros:
@@ -5677,7 +6079,7 @@
                     el.className = 'toast toast-warn toast-confirm';
                     el.style.cssText = 'pointer-events:all; display:flex; gap:8px; align-items:center; flex-wrap:wrap; white-space:normal;';
                     el.innerHTML = `<span style="flex:1 1 100%;">¿Terminar "Adivina la Canción (Local)"? El equipo conserva los puntos ya ganados en este turno.</span>`
-                        + `<button onclick="this.closest('.toast-confirm').remove(); Minigames.CancionLocal.exit();" `
+                        + `<button onclick="this.closest('.toast-confirm').remove(); Minigames.CancionLocal.exit(true);" `
                         + `style="background:var(--incorrect-color);color:white;border:none;border-radius:8px;padding:5px 12px;font-size:0.82rem;font-weight:700;cursor:pointer;width:auto;min-height:0;">Sí, terminar</button>`
                         + `<button onclick="this.closest('.toast-confirm').remove()" `
                         + `style="background:rgba(128,128,128,0.2);color:var(--text-main);border:none;border-radius:8px;padding:5px 12px;font-size:0.82rem;font-weight:700;cursor:pointer;width:auto;min-height:0;">Cancelar</button>`;
@@ -5697,7 +6099,7 @@
                     setTurn((state.currentTurn + 1) % state.teams.length);
                     this.startRound();
                 },
-                exit() {
+                exit(advance) {
                     this.roundActive = false; this._clearPlayBuffer();
                     cancionRoundTimer.stop(); songTimer.stop();
                     const audio = document.getElementById('cancionLocalAudio');
@@ -5705,7 +6107,277 @@
                     Presentation.broadcast('SONG_LOCAL_STOP', {});
                     Presentation.broadcast('STOP_MINIGAME', {});
                     this._revokeActiveUrls();
-                    returnToBoard(false);
+                    returnToBoard(!!advance);
+                }
+            },
+
+            /**
+             * CancionDrive — "Adivina la Canción (Drive)". Misma dinámica y
+             * misma UI que CancionLocal (turno cronometrado, carátula ID3,
+             * revelado), pero el archivo se descarga de una carpeta de
+             * Google Drive en vez de leerse del disco. Reutiliza
+             * extractID3Tags() tal cual — el buffer descargado se procesa
+             * exactamente igual que un File local.
+             */
+            CancionDrive: {
+                currentCat: null, pool: [], activeFileMeta: null, activeCoverBlob: null, activeAudioBlobUrl: null,
+                activeTitle: '', activeArtist: '', _activeBuffer: null,
+                playing: false, revealed: false, roundScore: 0, roundActive: false, _playBufferTimeout: null, _loadingSong: false,
+                _clearPlayBuffer() { if(this._playBufferTimeout) { clearTimeout(this._playBufferTimeout); this._playBufferTimeout = null; } },
+                _revokeActiveUrls() {
+                    if(this.activeAudioBlobUrl) { try { URL.revokeObjectURL(this.activeAudioBlobUrl); } catch(e){} }
+                    this.activeAudioBlobUrl = null; this.activeCoverBlob = null; this._activeBuffer = null;
+                },
+                async init() {
+                    playSoundEffect('transition');
+                    if(state.currentTurn === null) { showToast('Asigna un turno antes de iniciar.', 'warn'); return; }
+                    if(!config.driveApiKey || !config.driveParentFolderId) { showToast('Configura la API key y la carpeta de Drive en Ajustes técnicos antes de usar este minijuego.', 'warn', 6000); return; }
+                    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+                    document.getElementById('cancionDriveScreen').classList.add('active');
+                    document.getElementById('cancionDriveSetupArea').style.display = 'block';
+                    document.getElementById('cancionDriveGameArea').style.display = 'none';
+                    const status = document.getElementById('cancionDriveSetupStatus');
+                    const btn = document.getElementById('btnCancionDriveStart');
+                    this.currentCat = null;
+                    if(!state.driveCategoriesLoaded) {
+                        btn.disabled = true;
+                        status.style.color = 'var(--text-muted)';
+                        status.textContent = '☁️ Buscando categorías (subcarpetas) en Google Drive…';
+                        document.getElementById('cancionDriveCategoryCards').innerHTML = '';
+                        try {
+                            const folderId = extractDriveFolderId(config.driveParentFolderId);
+                            const subfolders = await fetchDriveSubfolders(folderId);
+                            if(!subfolders.length) throw new Error('La carpeta no tiene subcarpetas — crea una subcarpeta por categoría (ej. "80s", "Disney") dentro de ella.');
+                            state.driveSongCategories = subfolders.map(f => f.name);
+                            state.driveFolderIds = {}; subfolders.forEach(f => { state.driveFolderIds[f.name] = f.id; });
+                            state.driveCategoriesLoaded = true;
+                            status.textContent = '';
+                        } catch(err) {
+                            status.style.color = 'var(--incorrect-color)'; status.textContent = '❌ ' + err.message;
+                            showToast('No se pudieron cargar las categorías de Drive: ' + err.message, 'error', 6000);
+                            return;
+                        }
+                    }
+                    document.getElementById('cancionDriveSetupStatus').textContent = '';
+                    this.renderCategoryCards();
+                },
+                renderCategoryCards() {
+                    renderSongCategoryCards('cancionDriveCategoryCards', state.driveSongCategories, (cat) => this.selectCategory(cat));
+                    broadcastSongCategoryBoard(state.driveSongCategories, '☁️ Adivina la Canción (Drive)');
+                },
+                // Botón "Actualizar categorías" (por si añades una subcarpeta
+                // nueva a mitad de fiesta sin tener que recargar la página).
+                async refreshCategories() {
+                    state.driveCategoriesLoaded = false;
+                    state.drivePools = {};
+                    await this.init();
+                },
+                selectCategory(cat) {
+                    this.currentCat = cat;
+                    document.querySelectorAll('#cancionDriveCategoryCards .category-card').forEach(el => el.classList.toggle('song-cat-selected', el.dataset.cat === cat));
+                    document.getElementById('btnCancionDriveStart').disabled = false;
+                },
+                async start() {
+                    if(!this.currentCat) { showToast('Elige una categoría.', 'warn'); return; }
+                    const btn = document.getElementById('btnCancionDriveStart');
+                    const status = document.getElementById('cancionDriveSetupStatus');
+                    if(!state.drivePools[this.currentCat] || !state.drivePools[this.currentCat].length) {
+                        btn.disabled = true; btn.classList.add('btn-loading'); btn.innerText = 'Cargando…';
+                        status.style.color = 'var(--text-muted)'; status.textContent = '☁️ Consultando la carpeta de Google Drive…';
+                        try {
+                            const folderId = state.driveFolderIds[this.currentCat];
+                            const files = await fetchDriveFolderFiles(folderId);
+                            if(!files.length) throw new Error('La carpeta no tiene archivos de audio (¿está compartida como "Cualquiera con el enlace"?).');
+                            state.drivePools[this.currentCat] = files.sort(() => 0.5 - Math.random());
+                        } catch(err) {
+                            btn.disabled = false; btn.classList.remove('btn-loading'); btn.innerText = 'Iniciar minijuego';
+                            status.style.color = 'var(--incorrect-color)'; status.textContent = '❌ ' + err.message;
+                            showToast('No se pudo cargar la carpeta: ' + err.message, 'error', 5500);
+                            return;
+                        }
+                        btn.disabled = false; btn.classList.remove('btn-loading'); btn.innerText = 'Iniciar minijuego';
+                    }
+                    this.pool = [...state.drivePools[this.currentCat]];
+                    document.getElementById('cancionDriveSetupArea').style.display = 'none';
+                    document.getElementById('cancionDriveGameArea').style.display = 'flex';
+                    this.startRound();
+                },
+                startRound() {
+                    consumeChaosCardGate(() => {
+                        this.roundScore = 0; this.roundActive = true;
+                        const roundSeconds = config.timeCancionRound || 120;
+                        document.getElementById('cancionDriveRoundScore').textContent = '0';
+                        cancionRoundTimer.startPaused(roundSeconds, t => { document.getElementById('cancionDriveRoundTimer').textContent = formatMMSS(t); }, () => this.endRound());
+                        this.nextSong();
+                    });
+                },
+                async nextSong() {
+                    if(!this.pool.length) { showToast('Se agotaron las canciones de esta categoría.', 'warn'); this.endRound(); return; }
+                    this._clearPlayBuffer(); this._revokeActiveUrls();
+                    this.activeFileMeta = this.pool.pop();
+                    this.playing = false; this.revealed = false; this._loadingSong = true; this.activeStartOffset = 0;
+                    this.activeTitle = this.activeFileMeta.name.replace(/\.[^.]+$/, ''); this.activeArtist = '';
+                    const t = state.teams[state.currentTurn];
+                    const pill = document.getElementById('cancionDriveTeamPill');
+                    pill.innerHTML = `<span style="font-family:'Apple Color Emoji',sans-serif;">${t.emoji}</span> ${t.id}. ${t.countryName}${streakBadgeHTML(state.currentTurn)}`;
+                    pill.style.backgroundColor = t.color; pill.style.color = getContrastYIQ(t.color);
+                    document.getElementById('cancionDriveTimer').innerText = '0';
+                    document.getElementById('cancionDrivePoints').innerText = config.ptsCancionMax;
+                    document.getElementById('cancionDriveOverlay').style.display = 'flex';
+                    document.getElementById('cancionDriveOverlay').classList.remove('cancion-revealed');
+                    document.getElementById('cancionDriveRevealTitle').style.display = 'none';
+                    document.getElementById('cancionDriveCoverImg').style.display = 'none';
+                    document.getElementById('btnCancionDrivePlay').style.display = 'inline-block';
+                    document.getElementById('btnCancionDrivePlay').disabled = true;
+                    document.getElementById('cancionDriveActiveControls').style.display = 'none';
+                    document.getElementById('cancionDriveModeratorTitle').innerHTML = `☁️ Descargando… <strong>${this.activeTitle}</strong>`;
+                    Presentation.broadcast('START_MINIGAME', { type: 'cancionDrive', teamIndex: state.currentTurn });
+                    autoScrollTo('cancionDriveScreen');
+                    try {
+                        const res = await fetch(driveMediaUrl(this.activeFileMeta.id));
+                        if(!res.ok) throw new Error('HTTP ' + res.status);
+                        const buffer = await res.arrayBuffer();
+                        this._activeBuffer = buffer;
+                        const tags = extractID3Tags(buffer);
+                        if(tags.title) this.activeTitle = tags.title;
+                        if(tags.artist) this.activeArtist = tags.artist;
+                        this.activeCoverBlob = tags.cover || null;
+                        document.getElementById('cancionDriveModeratorTitle').innerHTML = `🎧 Suena: <strong>${this.activeTitle}</strong>${this.activeArtist ? ' — ' + this.activeArtist : ''}`;
+                        this.activeAudioBlobUrl = URL.createObjectURL(new Blob([buffer]));
+                        const img = document.getElementById('cancionDriveCoverImg');
+                        // El moderador ve la carátula real desde el inicio (el público sigue viendo
+                        // el disco girando en el proyector hasta el revelado). Sin carátula en el
+                        // archivo, se mantiene el disco como respaldo.
+                        if(this.activeCoverBlob) { img.src = URL.createObjectURL(this.activeCoverBlob); img.style.display = 'block'; document.getElementById('cancionDriveOverlay').style.display = 'none'; }
+                        else { img.style.display = 'none'; }
+                        const myMeta = this.activeFileMeta;
+                        if(config.cancionSkipIntro !== false) this.activeStartOffset = await analyzeSongStartOffset(buffer, myMeta.name, config.cancionSkipIntroMax || 20);
+                        if(this.activeFileMeta !== myMeta) return; // se cambió de canción mientras se analizaba
+                        this._loadingSong = false;
+                        document.getElementById('btnCancionDrivePlay').disabled = false;
+                    } catch(e) {
+                        console.warn('No se pudo descargar el archivo de Drive', e);
+                        showToast('No se pudo descargar esta canción de Drive, se salta a la siguiente.', 'warn');
+                        this.nextSong();
+                    }
+                },
+                play() {
+                    if(this.playing || this._loadingSong || !this.activeFileMeta) return;
+                    this.playing = true; this.revealed = false;
+                    document.getElementById('btnCancionDrivePlay').style.display = 'none';
+                    document.getElementById('cancionDriveActiveControls').style.display = 'flex';
+                    document.getElementById('btnCancionDriveCorrect').disabled = true;
+                    document.getElementById('cancionDriveTimer').innerText = '…';
+                    const audio = document.getElementById('cancionDriveAudio');
+                    audio.muted = Presentation.isConnected();
+                    audio.src = this.activeAudioBlobUrl; startAudioAt(audio, this.activeStartOffset);
+                    audio.play().catch(e => console.log('Audio de Drive bloqueado', e));
+                    if(Presentation.isConnected() && this._activeBuffer) {
+                        Presentation.broadcastLocalSong('SONG_LOCAL_PLAY', { teamIndex: state.currentTurn, initialPoints: config.ptsCancionMax, startAt: this.activeStartOffset || 0 }, new Blob([this._activeBuffer]), this.activeCoverBlob);
+                    }
+                    this._clearPlayBuffer();
+                    // Margen de 4 segundos antes de arrancar los cronómetros:
+                    // da tiempo a que el audio empiece a sonar de verdad (y a
+                    // que el proyector reciba y monte el Blob) antes de que
+                    // el equipo pueda marcar "Correcto" o corra el reloj.
+                    this._playBufferTimeout = setTimeout(() => {
+                        this._playBufferTimeout = null;
+                        if(!this.playing) return;
+                        document.getElementById('btnCancionDriveCorrect').disabled = false;
+                        cancionRoundTimer.resume();
+                        songTimer.start(
+                            t => {
+                                document.getElementById('cancionDriveTimer').innerText = t;
+                                const pts = currentSongPoints(t);
+                                document.getElementById('cancionDrivePoints').innerText = pts;
+                                Presentation.broadcast('SONG_LOCAL_TICK', { elapsed: t, points: pts });
+                            },
+                            () => this.handleTimeout(),
+                            config.timeCancionMax
+                        );
+                    }, 4000);
+                },
+                handleCorrect() {
+                    if(!this.playing || this.revealed) return;
+                    this.playing = false; songTimer.stop();
+                    const secs = songTimer.elapsed, pts = currentSongPoints(secs);
+                    pushUndo('Adivina la Canción (Drive): acierto');
+                    playSoundEffect('miniCorrect');
+                    addExtra(state.currentTurn, pts, true);
+                    this.roundScore += pts;
+                    document.getElementById('cancionDriveRoundScore').textContent = this.roundScore;
+                    recordHistory({ type:'score', title:'Adivina la Canción (Drive)', detail:`${teamLabel(state.currentTurn)} · +${pts} pts en ${secs}s · "${this.activeTitle}"` });
+                    this._pauseAndReveal();
+                },
+                handleTimeout() {
+                    this.playing = false;
+                    playSoundEffect('timeout');
+                    recordHistory({ type:'timeout', title:'Adivina la Canción (Drive)', detail:`Canción perdida (0 pts) · "${this.activeTitle}" · ${teamLabel(state.currentTurn)}` });
+                    this._pauseAndReveal();
+                },
+                _pauseAndReveal() {
+                    this.revealed = true;
+                    cancionRoundTimer.pause();
+                    const btnCorrect = document.getElementById('btnCancionDriveCorrect');
+                    if(btnCorrect) btnCorrect.disabled = true;
+                    document.getElementById('cancionDriveOverlay').classList.add('cancion-revealed');
+                    setTimeout(() => { const el = document.getElementById('cancionDriveOverlay'); if(el) el.style.display = 'none'; }, 400);
+                    const revealEl = document.getElementById('cancionDriveRevealTitle');
+                    revealEl.innerHTML = `🎵 <strong>${this.activeTitle}</strong>${this.activeArtist ? ' · ' + this.activeArtist : ''}`;
+                    revealEl.style.display = 'block';
+                    Presentation.broadcast('SONG_LOCAL_REVEAL', { title: this.activeTitle, artist: this.activeArtist });
+                },
+                nextSongClick() {
+                    const audio = document.getElementById('cancionDriveAudio');
+                    this._clearPlayBuffer();
+                    if(this.revealed) {
+                        audio.pause(); audio.src = '';
+                        Presentation.broadcast('SONG_LOCAL_STOP', {});
+                        this.nextSong();
+                    } else if(this.playing) {
+                        this.playing = false; songTimer.stop(); cancionRoundTimer.pause();
+                        playSoundEffect('timeout');
+                        recordHistory({ type:'question', title:'Canción saltada', detail:`"${this.activeTitle}" · ${teamLabel(state.currentTurn)}` });
+                        audio.pause(); audio.src = '';
+                        Presentation.broadcast('SONG_LOCAL_STOP', {});
+                        this.nextSong();
+                    }
+                },
+                confirmExit() {
+                    document.querySelectorAll('.toast-confirm').forEach(t => t.remove());
+                    const el = document.createElement('div');
+                    el.className = 'toast toast-warn toast-confirm';
+                    el.style.cssText = 'pointer-events:all; display:flex; gap:8px; align-items:center; flex-wrap:wrap; white-space:normal;';
+                    el.innerHTML = `<span style="flex:1 1 100%;">¿Terminar "Adivina la Canción (Drive)"? El equipo conserva los puntos ya ganados en este turno.</span>`
+                        + `<button onclick="this.closest('.toast-confirm').remove(); Minigames.CancionDrive.exit(true);" `
+                        + `style="background:var(--incorrect-color);color:white;border:none;border-radius:8px;padding:5px 12px;font-size:0.82rem;font-weight:700;cursor:pointer;width:auto;min-height:0;">Sí, terminar</button>`
+                        + `<button onclick="this.closest('.toast-confirm').remove()" `
+                        + `style="background:rgba(128,128,128,0.2);color:var(--text-main);border:none;border-radius:8px;padding:5px 12px;font-size:0.82rem;font-weight:700;cursor:pointer;width:auto;min-height:0;">Cancelar</button>`;
+                    document.body.appendChild(el);
+                    requestAnimationFrame(() => { requestAnimationFrame(() => el.classList.add('visible')); });
+                    setTimeout(() => { el.classList.remove('visible'); setTimeout(() => el.remove(), 280); }, 6000);
+                },
+                endRound() {
+                    this.roundActive = false; this._clearPlayBuffer();
+                    cancionRoundTimer.stop(); songTimer.stop();
+                    const audio = document.getElementById('cancionDriveAudio'); audio.pause(); audio.src = '';
+                    Presentation.broadcast('SONG_LOCAL_STOP', {});
+                    this._revokeActiveUrls();
+                    playSoundEffect('timeout');
+                    showToast(`⏱ Turno de ${teamLabel(state.currentTurn)} terminado: ${this.roundScore} pts.`, 'ok', 3200);
+                    recordHistory({ type:'timeout', title:'Adivina la Canción (Drive): fin de turno', detail:`${teamLabel(state.currentTurn)} · ${this.roundScore} pts en total` });
+                    setTurn((state.currentTurn + 1) % state.teams.length);
+                    this.startRound();
+                },
+                exit(advance) {
+                    this.roundActive = false; this._clearPlayBuffer();
+                    cancionRoundTimer.stop(); songTimer.stop();
+                    const audio = document.getElementById('cancionDriveAudio');
+                    if(audio) { audio.pause(); audio.src = ''; }
+                    Presentation.broadcast('SONG_LOCAL_STOP', {});
+                    Presentation.broadcast('STOP_MINIGAME', {});
+                    this._revokeActiveUrls();
+                    returnToBoard(!!advance);
                 }
             }
         };
@@ -5734,23 +6406,31 @@
          * (texto final ya resuelto) → CHAOS_CLOSE (oculta overlay).
          */
         const CHAOS_CARDS = [
-            { id:'robo',        icon:'bolt',                 title:'Robo Relámpago',        desc:'Roba el 25% de los puntos del líder actual (mínimo 10 pts).' },
-            { id:'racha',       icon:'local_fire_department', title:'Racha Robada',          desc:'Sumas a tu racha la racha actual de un rival (y heredas su escudo, si tenía). La de él se reinicia a 0.', needsTarget:true, targetLabel:'racha' },
-            { id:'prohibida',   icon:'block',                title:'Categoría Prohibida',   desc:'Bloquea una categoría del tablero por el resto de la partida.', needsCategory:true },
-            { id:'doblefilo',   icon:'swords',               title:'Doble Filo',            desc:'Tu próxima respuesta vale el triple si aciertas... o el doble en contra si fallas.' },
-            { id:'maldicion',   icon:'skull',                title:'Maldición del Líder',   desc:'El líder actual pierde los puntos ganados en sus últimas 3 rondas: se reparten entre el resto de equipos.' },
-            { id:'segunda',     icon:'redeem',               title:'Segunda Oportunidad',   desc:'Recupera el uso de un comodín ya gastado (Doble o Nada o ±50).' },
-            { id:'prestado',    icon:'theater_comedy',       title:'Comodín Robado',        desc:'Robas el Doble o Nada o el ±50 de un rival: lo usas tú en tu próxima respuesta y él lo pierde.', needsTarget:true, needsChoice:true, targetLabel:'comodín' },
-            { id:'espejo',      icon:'flip',                 title:'Espejo',                desc:'Copia el último comodín (normal o del Caos) que jugó otro equipo.' },
-            { id:'intercambio', icon:'sync_alt',             title:'Intercambio de Puntajes',desc:'Elige un equipo y cruza tu puntaje total con el suyo.', needsTarget:true, targetLabel:'puntaje' },
-            { id:'nada',        icon:'visibility_off',       title:'Nada pasó...',          desc:'La carta no tiene ningún efecto. Solo drama.' }
+            { id:'robo',        icon:'bolt',                 title:'Robo Relámpago',        desc:'Roba el 35% de los puntos del líder actual (mínimo 15 pts).', w:3 },
+            { id:'racha',       icon:'local_fire_department', title:'Racha Robada',          desc:'Sumas a tu racha la racha actual de un rival (y heredas su escudo, si tenía). La de él se reinicia a 0.', needsTarget:true, targetLabel:'racha', w:2 },
+            { id:'prohibida',   icon:'block',                title:'Categoría Prohibida',   desc:'Bloquea una categoría del tablero por el resto de la partida.', needsCategory:true, w:2 },
+            { id:'doblefilo',   icon:'swords',               title:'Doble Filo',            desc:'Tu próxima respuesta vale el triple si aciertas... o el doble en contra si fallas.', w:3 },
+            { id:'maldicion',   icon:'skull',                title:'Maldición del Líder',   desc:'El líder actual pierde los puntos ganados en sus últimas 5 rondas: se reparten entre el resto de equipos.', w:3 },
+            { id:'segunda',     icon:'redeem',               title:'Segunda Oportunidad',   desc:'Recupera el uso de un comodín ya gastado (Doble o Nada o ±50).', w:1 },
+            { id:'prestado',    icon:'theater_comedy',       title:'Comodín Robado',        desc:'Robas el Doble o Nada o el ±50 de un rival: lo usas tú en tu próxima respuesta y él lo pierde.', needsTarget:true, needsChoice:true, targetLabel:'comodín', w:2 },
+            { id:'espejo',      icon:'flip',                 title:'Espejo',                desc:'Copia el último comodín (normal o del Caos) que jugó otro equipo.', w:1 },
+            { id:'intercambio', icon:'sync_alt',             title:'Intercambio de Puntajes',desc:'Elige un equipo y cruza tu puntaje total con el suyo.', needsTarget:true, targetLabel:'puntaje', w:2 },
+            { id:'nada',        icon:'visibility_off',       title:'Nada pasó...',          desc:'La carta no tiene ningún efecto. Solo drama.', w:0.5 },
+            { id:'saqueo',      icon:'payments',             title:'Saqueo General',        desc:'Cada rival pierde el 10% de sus puntos (mínimo 5) y todo pasa a tu marcador.', w:3 }
         ];
         let chaosState = { teamIndex: null, cards: [], revealedIndex: null, applied: false, isModeAuto: false, onClose: null, pendingTarget: null };
 
+        // Sorteo ponderado SIN repetir (cada carta trae su peso `w`): las cartas agresivas salen más a menudo
+        // y las inofensivas ("Nada pasó...", "Segunda Oportunidad", "Espejo") quedan como rareza.
         function chaosPickThree() {
-            const pool = [...CHAOS_CARDS];
+            const pool = CHAOS_CARDS.map(c => ({ c, w: c.w ?? 1 }));
             const picks = [];
-            for(let i = 0; i < 3 && pool.length; i++) { const idx = Math.floor(Math.random() * pool.length); picks.push(pool.splice(idx, 1)[0]); }
+            for(let i = 0; i < 3 && pool.length; i++) {
+                const total = pool.reduce((sum, x) => sum + x.w, 0);
+                let r = Math.random() * total, idx = 0;
+                for(; idx < pool.length - 1; idx++) { r -= pool[idx].w; if(r <= 0) break; }
+                picks.push(pool.splice(idx, 1)[0].c);
+            }
             return picks;
         }
 
@@ -5774,7 +6454,12 @@
         // (se aplique o no una carta), para que quien la disparó pueda
         // arrancar recién entonces el cronómetro que estaba esperando.
         function triggerAutoChaosCard(teamIndex, onClose) {
-            if(document.getElementById('chaosModal').style.display === 'block') { if(onClose) onClose(); return; } // evita solapar modales
+            if(document.getElementById('chaosModal').style.display === 'block') {
+                // Ya hay una carta abierta (p. ej. el Comodín del Caos manual): esta se mostrará al cerrarla.
+                const prev = chaosState.onClose;
+                chaosState.onClose = () => { if(prev) prev(); triggerAutoChaosCard(teamIndex, onClose); };
+                return;
+            }
             chaosState = { teamIndex, cards: chaosPickThree(), revealedIndex: null, applied: false, isModeAuto: true, onClose: onClose || null, pendingTarget: null };
             renderChaosModal();
             document.getElementById('chaosModal').style.display = 'block';
@@ -5782,25 +6467,55 @@
             Presentation.broadcast('CHAOS_OPEN', { teamIndex, cardIds: chaosState.cards.map(c => c.id), auto: true });
         }
 
+        // ¿Estamos en una frontera de ronda? Solo en el tablero y sin equipos que ya hayan respondido en la ronda.
+        function isRoundBoundary() {
+            const board = document.getElementById('boardScreen');
+            return !!(board && board.classList.contains('active')) && !(state.roundRespondedCount > 0);
+        }
         function toggleChaosMode() {
             if(state.currentTurn === null) {
                 showToast('Inicia la partida para activar el Modo Caos.', 'warn');
                 updateChaosModeButton(); // resincroniza el interruptor visual (el clic ya lo había marcado)
                 return;
             }
-            if(state.chaosModeActive) { deactivateChaosMode(false); return; }
+            if(state.chaosModeActive) {
+                // Una vez activo debe completar una ronda entera: no se puede apagar a mano.
+                const left = state.teams.length - (state.chaosDoneTeams || []).length;
+                showToast(`El Modo Caos debe completar una ronda: faltan ${left} equipo(s) por elegir su carta. Espera al final de la ronda para cambiar este ajuste.`, 'warn', 5000);
+                updateChaosModeButton();
+                return;
+            }
+            if(!isRoundBoundary()) {
+                showToast('No es posible activar el Modo Caos a media ronda. Espera al final de la ronda para cambiar este ajuste.', 'warn', 5000);
+                updateChaosModeButton();
+                return;
+            }
+            if(state.chaosModeUsed) {
+                showToast('El Modo Caos solo se puede activar una vez por partida (cada equipo conserva además su propio Comodín del Caos).', 'warn', 5000);
+                updateChaosModeButton();
+                return;
+            }
             state.chaosModeActive = true;
-            state.chaosModeRemaining = state.teams.length;
+            state.chaosModeUsed = true;
+            state.chaosDoneTeams = [];
+            state.chaosCardGatePending = true; // el equipo en turno saca su carta antes de su pregunta
             updateChaosModeButton();
-            showToast(`🌪️ Modo Caos activado: cada equipo sacará una carta al empezar su turno durante ${state.teams.length} turnos.`, 'ok', 4200);
-            recordHistory({ type:'wildcard', title:'Modo Caos activado', detail:`Durará ${state.teams.length} turnos (una ronda completa), sin gastar el Comodín del Caos de nadie.` });
+            showToast(`🌪️ Modo Caos activado: dura una ronda completa — los ${state.teams.length} equipos sacan su carta antes de su pregunta. Solo se puede activar una vez por partida.`, 'ok', 5500);
+            recordHistory({ type:'wildcard', title:'Modo Caos activado', detail:`Dura una ronda completa (${state.teams.length} equipos), sin gastar el Comodín del Caos de nadie. Uso único por partida.` });
             persistNow(true);
         }
         function deactivateChaosMode(auto) {
-            state.chaosModeActive = false; state.chaosModeRemaining = 0;
+            state.chaosModeActive = false; state.chaosModeRemaining = 0; state.chaosDoneTeams = []; state.chaosCardGatePending = false;
             updateChaosModeButton();
-            if(auto) showToast('🌀 El Modo Caos terminó su ronda.', 'info', 3000);
+            if(auto) showToast('🌀 El Modo Caos terminó su ronda: todos los equipos sacaron carta.', 'info', 3500);
             persistNow(true);
+        }
+        // Marca que un equipo ya sacó su carta del Modo Caos; al completarse todos, el modo termina solo.
+        function markChaosTeamDone(teamIndex) {
+            state.chaosDoneTeams = state.chaosDoneTeams || [];
+            if(!state.chaosDoneTeams.includes(teamIndex)) state.chaosDoneTeams.push(teamIndex);
+            if(state.chaosModeActive && state.chaosDoneTeams.length >= state.teams.length) deactivateChaosMode(true);
+            else updateChaosModeButton();
         }
         // Sincroniza el interruptor de esquina y el tinte morado de
         // pantalla completa con state.chaosModeActive — tanto en esta
@@ -5812,7 +6527,7 @@
             if(checkbox) checkbox.checked = state.chaosModeActive;
             if(wrap) {
                 wrap.classList.toggle('active', state.chaosModeActive);
-                wrap.title = state.chaosModeActive ? `Modo Caos activo (quedan ${state.chaosModeRemaining} turnos)` : 'Modo Caos: cada equipo saca una carta gratis al empezar su turno, durante una ronda completa.';
+                wrap.title = state.chaosModeActive ? `Modo Caos activo (${(state.chaosDoneTeams || []).length}/${state.teams.length} equipos ya sacaron carta)` : (state.chaosModeUsed ? 'Modo Caos ya usado en esta partida.' : 'Modo Caos: cada equipo saca una carta gratis antes de su pregunta, durante una ronda completa. Solo una vez por partida y al inicio de una ronda.');
             }
             document.body.classList.toggle('chaos-mode-active', state.chaosModeActive);
             Presentation.broadcast('CHAOS_MODE_TOGGLE', { active: state.chaosModeActive });
@@ -5903,7 +6618,7 @@
             const available = state.catNames.filter(c => !state.blockedCategories.includes(c));
             box.innerHTML = available.length
                 ? available.map(c => `<button class="btn-rebound" onclick="applyChaosCategory('${c.replace(/'/g, "\\'")}')">${c}</button>`).join('')
-                : '<p style="color:var(--text-muted); font-size:0.85rem;">No quedan categorías para bloquear.</p>';
+                : '<button class="btn-rebound" onclick="applyChaosCategory(\'\')">No quedan categorías: continuar</button>';
         }
 
         function applyChaosGeneric() { applyChaosCard(chaosState.cards[chaosState.revealedIndex], {}); }
@@ -5937,7 +6652,7 @@
                     let leaderIdx = -1, leaderScore = -Infinity;
                     state.teams.forEach((tt, i) => { if(i !== teamIdx && tt.score > leaderScore) { leaderScore = tt.score; leaderIdx = i; } });
                     if(leaderIdx >= 0 && state.teams[leaderIdx].score > 0) {
-                        const amount = Math.max(10, Math.round(state.teams[leaderIdx].score * 0.25));
+                        const amount = Math.max(15, Math.round(state.teams[leaderIdx].score * 0.35));
                         const actual = Math.min(amount, state.teams[leaderIdx].score);
                         state.teams[leaderIdx].score -= actual; t.score += actual;
                         t.pointsStolen += actual; state.teams[leaderIdx].pointsLostToTheft += actual;
@@ -5945,6 +6660,7 @@
                     } else { resultText += ' — No había a quién robarle puntos'; }
                     break;
                 }
+                case 'saqueo': { resultText += resolveSaqueo(teamIdx); break; }
                 case 'racha': {
                     const tgt = state.teams[extra.targetIndex];
                     const stolenStreak = tgt.streak, stolenShield = tgt.shield;
@@ -5956,8 +6672,8 @@
                     break;
                 }
                 case 'prohibida': {
-                    state.blockedCategories.push(extra.category);
-                    resultText += ` — Bloqueó la categoría "${extra.category}"`;
+                    if(extra.category) { state.blockedCategories.push(extra.category); resultText += ` — Bloqueó la categoría "${extra.category}"`; }
+                    else resultText += ' — No quedaban categorías por bloquear';
                     renderBoard();
                     break;
                 }
@@ -6058,12 +6774,23 @@
         // últimas 3 rondas registradas (solo sumas positivas de su
         // scoreLog), y ese total se reparte en partes iguales entre el
         // resto de equipos. Devuelve el fragmento de texto para el toast.
+        // Saqueo General: cada rival pierde el 10% de su puntaje (mínimo 5, sin bajar de 0) y todo pasa al jugador.
+        function resolveSaqueo(teamIdx) {
+            const t = state.teams[teamIdx]; let total = 0;
+            state.teams.forEach((o, i) => {
+                if(i === teamIdx) return;
+                const amt = Math.min(o.score, Math.max(5, Math.round(o.score * 0.10)));
+                if(amt > 0) { o.score -= amt; o.pointsLostToTheft += amt; total += amt; }
+            });
+            t.score += total; t.pointsStolen += total;
+            return total > 0 ? ` — Saqueó ${total} pts entre todos los rivales` : ' — Ningún rival tenía puntos que saquear';
+        }
         function resolveMaldicionDelLider() {
             let leaderIdx = -1, leaderScore = -Infinity;
             state.teams.forEach((tt, i) => { if(tt.score > leaderScore) { leaderScore = tt.score; leaderIdx = i; } });
             if(leaderIdx < 0) return '';
             const leader = state.teams[leaderIdx];
-            const lastThree = (leader.scoreLog || []).slice(-3);
+            const lastThree = (leader.scoreLog || []).slice(-5);
             const totalToDeduct = Math.min(leader.score, lastThree.reduce((s, v) => s + Math.max(0, v), 0));
             if(totalToDeduct <= 0) return ` — ${teamLabel(leaderIdx)} no tenía puntos recientes que perder`;
             leader.score -= totalToDeduct;
@@ -6083,7 +6810,7 @@
                     let leaderIdx = -1, leaderScore = -Infinity;
                     state.teams.forEach((tt, i) => { if(i !== teamIdx && tt.score > leaderScore) { leaderScore = tt.score; leaderIdx = i; } });
                     if(leaderIdx >= 0 && state.teams[leaderIdx].score > 0) {
-                        const amount = Math.max(10, Math.round(state.teams[leaderIdx].score * 0.25));
+                        const amount = Math.max(15, Math.round(state.teams[leaderIdx].score * 0.35));
                         const actual = Math.min(amount, state.teams[leaderIdx].score);
                         state.teams[leaderIdx].score -= actual; t.score += actual;
                         t.pointsStolen += actual; state.teams[leaderIdx].pointsLostToTheft += actual;
@@ -6091,6 +6818,7 @@
                     break;
                 }
                 case 'doblefilo': t.chaosPending.push({ type: 'doubleFilo' }); break;
+                case 'saqueo': resolveSaqueo(teamIdx); break;
                 case 'maldicion': resolveMaldicionDelLider(); break;
                 case 'segunda': {
                     if(t.usedDoN) t.usedDoN = false; else if(t.usedFifty) t.usedFifty = false;
@@ -6101,7 +6829,13 @@
         }
 
         function dismissChaosModal() {
+            // En Modo Caos cada equipo está obligado a elegir y aplicar su carta antes de seguir.
+            if(chaosState.isModeAuto && !chaosState.applied) {
+                showToast('En Modo Caos cada equipo debe elegir y aplicar su carta antes de continuar.', 'warn', 3500);
+                return;
+            }
             document.getElementById('chaosModal').style.display = 'none';
+            if(chaosState.isModeAuto) markChaosTeamDone(chaosState.teamIndex);
             Presentation.broadcast('CHAOS_CLOSE', {});
             // Si esta carta bloqueaba el arranque de un cronómetro (Modo
             // Caos), se libera aquí — se llegue o no a aplicar una carta.
@@ -6268,6 +7002,7 @@
             document.querySelectorAll('.theme-swatch').forEach(el => el.classList.toggle('active-theme', el.dataset.theme === key));
             currentThemeKey = key;
             try { localStorage.setItem('trivia_theme', key); } catch(e) {}
+            Presentation.broadcast('THEME', { themeKey: key }); // el proyector adopta el mismo tema al instante
             // Cerrar popover tras elegir tema (legacy, ya no existe como overlay)
             // Actualizar label en ajustes
             const lbl = document.getElementById('currentThemeLabel'); if(lbl) lbl.textContent = t.light ? 'claro' : 'oscuro';
@@ -6335,6 +7070,20 @@
                 new MutationObserver(sync).observe(el, { attributes: true, attributeFilter: ['class'] });
             });
             new MutationObserver(sync).observe(document.body, { attributes: true, attributeFilter: ['class'] });
+        })();
+// --- SCROLL DE RESULTADOS: el proyector sigue el scroll del moderador ---
+        (function setupResultsScrollSync() {
+            let ticking = false;
+            window.addEventListener('scroll', () => {
+                const rs = document.getElementById('resultsScreen');
+                if(Presentation.isReceiver || !rs || !rs.classList.contains('active') || ticking) return;
+                ticking = true;
+                requestAnimationFrame(() => {
+                    ticking = false;
+                    const max = document.documentElement.scrollHeight - window.innerHeight;
+                    Presentation.broadcast('RESULTS_SCROLL', { fraction: max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0 });
+                });
+            }, { passive: true });
         })();
 // --- CARGA DESDE EXCEL LOCAL (sin internet) ---
         function loadLocalExcel(event) {
@@ -6519,16 +7268,17 @@
             // puntos, ventana), "Nueva partida" los repone a los valores
             // por defecto del código actual, sin depender de recargar la
             // página entera.
-            config.timeCancionRound = 120; config.ptsCancionMax = 10; config.ptsCancionMin = 4;
+            config.timeCancionRound = 120; config.ptsCancionMax = 10; config.ptsCancionMin = 1;
             gameTimer.stop(); stopMusic(); clearInterval(Minigames.Stop.intervalLetter);
             Presentation.broadcast('END_GAME', {});
             // Resetear preguntas usadas para que estén disponibles en la nueva partida
             Object.values(state.categories).forEach(pool => pool.forEach(q => q.used = false));
             state.multiplePool.forEach(q => q.used = false);
             state.teams = []; state.currentTurn = null; state.activeCat = null; state.activeQ = null; state.history = []; state.undoStack = []; state.gameLog = []; state.lastScoreUpdated = null; state.lastScoreDelta = null;
-            state.scoreHistory = []; state.blockedCategories = []; state.chaosModeActive = false; state.chaosModeRemaining = 0; state.chaosCardGatePending = false;
+            state.scoreHistory = []; state.blockedCategories = []; state.chaosModeActive = false; state.chaosModeRemaining = 0; state.chaosCardGatePending = false; state.chaosModeUsed = false; state.chaosDoneTeams = [];
             updateChaosModeButton();
             document.body.classList.remove('game-active');
+            updateTurnChip();
             document.getElementById('liveScoreboard').style.display = 'none';
             document.querySelectorAll('.screen').forEach(s => { s.classList.remove('active'); s.style.display = ''; });
             document.getElementById('setupScreen').style.display = '';
@@ -6641,6 +7391,7 @@
         const PODIUM_REVEAL_TOTAL_MS = PODIUM_DELAYS_MS.first + PODIUM_CARD_DURATION_MS + 150;
 
         function showResultsScreen() {
+            const _chip = document.getElementById('currentTurnChip'); if(_chip) _chip.style.display = 'none';
             if (!state.teams.length) { showToast('Inicia una partida primero.', 'warn'); return; }
             gameTimer.stop(); stopMusic();
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -7095,6 +7846,13 @@
             let cnData = jsonData[Object.keys(jsonData).find(k=>k.toLowerCase().includes('cancion')||k.toLowerCase().includes('canción')||k.toLowerCase().includes('musica')||k.toLowerCase().includes('música'))];
             if(cnData?.length) { const cnK=Object.keys(cnData.find(r=>r&&typeof r==='object')||{}); cnData.forEach(r => { let cat=r[cnK[0]]?.toString().trim(), pl=r[cnK[1]]?.toString().trim(); if(cat && pl) { state.songCategories.push(cat); state.songPlaylistIds[cat] = extractPlaylistId(pl); } }); }
 
+            // Adivina la Canción (Drive): a diferencia de YouTube, NO se
+            // configura en el Google Sheet — las categorías se detectan
+            // solas como subcarpetas de config.driveParentFolderId, igual
+            // que la carpeta "Music/" local (ver Minigames.CancionDrive.
+            // ensureCategories()). Aquí solo se inicializa el estado.
+            state.driveSongCategories = []; state.driveFolderIds = {}; state.drivePools = {}; state.driveCategoriesLoaded = false;
+
             state.teamPools = {}; let eqData = jsonData[Object.keys(jsonData).find(k=>k.toLowerCase().includes('equipo'))] || [];
             if(eqData.length) { const eK=Object.keys(eqData.find(r=>r&&typeof r==='object')||{}); eqData.forEach(r => { let c=r[eK[0]]?.toString().trim()||"G", n=r[eK[1]]?.toString().trim()||"", e=r[eK[2]]?.toString().trim()||"🎯", col=r[eK[3]]?.toString().trim()||""; if(n){ if(!state.teamPools[c]) state.teamPools[c]=[]; state.teamPools[c].push({n,e,c:col}); } }); }
             if(!Object.keys(state.teamPools).length) state.teamPools["Respaldo"]=[{n:'E1',e:'🔴',c:'#ef4444'}];
@@ -7130,6 +7888,9 @@
             if(state.roundRespondedCount >= state.teams.length) {
                 state.roundRespondedCount = 0;
                 state.roundStartTurn = null;
+                // El turno pasa al equipo siguiente al último que respondió; antes se quedaba en
+                // ese último equipo y jugaba dos veces seguidas (fin de una ronda + inicio de la otra).
+                setTurn(nextIdx);
                 returnToBoard(false);
                 return;
             }
@@ -7158,7 +7919,7 @@
         // handleRebound: asigna puntos de rebote al equipo elegido.
         function startGame() {
             pushUndo('Iniciar partida');
-            state.scoreHistory = []; state.chaosModeActive = false; state.chaosModeRemaining = 0; state.chaosCardGatePending = false;
+            state.scoreHistory = []; state.chaosModeActive = false; state.chaosModeRemaining = 0; state.chaosCardGatePending = false; state.chaosModeUsed = false; state.chaosDoneTeams = [];
             state.teams = []; let pool = state.teamPools[document.getElementById('teamCategorySelect').value] || state.teamPools[Object.keys(state.teamPools)[0]], shPool = [...pool].sort(()=>0.5-Math.random());
             for(let i=1; i<=config.teamsCount; i++) { let d=shPool[i-1]||{n:`Reserva ${i}`,e:'🎲',c:''}; state.teams.push({ id:i, emoji:d.e, countryName:d.n, color:d.c||['#f43f5e','#3b82f6','#10b981','#f59e0b','#a855f7'][i%5], score:0, correct:0, rebounds:0, extra:0, usedDoN:false, usedFifty:false, miniPositions:[], streak:0, maxStreak:0, shield:false, usedCaos:false, chaosPending:[], lastWildcard:null, scoreLog:[], qPoints:0, pointsStolen:0, pointsLostToTheft:0, hypotheticalScore:0 }); }
             recordScoreSnapshot('Inicio');
@@ -7185,11 +7946,11 @@
             // arranque el cronómetro de la siguiente pregunta/minijuego de
             // este equipo, garantizando que la ventana aparezca ANTES de
             // poder responder y que ningún tiempo corra mientras está abierta.
-            if(state.chaosModeActive) {
-                state.chaosModeRemaining--;
-                if(state.chaosModeRemaining <= 0) deactivateChaosMode(true); else updateChaosModeButton();
-                state.chaosCardGatePending = true;
-            }
+            // MODO CAOS (v7.13): cada equipo debe sacar su carta ANTES de su pregunta, una sola vez por
+            // activación. La compuerta se arma solo si el modo está activo y ese equipo aún no eligió carta;
+            // ya no se descuenta por cada cambio de turno (los cambios manuales/deshacer descuadraban la ronda).
+            state.chaosCardGatePending = !!(state.chaosModeActive && !(state.chaosDoneTeams || []).includes(index));
+            updateTurnChip();
         }
 
         // Se llama justo antes de arrancar CUALQUIER cronómetro de pregunta
@@ -7764,6 +8525,9 @@
         }
 
         function returnToBoard(advTurn=false) {
+            // Volver al tablero siempre cierra la ronda en curso: sin esto los contadores quedaban
+            // sucios (p. ej. tras "Terminar ronda" o un minijuego) y la ronda siguiente terminaba antes de tiempo.
+            state.roundRespondedCount = 0; state.roundStartTurn = null;
             playSoundEffect('transition');
             stopMusic(); gameTimer.stop(); clearInterval(Minigames.Stop.intervalLetter);
             if(advTurn && state.currentTurn!==null) setTurn((state.currentTurn+1)%state.teams.length);
@@ -7784,6 +8548,7 @@
             cM.innerHTML += `<div class="tooltip" style="background:linear-gradient(135deg, var(--incorrect-color), #e11d48); ${bS}" onclick="Minigames.Stop.init()"><span class="material-symbols-outlined" style="vertical-align:middle; margin-right:6px;">front_hand</span> STOP!</div>`;
             cM.innerHTML += `<div class="tooltip" style="background:linear-gradient(135deg, #ec4899, #db2777); ${bS}" onclick="Minigames.Cancion.init()"><span class="material-symbols-outlined" style="vertical-align:middle; margin-right:6px;">music_note</span> ADIVINA LA CANCIÓN</div>`;
             cM.innerHTML += `<div class="tooltip" style="background:linear-gradient(135deg, #db2777, #831843); ${bS}" onclick="Minigames.CancionLocal.init()"><span class="material-symbols-outlined" style="vertical-align:middle; margin-right:6px;">library_music</span> ADIVINA LA CANCIÓN (LOCAL)</div>`;
+            cM.innerHTML += `<div class="tooltip" style="background:linear-gradient(135deg, #0891b2, #164e63); ${bS}" onclick="Minigames.CancionDrive.init()"><span class="material-symbols-outlined" style="vertical-align:middle; margin-right:6px;">cloud</span> ADIVINA LA CANCIÓN (DRIVE)</div>`;
             cO.innerHTML = state.challenges.length ? state.challenges.map(ch => `<div class="tooltip" style="padding:10px 15px; background:rgba(128,128,128,0.1); border:1px solid var(--border-color);">${ch.name}${ch.link?`<a href="${ch.link}" target="_blank" style="margin-left:5px; color:#f59e0b;"><span class="material-symbols-outlined" style="font-size:1.1rem; vertical-align:middle;">open_in_new</span></a>`:''}${ch.desc?`<span class="tooltiptext">${ch.desc}</span>`:''}</div>`).join('') : `<p style="color:var(--text-muted); font-size:0.85rem; padding:10px;">No hay retos extras.</p>`;
             let l=document.getElementById('pruebasList'), o=''; for(let i=0; i<config.teamsCount; i++) { let v=Math.round(config.ptsChallengeMax-(i*config.ptsChallengeMax/(config.teamsCount-1||1))); o+=`<option value="${v}">${v} pts</option>`; }
             l.innerHTML = state.teams.map((t,i) => `<div class="pruebas-row"><strong>${t.id}. ${t.countryName} <span style="font-family:'Apple Color Emoji',sans-serif;">${t.emoji}</span></strong><select id="pr-t-${i}">${o}</select></div>`).join('');
@@ -7819,9 +8584,13 @@
             document.getElementById('setTimeCancionRound').value = config.timeCancionRound;
             document.getElementById('setTimeCancionMax').value = config.timeCancionMax;
             document.getElementById('setCancionStartOffset').value = config.cancionStartOffset;
+            document.getElementById('setCancionSkipIntro').checked = config.cancionSkipIntro !== false;
+            document.getElementById('setCancionSkipIntroMax').value = config.cancionSkipIntroMax || 20;
             document.getElementById('setPtsCancionMax').value = config.ptsCancionMax;
             document.getElementById('setPtsCancionMin').value = config.ptsCancionMin;
             document.getElementById('setYtApiKey').value = config.ytApiKey || '';
+            document.getElementById('setDriveApiKey').value = config.driveApiKey || '';
+            document.getElementById('setDriveParentFolderId').value = config.driveParentFolderId || '';
             document.getElementById('setStreakThreshold').value = config.streakThreshold;
             document.getElementById('setStreakMultiplier').value = config.streakMultiplier;
             const soundToggle = document.getElementById('setSoundEnabled');
@@ -7854,10 +8623,18 @@
             config.timeCancionRound = parseInt(document.getElementById('setTimeCancionRound').value) || 120;
             config.timeCancionMax = parseInt(document.getElementById('setTimeCancionMax').value) || 30;
             config.cancionStartOffset = Math.max(0, parseInt(document.getElementById('setCancionStartOffset').value) || 0);
+            config.cancionSkipIntro = document.getElementById('setCancionSkipIntro').checked;
+            config.cancionSkipIntroMax = Math.max(3, parseInt(document.getElementById('setCancionSkipIntroMax').value) || 20);
             config.ptsCancionMax = parseInt(document.getElementById('setPtsCancionMax').value) || 10;
-            config.ptsCancionMin = parseInt(document.getElementById('setPtsCancionMin').value) || 4;
+            config.ptsCancionMin = parseInt(document.getElementById('setPtsCancionMin').value) || 1;
             config.ytApiKey = document.getElementById('setYtApiKey').value.trim();
             saveYtApiKey(config.ytApiKey);
+            config.driveApiKey = document.getElementById('setDriveApiKey').value.trim();
+            saveDriveApiKey(config.driveApiKey);
+            const newDriveFolder = document.getElementById('setDriveParentFolderId').value.trim();
+            if(newDriveFolder !== config.driveParentFolderId) state.driveCategoriesLoaded = false; // fuerza redetectar subcarpetas
+            config.driveParentFolderId = newDriveFolder;
+            saveDriveParentFolderId(config.driveParentFolderId);
             config.streakThreshold = parseInt(document.getElementById('setStreakThreshold').value) || 3;
             config.streakMultiplier = parseFloat(document.getElementById('setStreakMultiplier').value) || 1.5;
             const soundToggle = document.getElementById('setSoundEnabled');
