@@ -1417,7 +1417,7 @@
     <div id="streakBanner"><span id="streakBannerText"></span></div>
 
     <div style="position: fixed; bottom: 12px; right: 24px; font-size: 0.75rem; color: var(--text-muted); opacity: 0.8; font-weight: 400; letter-spacing: 0.3px; z-index: 5000;">
-        © 2026 Fernando Ros • <span onclick="document.getElementById('changelogModal').style.display='block'" style="cursor:pointer; text-decoration:underline; font-weight:500; color:var(--secondary);">Versión 7.13.0</span>
+        © 2026 Fernando Ros • <span onclick="document.getElementById('changelogModal').style.display='block'" style="cursor:pointer; text-decoration:underline; font-weight:500; color:var(--secondary);">Versión 7.13.1</span>
     </div>
 
     <!-- Indicador LED discreto de "Modo fácil" — solo visible para el
@@ -1465,6 +1465,12 @@
             <button onclick="document.getElementById('changelogModal').style.display='none'" style="background:none; border:none; color:var(--text-main); font-size:1.6rem; padding:0; width:auto;">×</button>
         </div>
         <div>
+            <div class="changelog-version">
+                <h4><strong>v7.13.1 – "Dar turno" inicia una ronda nueva</strong></h4>
+                <ul>
+                    <li>Asignar el turno a mano a un equipo reinicia los contadores de ronda: ese equipo responde primero y luego los demás, una vez cada uno, en orden circular. Pensado para que cada equipo elija la categoría que prefiera y todos respondan una vez a ella. Se puede deshacer con "Deshacer última acción".</li>
+                </ul>
+            </div>
             <div class="changelog-version">
                 <h4><strong>v7.13.0 – Turnos corregidos, Modo Caos rediseñado, intro inteligente y mejoras de proyector</strong></h4>
                 <ul>
@@ -1802,7 +1808,7 @@
     
    <div id="infoModal" style="display: none; position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); background: var(--surface); padding: 28px; border-radius: 20px; border: 1px solid var(--border-color); animation: modalPop 0.22s cubic-bezier(0.4,0,0.2,1); z-index: 10000; width: 90%; max-width: 340px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
     <p style="color: var(--primary); font-weight: 700; margin-bottom: 6px; font-size: 1.5rem;">Trivia Cultural</p>
-    <p style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 20px;">Versión 7.13.0</p>
+    <p style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 20px;">Versión 7.13.1</p>
     <p style="margin-bottom: 8px; font-size: 0.95rem; font-weight: 600;">Desarrollado por Fernando Ros</p>
     <p style="margin-bottom: 20px; font-size: 0.9rem;">
         <a href="mailto:rosfernando@gmail.com" style="color: var(--primary); text-decoration: none; display:inline-flex; align-items:center; gap:5px;">
@@ -7983,11 +7989,25 @@
         // (útil cuando el llamador ya sabe que no hubo multiplicador).
         function addNormal(tIndex, amt, silent=false, hypoAmt=null) { if(!amt || !state.teams[tIndex]) return; if(!silent) pushUndo(`Puntos normales a ${teamLabel(tIndex)}`); state.teams[tIndex].score+=amt; state.teams[tIndex].qPoints+=amt; state.teams[tIndex].hypotheticalScore += (hypoAmt !== null ? hypoAmt : amt); state.lastScoreUpdated = tIndex; state.lastScoreDelta = amt; renderScoreboard(); if(!silent) recordHistory({ type:'score', title:'Puntos otorgados', detail:`${teamLabel(tIndex)}: ${amt >= 0 ? '+' : ''}${amt} pts.` }); if(document.getElementById('mobileTeamModal').style.display === 'block') handleTeamClick(tIndex,null,true); persistNow(); }
 
+        // Asignar el turno a mano INICIA UNA RONDA NUEVA con ese equipo: él responde primero y luego todos
+        // los demás, una vez cada uno, en orden circular. Útil para que cada equipo elija su categoría.
+        function assignTurnManually(i) {
+            const t = state.teams[i]; if(!t) return;
+            pushUndo(`Dar turno a ${teamLabel(i)}`);
+            const onBoard = !!document.getElementById('boardScreen')?.classList.contains('active');
+            state.roundRespondedCount = 0;
+            // En el tablero la ronda arranca con la próxima pregunta; con una pregunta ya en pantalla,
+            // esa misma pregunta cuenta como la primera respuesta de la ronda del equipo asignado.
+            state.roundStartTurn = onBoard ? null : i;
+            setTurn(i);
+            showToast(`🔄 Ronda nueva: empieza ${t.countryName} y los demás responden después, una vez cada uno.`, 'ok', 3500);
+            recordHistory({ type:'session', title:'Turno asignado a mano', detail:`${teamLabel(i)} inicia una ronda nueva.` });
+        }
         function handleTeamClick(i, ev, refreshOnly=false) {
             if(ev?.target.classList.contains('btn-conduct')) return;
             const t = state.teams[i]; let bHTML = '';
             if(config.allowDoN) bHTML += `<span class="badge ${t.usedDoN?'usado':'disponible'}">Doble o nada</span>`; if(config.allowFifty) bHTML += `<span class="badge ${t.usedFifty?'usado':'disponible'}">+50/-50</span>`;
-            document.getElementById('mobileTeamContent').innerHTML = `<div style="font-size:3rem; margin-bottom:10px; font-family:'Apple Color Emoji',sans-serif;">${t.emoji}</div><h2 style="margin-bottom:5px;">${t.id}. ${t.countryName}</h2><div style="font-size:2.5rem; font-weight:700; color:${t.color}; margin-bottom:15px;">${t.score} pts</div><div class="badges-container" style="margin-bottom:15px;">${bHTML}</div><div style="display:flex; width:100%; justify-content:space-around; background:rgba(128,128,128,0.1); padding:10px; border-radius:12px; margin-bottom:20px; border:1px solid var(--border-color);"><div style="text-align:center; font-size:0.75rem; color:var(--text-muted); font-weight:500;">Aciertos<span style="display:block; font-size:1.2rem; color:var(--text-main); font-weight:700; margin-top:2px;">${t.correct}</span></div><div style="text-align:center; font-size:0.75rem; color:var(--text-muted); font-weight:500;">Rebotes<span style="display:block; font-size:1.2rem; color:var(--text-main); font-weight:700; margin-top:2px;">${t.rebounds}</span></div><div style="text-align:center; font-size:0.75rem; color:var(--text-muted); font-weight:500;">Minijuegos<span style="display:block; font-size:1.2rem; color:var(--text-main); font-weight:700; margin-top:2px;">${t.extra}</span></div><div style="text-align:center; font-size:0.75rem; color:var(--text-muted); font-weight:500;">Racha<span style="display:block; font-size:1.2rem; color:${(t.streak||0)>=(config.streakThreshold||3)?'#f59e0b':'var(--text-main)'}; font-weight:700; margin-top:2px;">${t.streak||0}🔥</span></div></div><h4 style="color:var(--text-muted); font-size:0.8rem; margin-bottom:8px; text-transform:uppercase;">Asignar manual</h4><div class="conduct-panel" style="margin-bottom:20px;"><button class="btn-conduct btn-bonus" onclick="applyConductPoints(${i},5)">+5</button><button class="btn-conduct btn-penalty" onclick="applyConductPoints(${i},-5)">-5</button></div><button class="btn-primary" style="background:${t.color}; color:${getContrastYIQ(t.color)}; padding:15px; border-radius:100px; width:100%; font-size:1rem; font-weight:700;" onclick="setTurn(${i}); document.getElementById('mobileTeamModal').style.display='none';">Dar turno</button>`;
+            document.getElementById('mobileTeamContent').innerHTML = `<div style="font-size:3rem; margin-bottom:10px; font-family:'Apple Color Emoji',sans-serif;">${t.emoji}</div><h2 style="margin-bottom:5px;">${t.id}. ${t.countryName}</h2><div style="font-size:2.5rem; font-weight:700; color:${t.color}; margin-bottom:15px;">${t.score} pts</div><div class="badges-container" style="margin-bottom:15px;">${bHTML}</div><div style="display:flex; width:100%; justify-content:space-around; background:rgba(128,128,128,0.1); padding:10px; border-radius:12px; margin-bottom:20px; border:1px solid var(--border-color);"><div style="text-align:center; font-size:0.75rem; color:var(--text-muted); font-weight:500;">Aciertos<span style="display:block; font-size:1.2rem; color:var(--text-main); font-weight:700; margin-top:2px;">${t.correct}</span></div><div style="text-align:center; font-size:0.75rem; color:var(--text-muted); font-weight:500;">Rebotes<span style="display:block; font-size:1.2rem; color:var(--text-main); font-weight:700; margin-top:2px;">${t.rebounds}</span></div><div style="text-align:center; font-size:0.75rem; color:var(--text-muted); font-weight:500;">Minijuegos<span style="display:block; font-size:1.2rem; color:var(--text-main); font-weight:700; margin-top:2px;">${t.extra}</span></div><div style="text-align:center; font-size:0.75rem; color:var(--text-muted); font-weight:500;">Racha<span style="display:block; font-size:1.2rem; color:${(t.streak||0)>=(config.streakThreshold||3)?'#f59e0b':'var(--text-main)'}; font-weight:700; margin-top:2px;">${t.streak||0}🔥</span></div></div><h4 style="color:var(--text-muted); font-size:0.8rem; margin-bottom:8px; text-transform:uppercase;">Asignar manual</h4><div class="conduct-panel" style="margin-bottom:20px;"><button class="btn-conduct btn-bonus" onclick="applyConductPoints(${i},5)">+5</button><button class="btn-conduct btn-penalty" onclick="applyConductPoints(${i},-5)">-5</button></div><button class="btn-primary" style="background:${t.color}; color:${getContrastYIQ(t.color)}; padding:15px; border-radius:100px; width:100%; font-size:1rem; font-weight:700;" onclick="assignTurnManually(${i}); document.getElementById('mobileTeamModal').style.display='none';">Dar turno</button>`;
             if(!refreshOnly) document.getElementById('mobileTeamModal').style.display = 'block';
         }
 
