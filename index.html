@@ -327,7 +327,7 @@
         h1 { font-size: 2.4rem; color: var(--text-main); letter-spacing: -0.8px; font-weight: 700; }
         h2 { font-size: 1.6rem; font-weight: 600; letter-spacing: -0.3px; }
 
-        .game-logo { display: block; margin: 0 auto 15px auto; max-width: 150px; height: auto; border-radius: 28px; }
+        .game-logo { display: block; margin: 0 auto 15px auto; width: 100%; max-width: 300px; height: auto; border-radius: 28px; }
 
         .setup-group { margin-bottom: 18px; text-align: left; width: 100%; }
         .setup-group label { display: block; margin-bottom: 7px; color: var(--text-muted); font-weight: 500; font-size: 0.85rem; letter-spacing: 0.4px; text-transform: uppercase; }
@@ -336,6 +336,20 @@
         
         .btn-jugador { padding: 8px 16px; font-size: 1.1rem; font-weight: 700; border: 2px solid var(--border-color); background: transparent; color: var(--text-muted); border-radius: 12px; cursor: pointer; transition: 0.2s; width: auto; box-shadow: none;}
         .btn-jugador.active { border-color: var(--primary); background: var(--primary); color: white; }
+
+        /* ── COLORES DE MARCA DE LA PANTALLA DE INICIO ──────────────────────────────
+           Paleta del tema "azul oscuro" (dorado + cian sobre azul marino), a juego con el logo.
+           Para ajustar a los colores exactos del logo basta cambiar estas 4 variables. */
+        :root { --brand-gold: #f4c542; --brand-gold-2: #ffdf7e; --brand-cyan: #2be3ff; --brand-navy: #0d3f9e; --brand-deep: #031233; }
+        #splashProgressBar { background: linear-gradient(90deg, var(--brand-gold), var(--brand-cyan)) !important; box-shadow: 0 0 12px rgba(43,227,255,0.55); }
+        #splashScreen div:has(> #splashProgressBar) { background: rgba(43,227,255,0.16) !important; border: 1px solid rgba(244,197,66,0.35); }
+        #btnSplashStart, #btnStart { background: linear-gradient(135deg, var(--brand-gold-2), var(--brand-gold)) !important; color: var(--brand-deep) !important; font-weight: 800; border: 1px solid rgba(255,255,255,0.35) !important; box-shadow: 0 6px 20px rgba(244,197,66,0.35); }
+        #btnSplashStart:hover:not(:disabled), #btnStart:hover:not(:disabled) { filter: brightness(1.07); }
+        #btnConnectProjector { background: linear-gradient(135deg, var(--brand-navy), #1450b0) !important; color: #fff !important; border: 1px solid var(--brand-cyan) !important; box-shadow: 0 0 14px rgba(43,227,255,0.25); }
+        #btnConnectProjector.pj-connected { background: linear-gradient(135deg, #16a34a, #059669) !important; border-color: rgba(255,255,255,0.35) !important; }
+        #setupScreen .btn-jugador { border-color: rgba(43,227,255,0.45); color: var(--text-main); }
+        #setupScreen .btn-jugador.active { background: var(--brand-gold); border-color: var(--brand-gold); color: var(--brand-deep); }
+        #setupScreen .setup-group select:focus, #setupScreen .setup-group input:focus { border-color: var(--brand-cyan); }
 
         .opciones-moderador { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px; text-transform: uppercase;}
         .toggle-row { display: flex; align-items: center; gap: 12px; font-size: 0.85rem; font-weight: 700; color: var(--text-main); }
@@ -1175,7 +1189,7 @@
             gap: 22px; overflow: hidden;
         }
         #pjIdle { display:flex; flex-direction:column; align-items:center; gap:18px; }
-        #pjIdle .pj-idle-logo { max-width: 200px; border-radius: 32px; }
+        #pjIdle .pj-idle-logo { max-width: 400px; width: 100%; border-radius: 32px; }
         #pjBoard { display:none; flex-direction:column; align-items:center; gap:8px; width:100%; max-width:1700px; max-height:94vh; overflow-y:auto; padding: 4px 6px; }
         #pjBoard::-webkit-scrollbar { display:none; }
         #pjFeaturedGrid.featured-grid, #pjCategoriesGrid.categories-grid { pointer-events:none; }
@@ -1417,7 +1431,7 @@
     <div id="streakBanner"><span id="streakBannerText"></span></div>
 
     <div style="position: fixed; bottom: 12px; right: 24px; font-size: 0.75rem; color: var(--text-muted); opacity: 0.8; font-weight: 400; letter-spacing: 0.3px; z-index: 5000;">
-        © 2026 Fernando Ros • <span onclick="document.getElementById('changelogModal').style.display='block'" style="cursor:pointer; text-decoration:underline; font-weight:500; color:var(--secondary);">Versión 7.13.1</span>
+        © 2026 Fernando Ros • <span onclick="document.getElementById('changelogModal').style.display='block'" style="cursor:pointer; text-decoration:underline; font-weight:500; color:var(--secondary);">Versión 7.14.0</span>
     </div>
 
     <!-- Indicador LED discreto de "Modo fácil" — solo visible para el
@@ -1465,6 +1479,15 @@
             <button onclick="document.getElementById('changelogModal').style.display='none'" style="background:none; border:none; color:var(--text-main); font-size:1.6rem; padding:0; width:auto;">×</button>
         </div>
         <div>
+            <div class="changelog-version">
+                <h4><strong>v7.14.0 – Nuevo logo y pantalla de inicio renovada</strong></h4>
+                <ul>
+                    <li><strong>Nuevo logo</strong> (pantalla de carga, configuración y proyector en espera), al doble de tamaño; se retiró el texto "Trivia cultural" de las pantallas de inicio porque el logo ya lo dice.</li>
+                    <li>La barra de carga y los botones de inicio ("Entrar al juego", "Iniciar partida", "Conectar proyector", número de equipos) usan los colores de marca del tema azul oscuro (dorado y cian sobre azul marino).</li>
+                    <li><strong>Tema por defecto: azul oscuro.</strong> Una sola vez se sustituye el tema guardado por este; después se respeta lo que se elija en Ajustes técnicos.</li>
+                    <li>Se eliminó el interruptor de Rebotes de la pantalla de inicio: los rebotes quedan siempre desactivados.</li>
+                </ul>
+            </div>
             <div class="changelog-version">
                 <h4><strong>v7.13.1 – "Dar turno" inicia una ronda nueva</strong></h4>
                 <ul>
@@ -1808,7 +1831,7 @@
     
    <div id="infoModal" style="display: none; position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); background: var(--surface); padding: 28px; border-radius: 20px; border: 1px solid var(--border-color); animation: modalPop 0.22s cubic-bezier(0.4,0,0.2,1); z-index: 10000; width: 90%; max-width: 340px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
     <p style="color: var(--primary); font-weight: 700; margin-bottom: 6px; font-size: 1.5rem;">Trivia Cultural</p>
-    <p style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 20px;">Versión 7.13.1</p>
+    <p style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 20px;">Versión 7.14.0</p>
     <p style="margin-bottom: 8px; font-size: 0.95rem; font-weight: 600;">Desarrollado por Fernando Ros</p>
     <p style="margin-bottom: 20px; font-size: 0.9rem;">
         <a href="mailto:rosfernando@gmail.com" style="color: var(--primary); text-decoration: none; display:inline-flex; align-items:center; gap:5px;">
@@ -1848,7 +1871,6 @@
          ════════════════════════════════════════════════════════════ -->
     <div id="splashScreen" class="screen active" style="justify-content: center; min-height: 80vh;">
         <img src="https://lh3.googleusercontent.com/d/1lJvqpAYialj_W3tNIzLzYp3yYAa-7oNI" alt="Logo de Trivia" class="game-logo" style="margin-bottom: 25px;" onerror="this.style.display='none';">
-        <h1 style="margin-bottom: 20px;">Trivia cultural</h1>
         <div style="width: 80%; max-width: 300px; height: 8px; background: var(--border-color); border-radius: 5px; overflow: hidden; position: relative;">
             <div id="splashProgressBar" style="width: 0%; height: 100%; background: var(--primary); transition: width 0.3s;"></div>
         </div>
@@ -2166,8 +2188,7 @@
     <div id="liveScoreboard" class="scoreboard" style="display: none;"></div>
 
     <div id="setupScreen" class="screen" style="position: relative; width: 100%;">
-        <img src="https://lh3.googhttps://lh3.googleusercontent.com/d/1lJvqpAYialj_W3tNIzLzYp3yYAa-7oNIrivia" class="game-logo" onerror="this.style.display='none';">
-        <h1>Trivia cultural</h1>
+        <img src="https://lh3.googleusercontent.com/d/1lJvqpAYialj_W3tNIzLzYp3yYAa-7oNI" alt="Logo de Trivia" class="game-logo" onerror="this.style.display='none';">
         <h3 style="color: var(--text-muted); font-weight: 400; font-size: 1rem; margin-bottom: 25px;">Configuración de la partida</h3>
         
         <div class="setup-group" style="text-align: center;">
@@ -2185,11 +2206,6 @@
             <select id="teamCategorySelect" style="width: 100%; padding: 12px 14px; background: transparent; border: 1px solid var(--border-color); border-radius: 12px; color: var(--text-main); font-size: 1rem; outline: none;">
                 <option value="Cargando...">Cargando categorías...</option>
             </select>
-        </div>
-        <div class="setup-group">
-            <div class="opciones-moderador">
-                <div class="toggle-row"><label class="switch"><input type="checkbox" id="chkRebounds" checked><span class="slider"></span></label><span>Rebotes</span></div>
-            </div>
         </div>
         <button id="btnStart" class="btn-primary" style="margin-top: 10px; opacity:0.6; pointer-events:none;" onclick="initGameFlow()" disabled>
             <span class="material-symbols-outlined loading-icon" style="font-size:1rem; vertical-align:middle;">autorenew</span> Cargando…
@@ -2225,7 +2241,6 @@
         <div id="pjContent">
         <div id="pjIdle">
             <img src="https://lh3.googleusercontent.com/d/1lJvqpAYialj_W3tNIzLzYp3yYAa-7oNI" class="pj-idle-logo" alt="Trivia cultural" onerror="this.style.display='none';">
-            <h1 style="margin:0;">Trivia cultural</h1>
             <p style="color:var(--text-muted); font-size:1.1rem;">Esperando al moderador…</p>
         </div>
 
@@ -4099,7 +4114,7 @@
         function getSavedDriveParentFolderId() { try { return localStorage.getItem('trivia_drive_parent_folder') || ''; } catch(e) { return ''; } }
         function saveDriveParentFolderId(id) { try { localStorage.setItem('trivia_drive_parent_folder', id || ''); } catch(e) {} }
 
-        let config = { teamsCount: 3, ptsCorrect: 10, ptsRebound: 5, ptsChallengeMax: 50, ptsMultiple: 10, allowDouble: true, allowFifty: true, allowDoN: true, allowRebounds: true, isDouble: false, isDoubleOrNothing: false, isFiftyFifty: false, timeQuestion: 30, timeAcertijos: 90, timeMultiple: 30, timePictionary: 60, timeTabu: 60, timeStop: 120, timeCharadas: 60, ptsPicFacil: 2, ptsPicIntermedia: 3, ptsPicDificil: 10, ptsChaFacil: 2, ptsChaIntermedia: 3, ptsChaDificil: 10, ptsTabu: 5, ptsStopUnique: 10, ptsStopRepeated: 5, soundEnabled: true, streakThreshold: 3, streakMultiplier: 1.5, streakStep: 2, streakIncrement: 0.5, streakShieldAt: 6, easyMode: false, diceEnabled: false, ytApiKey: getSavedYtApiKey(), driveApiKey: getSavedDriveApiKey(), driveParentFolderId: getSavedDriveParentFolderId(), ptsCancionMax: 10, ptsCancionMin: 1, timeCancionMax: 30, timeCancionRound: 120, cancionStartOffset: 35, cancionSkipIntro: true, cancionSkipIntroMax: 20 };
+        let config = { teamsCount: 3, ptsCorrect: 10, ptsRebound: 5, ptsChallengeMax: 50, ptsMultiple: 10, allowDouble: true, allowFifty: true, allowDoN: true, allowRebounds: false, isDouble: false, isDoubleOrNothing: false, isFiftyFifty: false, timeQuestion: 30, timeAcertijos: 90, timeMultiple: 30, timePictionary: 60, timeTabu: 60, timeStop: 120, timeCharadas: 60, ptsPicFacil: 2, ptsPicIntermedia: 3, ptsPicDificil: 10, ptsChaFacil: 2, ptsChaIntermedia: 3, ptsChaDificil: 10, ptsTabu: 5, ptsStopUnique: 10, ptsStopRepeated: 5, soundEnabled: true, streakThreshold: 3, streakMultiplier: 1.5, streakStep: 2, streakIncrement: 0.5, streakShieldAt: 6, easyMode: false, diceEnabled: false, ytApiKey: getSavedYtApiKey(), driveApiKey: getSavedDriveApiKey(), driveParentFolderId: getSavedDriveParentFolderId(), ptsCancionMax: 10, ptsCancionMin: 1, timeCancionMax: 30, timeCancionRound: 120, cancionStartOffset: 35, cancionSkipIntro: true, cancionSkipIntroMax: 20 };
         let state = { db: [], categories: {}, catNames: [], teams: [], currentTurn: null, activeCat: null, activeQ: null, challenges: [], picPools: { facil: [], intermedia: [], dificil: [] }, charadasPools: { facil: [], intermedia: [], dificil: [] }, tabuPools: {}, tabuCategories: new Set(["Aleatoria"]), teamPools: {}, multiplePool: [], acertijosPool: [], stopCategories: [], stopLetters: [], history: [], undoStack: [], gameLog: [], lastScoreUpdated: null, lastScoreDelta: null, roundRespondedCount: 0, roundStartTurn: null, blockedCategories: [], scoreHistory: [], chaosModeActive: false, chaosModeRemaining: 0, chaosCardGatePending: false, chaosModeUsed: false, chaosDoneTeams: [], songCategories: [], songPlaylistIds: {}, songPools: {}, driveSongCategories: [], driveFolderIds: {}, drivePools: {}, driveCategoriesLoaded: false, wildcardLog: [] };
 
         /**
@@ -4169,6 +4184,7 @@
         function hydrateSession(payload) {
             if(!payload?.state || !payload?.config) throw new Error('Archivo de partida inválido.');
             config = { ...config, ...payload.config };
+            config.allowRebounds = false; // una partida guardada antes de v7.14 podía traerlos activados
             const savedYtKey = getSavedYtApiKey();
             if(savedYtKey) config.ytApiKey = savedYtKey;
             const savedDriveKey = getSavedDriveApiKey();
@@ -6993,7 +7009,7 @@
             millionaire_dark:  { '--bg-gradient':'#020817','--surface':'#0a1330','--surface-variant':'#060c22','--card-bg':'#0a1330','--stats-bg':'rgba(255,255,255,0.04)','--primary':'#f4c542','--primary-fg':'#1a1200','--secondary':'#4d6fb0','--text-main':'#eaf4ff','--text-muted':'#93a8d0','--correct-color':'#00e676','--correct-rgb':'0,230,118','--incorrect-color':'#ff3b5c','--border-color':'rgba(244,197,66,0.4)','--active-card-bg':'#142057','--pulse-ring':'rgba(0,209,255,0.3)','--radial-tint':'rgba(0,120,255,0.15)','--hex-fill-1':'#0d3f9e','--hex-fill-2':'#031233','--hex-border':'#f4c542','--hex-border-glow':'rgba(244,197,66,0.45)','--hex-text':'#eef6ff','--timer-color':'#2be3ff','--timer-glow':'rgba(43,227,255,0.28)', light:false },
             millionaire_light: { '--bg-gradient':'#eaf2ff','--surface':'#ffffff','--surface-variant':'#dbe8ff','--card-bg':'#ffffff','--stats-bg':'rgba(0,60,150,0.04)','--primary':'#b8860c','--primary-fg':'#ffffff','--secondary':'#3f5c8a','--text-main':'#0a1330','--text-muted':'#4f5f7a','--correct-color':'#0a8f52','--correct-rgb':'10,143,82','--incorrect-color':'#d81e3c','--border-color':'rgba(184,134,12,0.4)','--active-card-bg':'#dceaff','--pulse-ring':'rgba(0,102,255,0.25)','--radial-tint':'rgba(0,102,255,0.08)','--hex-fill-1':'#1450b0','--hex-fill-2':'#082a63','--hex-border':'#e0ac2b','--hex-border-glow':'rgba(224,172,43,0.4)','--hex-text':'#ffffff','--timer-color':'#0a63d6','--timer-glow':'rgba(10,99,214,0.22)', light:true }
         };
-        let currentThemeKey = 'tv_dark';
+        let currentThemeKey = 'millionaire_dark';
         const THEME_FAMILY = { tv_dark:'tv', tv_light:'tv', millionaire_dark:'millionaire', millionaire_light:'millionaire' };
         const FAMILY_LIGHT = { tv:'tv_light', millionaire:'millionaire_light' };
         const FAMILY_DEFAULT_DARK = { tv:'tv_dark', millionaire:'millionaire_dark' };
@@ -7047,7 +7063,14 @@
         // al final del body, así que el DOM necesario ya existe en este punto.
         // Restaurar tema guardado primero para evitar flash de color incorrecto
         (function restoreTheme() {
-            try { const saved = localStorage.getItem('trivia_theme'); if(saved && THEMES[saved]) applyTheme(saved); else applyTheme('tv_dark'); } catch(e) { applyTheme('tv_dark'); }
+            try {
+                // v7.14: el tema por defecto pasó a "azul oscuro". Una sola vez se sustituye el tema guardado
+                // por ese (quien ya tenía otro verá este al abrir); desde ahí se respeta lo que elija en Ajustes.
+                if(localStorage.getItem('trivia_theme_default') !== 'millionaire_dark') {
+                    localStorage.setItem('trivia_theme', 'millionaire_dark'); localStorage.setItem('trivia_theme_default', 'millionaire_dark');
+                }
+                const saved = localStorage.getItem('trivia_theme'); if(saved && THEMES[saved]) applyTheme(saved); else applyTheme('millionaire_dark');
+            } catch(e) { applyTheme('millionaire_dark'); }
         })();
 
         // --- VISIBILIDAD DE LA BARRA DE EQUIPOS DURANTE EL JUEGO ---
@@ -7692,7 +7715,7 @@
             // inicio solo conserva el toggle de Rebotes, que es el control
             // que se usa más seguido justo antes de arrancar la partida.
             config.allowDouble = true; config.allowFifty = true; config.allowDoN = true;
-            config.allowRebounds = document.getElementById('chkRebounds').checked;
+            config.allowRebounds = false; // los rebotes ya no se usan (se retiró el interruptor de la pantalla de inicio)
             document.getElementById('tbBtnDouble').style.display = config.allowDouble ? 'flex' : 'none'; document.getElementById('tbBtnFifty').style.display = config.allowFifty ? 'flex' : 'none'; document.getElementById('tbBtnDoN').style.display = config.allowDoN ? 'flex' : 'none';
             if(globalJsonData) { processData(globalJsonData); }
             else {
